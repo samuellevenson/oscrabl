@@ -177,7 +177,7 @@ let rec print_botline line =
     | None, NaN -> print_string "|  "
     | None, Letter x -> print_string ("| L")
     | None, Word x -> print_string ("| W")
-    | Some tile, _ -> print_string ("| " ^ string_of_int tile.value)
+    | Some tile, _ -> print_string ("| " ^ string_of_int tile.value) 
 
 let rec print_board board =
   print_endline "+——+——+——+——+——+——+——+——+——+——+——+——+——+——+——+——+——+";
