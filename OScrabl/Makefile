@@ -1,11 +1,20 @@
-default:
-	utop -init main.ml
-	
+MODULES = board actions main
+OBJECTS=$(MODULES:=.cmo)
+MLS=$(MODULES:=.ml)
+TEST=test.byte
+MAIN=main.byte
+OCAMLBUILD=ocamlbuild -use-ocamlfind
+
+
 build:
-	ocamlbuild -use-ocamlfind main.cmo test.cmo
+	$(OCAMLBUILD) $(OBJECTS)
 
 test:
-	ocamlbuild -use-ocamlfind -tag 'debug' test.byte && ./test.byte
+	$(OCAMLBUILD) -tag 'debug' $(TEST) && ./$(TEST)
+
+play:
+	$(OCAMLBUILD) $(MAIN) && ./$(MAIN)
+
 
 check:
 	bash checkenv.sh && bash checktypes.sh
@@ -17,3 +26,6 @@ docs:
 clean:
 	ocamlbuild -clean
 	rm -rf doc
+
+zip:
+	zip a2src.zip *.ml* *.json _tags Makefile
