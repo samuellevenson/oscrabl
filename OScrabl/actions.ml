@@ -32,9 +32,13 @@ let single_to_int str =
 (*[valid_col] string -> int
   Takes a numerical string of length one and codes it to an integer 
   representing a board position (0-14). *)
-let valid_col str = 
-  let colindex = (Char.code (String.get str 0) - 48) in 
-  if colindex > 14 then raise BadCol else colindex
+(*let valid_col str = 
+  if String.length str > 1 then 
+    let colindex = (Char.code (String.get str 0) - 48) + (Char.code (String.get str 1) - 48) in 
+    if colindex > 14 then raise BadCol else colindex
+  else 
+    let colindex = (Char.code (String.get str 0) - 48) in 
+    if colindex > 14 then raise BadCol else colindex*)
 
 (*[parse_cmd] string -> command
   Takes a string and returns the appropriate command after parsing.
@@ -50,7 +54,7 @@ let rec parse_cmd str =
   match command with 
   | [] -> raise Blank
   | h1::h2::h3::h4::[] -> 
-    if h1 = "place" then (Place (h2,(single_to_int h3, valid_col h4)))
+    if h1 = "place" then (Place (h2,(single_to_int h3, int_of_string h4)))
     else raise Broken
   | h::t -> 
     if h = "score" && t = [] then Score
