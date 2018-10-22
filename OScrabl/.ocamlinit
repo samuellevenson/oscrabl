@@ -2,8 +2,8 @@
 #require "str";;
 #require "yojson";;
 #require "ANSITerminal";;
-#load_rec "listDictionary.cmo";;
-#load_rec "treeDictionary.cmo";;
-#load_rec "dictionarySet.cmo";;
+#load_rec "main.cmo";;
+#load_rec "board.cmo";;
+#load_rec "actions.cmo";;
 #load_rec "listEngine.cmo";;
 #load_rec "treeEngine.cmo";;

@@ -1,3 +1,4 @@
+open Main
 type position = int * int
 
 type command = 

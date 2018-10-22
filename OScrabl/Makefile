@@ -2,7 +2,7 @@ default:
 	utop -init main.ml
 	
 build:
-	ocamlbuild -use-ocamlfind main.cmo test.cmo
+	ocamlbuild -use-ocamlfind main.cmo actions.cmo board.cmo test.cmo
 
 test:
 	ocamlbuild -use-ocamlfind -tag 'debug' test.byte && ./test.byte
