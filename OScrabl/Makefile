@@ -6,17 +6,15 @@ MAIN=main.byte
 OCAMLBUILD=ocamlbuild -use-ocamlfind
 
 
-default:
-	utop -init main.ml
-	
 build:
-	ocamlbuild -use-ocamlfind main.cmo actions.cmo board.cmo test.cmo
+	$(OCAMLBUILD) $(OBJECTS)
 
 test:
-	ocamlbuild -use-ocamlfind -tag 'debug' test.byte && ./test.byte
+	$(OCAMLBUILD) -tag 'debug' $(TEST) && ./$(TEST)
 
 play:
 	$(OCAMLBUILD) $(MAIN) && ./$(MAIN)
+
 
 check:
 	bash checkenv.sh && bash checktypes.sh
@@ -28,3 +26,6 @@ docs:
 clean:
 	ocamlbuild -clean
 	rm -rf doc
+
+zip:
+	zip a2src.zip *.ml* *.json _tags Makefile

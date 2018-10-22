@@ -1,4 +1,3 @@
-open Main
 type position = int * int
 
 type command = 
@@ -9,6 +8,10 @@ type command =
 exception Blank
 
 exception Broken
+
+exception BadRow
+
+exception BadCol
 
 (** [rm_space] string list -> string list
     A function that removes all empty strings in [lst] *)
@@ -24,14 +27,14 @@ let rec rm_space lst =
   position (0-14). *)
 let single_to_int str =
   let index = (Char.code (Char.uppercase_ascii (String.get str 0))) - 65 in
-  if index > 14 then raise Broken else index
+  if index > 14 then raise BadRow else index
 
 (*[valid_col] string -> int
   Takes a numerical string of length one and codes it to an integer 
   representing a board position (0-14). *)
 let valid_col str = 
   let index = (Char.code (String.get str 0) - 48) in 
-  if index > 14 then raise Broken else index
+  if index > 14 then raise BadCol else index
 
 (*[parse_cmd] string -> command
   Takes a string and returns the appropriate command after parsing.
