@@ -167,8 +167,8 @@ let rec print_topline line =
   | [] -> print_endline "|"
   | x::xs -> match x with
     | None, NaN -> print_string [] "|    "; print_topline xs
-    | None, DoubleLetter -> print_string [] ("|"); print_string [on_blue] (" 2  "); print_topline xs
-    | None, TripleLetter -> print_string [] ("|"); print_string [on_cyan] (" 3  "); print_topline xs
+    | None, DoubleLetter -> print_string [] ("|"); print_string [on_cyan] (" 2  "); print_topline xs
+    | None, TripleLetter -> print_string [] ("|"); print_string [on_blue] (" 3  "); print_topline xs
     | None, DoubleWord -> print_string [] ("|"); print_string [on_magenta] (" 2  "); print_topline xs
     | None, TripleWord -> print_string [] ("|"); print_string [on_red] (" 3  "); print_topline xs
     | Some tile, _ -> print_string [] ("| " ^ tile.letter ^ "  "); print_topline xs
@@ -178,8 +178,8 @@ let rec print_botline line =
   | [] -> print_endline "|"
   | x::xs -> match x with
     | None, NaN -> print_string [] "|    "; print_botline xs
-    | None, DoubleLetter -> print_string [] ("|"); print_string [on_blue] ("  L "); print_botline xs
-    | None, TripleLetter -> print_string [] ("|"); print_string [on_cyan] ("  L "); print_botline xs
+    | None, DoubleLetter -> print_string [] ("|"); print_string [on_cyan] ("  L "); print_botline xs
+    | None, TripleLetter -> print_string [] ("|"); print_string [on_blue] ("  L "); print_botline xs
     | None, DoubleWord -> print_string [] ("|"); print_string [on_magenta] ("  W "); print_botline xs
     | None, TripleWord -> print_string [] ("|"); print_string [on_red] ("  W "); print_botline xs
     | Some tile, _ -> print_string [] ("|  " ^ string_of_int tile.value ^ " "); print_botline xs
