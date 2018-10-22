@@ -173,10 +173,10 @@ let rec print_topline line =
   | [] -> print_endline "|"
   | x::xs -> match x with
     | None, NaN -> print_string [] "|    "; print_topline xs
-    | None, DoubleLetter -> print_string [] ("|"); print_string [on_cyan] (" 2  "); print_topline xs
-    | None, TripleLetter -> print_string [] ("|"); print_string [on_blue] (" 3  "); print_topline xs
-    | None, DoubleWord -> print_string [] ("|"); print_string [on_magenta] (" 2  "); print_topline xs
-    | None, TripleWord -> print_string [] ("|"); print_string [on_red] (" 3  "); print_topline xs
+    | None, DoubleLetter -> print_string [] ("|"); print_string [white; on_cyan] (" 2  "); print_topline xs
+    | None, TripleLetter -> print_string [] ("|"); print_string [white; on_blue] (" 3  "); print_topline xs
+    | None, DoubleWord -> print_string [] ("|"); print_string [white; on_magenta] (" 2  "); print_topline xs
+    | None, TripleWord -> print_string [] ("|"); print_string [white; on_red] (" 3  "); print_topline xs
     | Some tile, _ -> print_string [] ("|"); print_string [Bold; white; on_black] (" " ^ tile.letter ^ "  "); print_topline xs
 
 (** [print_topline line] prints the bottom half of [line], where [line] is one
@@ -185,17 +185,29 @@ let rec print_botline line =
   match line with
   | [] -> print_endline "|"
   | x::xs -> match x with
+<<<<<<< HEAD
+    | None, NaN -> print_string [] "|    "; print_botline xs
+    | None, DoubleLetter -> print_string [] ("|"); print_string [white; on_cyan] ("  L "); print_botline xs
+    | None, TripleLetter -> print_string [] ("|"); print_string [white; on_blue] ("  L "); print_botline xs
+    | None, DoubleWord -> print_string [] ("|"); print_string [white; on_magenta] ("  W "); print_botline xs
+    | None, TripleWord -> print_string [] ("|"); print_string [white; on_red] ("  W "); print_botline xs
+    | Some tile, _ -> print_string [] ("|"); print_string [Bold; white; on_black] ("  " ^ string_of_int tile.value ^ " "); print_botline xs
+=======
     | None, NaN -> print_string [] "|  "
     | None, DoubleLetter -> print_string [on_cyan] ("| L")
     | None, TripleLetter -> print_string [on_blue] ("| L")
     | None, DoubleWord -> print_string [on_magenta] ("| W")
     | None, TripleWord -> print_string [on_red] ("| W")
     | Some tile, _ -> print_string [] ("| " ^ string_of_int tile.value) 
+>>>>>>> f505eeab34163599127d3c23654dfeebb3ae827f
+
+let print_linenum i =
+  print_string [] (string_of_int i)
 
 (** [print_board board] prints a graphical representation of [board] into the
     terminal window *)
-let rec print_board board =
+let rec print_board board i =
   print_endline "+————+————+————+————+————+————+————+————+————+————+————+————+————+————+————+";
   match board with
-  | [] ->  print_endline "";
-  | x::xs -> print_topline x; print_botline x; print_board xs
+  | [] ->  print_endline " 0    1    2    3    4    5    6    7    8    9    10   11   12   13   14";
+  | x::xs -> print_linenum i; print_topline x; print_botline x; print_board xs (i + 1)
