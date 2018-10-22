@@ -26,15 +26,15 @@ let rec rm_space lst =
   Takes a string of length one and codes it to an integer representing a board 
   position (0-14). *)
 let single_to_int str =
-  let index = (Char.code (Char.uppercase_ascii (String.get str 0))) - 65 in
-  if index > 14 then raise BadRow else index
+  let rowindex = (Char.code (Char.uppercase_ascii (String.get str 0))) - 65 in
+  if rowindex > 14 then raise BadRow else rowindex
 
 (*[valid_col] string -> int
   Takes a numerical string of length one and codes it to an integer 
   representing a board position (0-14). *)
 let valid_col str = 
-  let index = (Char.code (String.get str 0) - 48) in 
-  if index > 14 then raise BadCol else index
+  let colindex = (Char.code (String.get str 0) - 48) in 
+  if colindex > 14 then raise BadCol else colindex
 
 (*[parse_cmd] string -> command
   Takes a string and returns the appropriate command after parsing.
