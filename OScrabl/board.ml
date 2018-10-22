@@ -1,9 +1,10 @@
+open ANSITerminal
 
 type tile = {
   letter: string; value: int
 }
 
-type multiplier = Letter of int | Word of int | NaN
+type multiplier = DoubleLetter | TripleLetter | DoubleWord | TripleWord | NaN
 
 type square = (tile option) * (multiplier)
 
@@ -13,15 +14,15 @@ let def_col_zero : square list =
   let rec helper row acclist =
     if (row < 15) then
       begin
-        if (row = 0) then helper (row + 1) ((None, Word(3))::acclist)
+        if (row = 0) then helper (row + 1) ((None, TripleWord)::acclist)
         else if (row <> 0) && (row < 3) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 3) then helper (row + 1) ((None, Letter(2))::acclist)
+        else if (row = 3) then helper (row + 1) ((None, DoubleLetter)::acclist)
         else if (row <> 3) && (row < 7) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 7) then helper (row + 1) ((None, Word(3))::acclist)
+        else if (row = 7) then helper (row + 1) ((None, TripleWord)::acclist)
         else if (row <> 7) && (row < 11) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 11) then helper (row + 1) ((None, Letter(2))::acclist)
+        else if (row = 11) then helper (row + 1) ((None, DoubleLetter)::acclist)
         else if (row <> 11) && (row < 14) then helper (row + 1) ((None, NaN)::acclist)
-        else helper (row + 1) ((None, Word(3))::acclist)
+        else helper (row + 1) ((None, TripleWord)::acclist)
       end
     else List.rev acclist
   in helper 0 []
@@ -31,13 +32,13 @@ let def_col_one =
     if (row < 15) then
       begin
         if (row = 0) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 1) then helper (row + 1) ((None, Word(2))::acclist)
+        else if (row = 1) then helper (row + 1) ((None, DoubleWord)::acclist)
         else if (row < 5) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 5) then helper (row + 1) ((None, Letter(3))::acclist)
+        else if (row = 5) then helper (row + 1) ((None, TripleLetter)::acclist)
         else if (row < 9) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 9) then helper (row + 1) ((None, Letter(3))::acclist)
+        else if (row = 9) then helper (row + 1) ((None, TripleLetter)::acclist)
         else if (row < 13) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 13) then helper (row + 1) ((None, Word(2))::acclist)
+        else if (row = 13) then helper (row + 1) ((None, DoubleWord)::acclist)
         else helper (row + 1) ((None, NaN)::acclist)
       end
     else List.rev acclist
@@ -48,13 +49,13 @@ let def_col_two =
     if (row < 15) then
       begin
         if (row < 2) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 2) then helper (row + 1) ((None, Word(2))::acclist)
+        else if (row = 2) then helper (row + 1) ((None, DoubleWord)::acclist)
         else if (row < 6) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 6) then helper (row + 1) ((None, Letter(2))::acclist)
+        else if (row = 6) then helper (row + 1) ((None, DoubleLetter)::acclist)
         else if (row < 8) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 8) then helper (row + 1) ((None, Letter(2))::acclist)
+        else if (row = 8) then helper (row + 1) ((None, DoubleLetter)::acclist)
         else if (row < 12) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 12) then helper (row + 1) ((None, Word(2))::acclist)
+        else if (row = 12) then helper (row + 1) ((None, DoubleWord)::acclist)
         else helper (row + 1) ((None, NaN)::acclist)
       end
     else List.rev acclist
@@ -64,15 +65,15 @@ let def_col_three =
   let rec helper row acclist =
     if (row < 15) then
       begin
-        if (row = 0) then helper (row + 1) ((None, Letter(2))::acclist)
+        if (row = 0) then helper (row + 1) ((None, DoubleLetter)::acclist)
         else if (row < 3) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 3) then helper (row + 1) ((None, Word(2))::acclist)
+        else if (row = 3) then helper (row + 1) ((None, DoubleWord)::acclist)
         else if (row < 7) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 7) then helper (row + 1) ((None, Letter(2))::acclist)
+        else if (row = 7) then helper (row + 1) ((None, DoubleLetter)::acclist)
         else if (row < 11) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 11) then helper (row + 1) ((None, Word(2))::acclist)
+        else if (row = 11) then helper (row + 1) ((None, DoubleWord)::acclist)
         else if (row < 14) then helper (row + 1) ((None, NaN)::acclist)
-        else helper (row + 1) ((None, Letter(2))::acclist)
+        else helper (row + 1) ((None, DoubleLetter)::acclist)
       end
     else List.rev acclist
   in helper 0 []
@@ -82,9 +83,9 @@ let def_col_four =
     if (row < 15) then
       begin
         if (row < 4) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 4) then helper (row + 1) ((None, Word(2))::acclist)
+        else if (row = 4) then helper (row + 1) ((None, DoubleWord)::acclist)
         else if (row < 10) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 10) then helper (row + 1) ((None, Word(2))::acclist)
+        else if (row = 10) then helper (row + 1) ((None, DoubleWord)::acclist)
         else helper (row + 1) ((None, NaN)::acclist)
       end
     else List.rev acclist
@@ -95,13 +96,13 @@ let def_col_five =
     if (row < 15) then
       begin
         if (row = 0) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 1) then helper (row + 1) ((None, Letter(3))::acclist)
+        else if (row = 1) then helper (row + 1) ((None, TripleLetter)::acclist)
         else if (row < 5) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 5) then helper (row + 1) ((None, Letter(3))::acclist)
+        else if (row = 5) then helper (row + 1) ((None, TripleLetter)::acclist)
         else if (row < 9) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 9) then helper (row + 1) ((None, Letter(3))::acclist)
+        else if (row = 9) then helper (row + 1) ((None, TripleLetter)::acclist)
         else if (row < 13) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 13) then helper (row + 1) ((None, Letter(3))::acclist)
+        else if (row = 13) then helper (row + 1) ((None, TripleLetter)::acclist)
         else helper (row + 1) ((None, NaN)::acclist)
       end
     else List.rev acclist
@@ -112,13 +113,13 @@ let def_col_six =
     if (row < 15) then
       begin
         if (row < 2) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 2) then helper (row + 1) ((None, Letter(2))::acclist)
+        else if (row = 2) then helper (row + 1) ((None, DoubleLetter)::acclist)
         else if (row < 6) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 6) then helper (row + 1) ((None, Letter(2))::acclist)
+        else if (row = 6) then helper (row + 1) ((None, DoubleLetter)::acclist)
         else if (row < 8) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 8) then helper (row + 1) ((None, Letter(2))::acclist)
+        else if (row = 8) then helper (row + 1) ((None, DoubleLetter)::acclist)
         else if (row < 12) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 12) then helper (row + 1) ((None, Letter(2))::acclist)
+        else if (row = 12) then helper (row + 1) ((None, DoubleLetter)::acclist)
         else helper (row + 1) ((None, NaN)::acclist)
       end
     else List.rev acclist
@@ -128,15 +129,15 @@ let def_col_seven =
   let rec helper row acclist =
     if (row < 15) then
       begin
-        if (row = 0) then helper (row + 1) ((None, Word(3))::acclist)
+        if (row = 0) then helper (row + 1) ((None, TripleWord)::acclist)
         else if (row < 3) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 3) then helper (row + 1) ((None, Letter(2))::acclist)
+        else if (row = 3) then helper (row + 1) ((None, DoubleLetter)::acclist)
         else if (row < 7) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 7) then helper (row + 1) ((None, Word(2))::acclist)
+        else if (row = 7) then helper (row + 1) ((None, DoubleWord)::acclist)
         else if (row < 11) then helper (row + 1) ((None, NaN)::acclist)
-        else if (row = 11) then helper (row + 1) ((None, Letter(2))::acclist)
+        else if (row = 11) then helper (row + 1) ((None, DoubleLetter)::acclist)
         else if (row < 14) then helper (row + 1) ((None, NaN)::acclist)
-        else helper (row + 1) ((None, Word(3))::acclist)
+        else helper (row + 1) ((None, TripleWord)::acclist)
       end
     else List.rev acclist
   in helper 0 []
@@ -165,22 +166,26 @@ let rec print_topline line =
   match line with
   | [] -> print_endline "|"
   | x::xs -> match x with
-    | None, NaN -> print_string "|  "; print_topline xs
-    | None, Letter x -> print_string ("|" ^ string_of_int x ^ " "); print_topline xs
-    | None, Word x -> print_string ("|" ^ string_of_int x ^ " "); print_topline xs
-    | Some tile, _ -> print_string ("|" ^ tile.letter ^ " "); print_topline xs
+    | None, NaN -> print_string [] "|    "; print_topline xs
+    | None, DoubleLetter -> print_string [] ("|"); print_string [on_blue] (" 2  "); print_topline xs
+    | None, TripleLetter -> print_string [] ("|"); print_string [on_cyan] (" 3  "); print_topline xs
+    | None, DoubleWord -> print_string [] ("|"); print_string [on_magenta] (" 2  "); print_topline xs
+    | None, TripleWord -> print_string [] ("|"); print_string [on_red] (" 3  "); print_topline xs
+    | Some tile, _ -> print_string [] ("| " ^ tile.letter ^ "  "); print_topline xs
 
 let rec print_botline line =
   match line with
   | [] -> print_endline "|"
   | x::xs -> match x with
-    | None, NaN -> print_string "|  "; print_botline xs
-    | None, Letter x -> print_string ("| L"); print_botline xs
-    | None, Word x -> print_string ("| W"); print_botline xs
-    | Some tile, _ -> print_string ("| " ^ string_of_int tile.value); print_botline xs
+    | None, NaN -> print_string [] "|    "; print_botline xs
+    | None, DoubleLetter -> print_string [] ("|"); print_string [on_blue] ("  L "); print_botline xs
+    | None, TripleLetter -> print_string [] ("|"); print_string [on_cyan] ("  L "); print_botline xs
+    | None, DoubleWord -> print_string [] ("|"); print_string [on_magenta] ("  W "); print_botline xs
+    | None, TripleWord -> print_string [] ("|"); print_string [on_red] ("  W "); print_botline xs
+    | Some tile, _ -> print_string [] ("|  " ^ string_of_int tile.value ^ " "); print_botline xs
 
 let rec print_board board =
-  print_endline "+——+——+——+——+——+——+——+——+——+——+——+——+——+——+——+";
+  print_endline "+————+————+————+————+————+————+————+————+————+————+————+————+————+————+————+";
   match board with
   | [] ->  print_endline "";
   | x::xs -> print_topline x; print_botline x; print_board xs
