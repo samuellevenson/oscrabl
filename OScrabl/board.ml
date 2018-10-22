@@ -1,13 +1,17 @@
 open ANSITerminal
 
+(** The type of tiles *)
 type tile = {
   letter: string; value: int
 }
 
+(** The type of score multipliers *)
 type multiplier = DoubleLetter | TripleLetter | DoubleWord | TripleWord | NaN
 
+(** The type of squares *)
 type square = (tile option) * (multiplier)
 
+(** The type of the scrabble® board *)
 type board = square list list
 
 let def_col_zero : square list =
@@ -147,7 +151,7 @@ let emptyBoard =
    def_col_six;def_col_seven;def_col_six;def_col_five;def_col_four;
    def_col_three;def_col_two;def_col_one;def_col_zero]
 
-let insertTile board tile (x,y)=
+let insertTile board tile (x,y) =
   let rec rowIter row col new_col =
     if row < y then rowIter (row + 1) col ((List.nth col row)::new_col)
     else if row = y then
@@ -162,6 +166,8 @@ let insertTile board tile (x,y)=
     else List.rev list_of_cols in
   columnIter 0 []
 
+(** [print_topline line] prints the top half of [line], where [line] is one row
+    of a board *)
 let rec print_topline line =
   match line with
   | [] -> print_endline "|"
@@ -171,8 +177,10 @@ let rec print_topline line =
     | None, TripleLetter -> print_string [] ("|"); print_string [on_blue] (" 3  "); print_topline xs
     | None, DoubleWord -> print_string [] ("|"); print_string [on_magenta] (" 2  "); print_topline xs
     | None, TripleWord -> print_string [] ("|"); print_string [on_red] (" 3  "); print_topline xs
-    | Some tile, _ -> print_string [] ("| " ^ tile.letter ^ "  "); print_topline xs
+    | Some tile, _ -> print_string [] ("|"); print_string [Bold; white; on_black] (" " ^ tile.letter ^ "  "); print_topline xs
 
+(** [print_topline line] prints the bottom half of [line], where [line] is one
+    row of a board *)
 let rec print_botline line =
   match line with
   | [] -> print_endline "|"
@@ -184,6 +192,8 @@ let rec print_botline line =
     | None, TripleWord -> print_string [on_red] ("| W")
     | Some tile, _ -> print_string [] ("| " ^ string_of_int tile.value) 
 
+(** [print_board board] prints a graphical representation of [board] into the
+    terminal window *)
 let rec print_board board =
   print_endline "+————+————+————+————+————+————+————+————+————+————+————+————+————+————+————+";
   match board with
