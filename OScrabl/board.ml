@@ -142,7 +142,7 @@ let def_col_seven =
   in helper 0 []
 
 let emptyBoard = 
-  [def_col_one;def_col_two;def_col_three;def_col_four;def_col_five;
+  [def_col_zero;def_col_one;def_col_two;def_col_three;def_col_four;def_col_five;
    def_col_six;def_col_seven;def_col_six;def_col_five;def_col_four;
    def_col_three;def_col_two;def_col_one;def_col_zero]
 
