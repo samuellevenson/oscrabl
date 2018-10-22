@@ -14,6 +14,8 @@ type square = (tile option) * (multiplier)
 (** The type of the scrabble® board *)
 type board = square list list
 
+(** The square list that represents the 0th column of a scrabble board at the 
+    start of a game *)
 let def_col_zero : square list =
   let rec helper row acclist =
     if (row < 15) then
@@ -31,6 +33,8 @@ let def_col_zero : square list =
     else List.rev acclist
   in helper 0 []
 
+(** The square list that represents the 1st column of a scrabble board at the 
+    start of a game *)
 let def_col_one =
   let rec helper row acclist =
     if (row < 15) then
@@ -48,6 +52,8 @@ let def_col_one =
     else List.rev acclist
   in helper 0 []
 
+(** The square list that represents the 2nd column of a scrabble board at the 
+    start of a game *)
 let def_col_two =
   let rec helper row acclist =
     if (row < 15) then
@@ -65,6 +71,8 @@ let def_col_two =
     else List.rev acclist
   in helper 0 []
 
+(** The square list that represents the 3rd column of a scrabble board at the 
+    start of a game *)
 let def_col_three =
   let rec helper row acclist =
     if (row < 15) then
@@ -82,6 +90,8 @@ let def_col_three =
     else List.rev acclist
   in helper 0 []
 
+(** The square list that represents the 4th column of a scrabble board at the 
+    start of a game *)
 let def_col_four =
   let rec helper row acclist =
     if (row < 15) then
@@ -95,6 +105,8 @@ let def_col_four =
     else List.rev acclist
   in helper 0 []
 
+(** The square list that represents the 5th column of a scrabble board at the 
+    start of a game *)
 let def_col_five =
   let rec helper row acclist =
     if (row < 15) then
@@ -112,6 +124,8 @@ let def_col_five =
     else List.rev acclist
   in helper 0 []
 
+(** The square list that represents the 6th column of a scrabble board at the 
+    start of a game *)
 let def_col_six =
   let rec helper row acclist =
     if (row < 15) then
@@ -129,6 +143,8 @@ let def_col_six =
     else List.rev acclist
   in helper 0 []
 
+(** The square list that represents the 7th column of a scrabble board at the 
+    start of a game *)
 let def_col_seven =
   let rec helper row acclist =
     if (row < 15) then
@@ -146,11 +162,15 @@ let def_col_seven =
     else List.rev acclist
   in helper 0 []
 
+(** The square list list that represents the scrabble board at the start of a
+    game *)
 let emptyBoard =
   [def_col_zero;def_col_one;def_col_two;def_col_three;def_col_four;def_col_five;
    def_col_six;def_col_seven;def_col_six;def_col_five;def_col_four;
    def_col_three;def_col_two;def_col_one;def_col_zero]
 
+(** [insertTile b t (x,y)] is the scrabble board [b] with a tile [t] square
+    at the [x]th row and [y]th column of the board *)
 let insertTile board tile (x,y) =
   let rec rowIter row col new_col =
     if row < y then rowIter (row + 1) col ((List.nth col row)::new_col)
@@ -199,3 +219,5 @@ let rec print_board board =
   match board with
   | [] ->  print_endline "";
   | x::xs -> print_topline x; print_botline x; print_board xs
+
+
