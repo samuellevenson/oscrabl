@@ -180,7 +180,7 @@ let rec print_botline line =
     | Some tile, _ -> print_string ("| " ^ string_of_int tile.value)
 
 let rec print_board board =
-  print_endline "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+";
+  print_endline "+——+——+——+——+——+——+——+——+——+——+——+——+——+——+——+——+——+";
   match board with
-  | [] ->  print_endline "+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+";
+  | [] ->  print_endline "+——+——+——+——+——+——+——+——+——+——+——+——+——+——+——+——+——+";
   | x::xs -> print_topline x; print_botline x; print_board xs
