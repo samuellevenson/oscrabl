@@ -149,8 +149,8 @@ let emptyBoard =
 
 let insertTile board tile (x,y)=
   let rec rowIter row col new_col =
-    if row < x then rowIter (row + 1) col ((List.nth col row)::new_col)
-    else if row = x then
+    if row < y then rowIter (row + 1) col ((List.nth col row)::new_col)
+    else if row = y then
       let multi = match (List.nth col row) with
         | (a, b) -> b in rowIter (row + 1) col ((tile, multi)::new_col)
     else if row < 15 then rowIter (row + 1) col ((List.nth col row)::new_col)
