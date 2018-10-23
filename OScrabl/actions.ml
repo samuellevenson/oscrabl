@@ -13,6 +13,7 @@ exception BadRow
 
 exception BadCol
 
+exception BadSelection
 (** [rm_space] string list -> string list
     A function that removes all empty strings in [lst] *)
 let rec rm_space lst =
