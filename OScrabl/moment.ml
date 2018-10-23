@@ -151,33 +151,35 @@ let init_state = {
 }
 
 
-let update_board board tile (x,y) = 
+let update_board board tile (x,y) =
   insertTile board tile (x,y)
 
 (* FIX update_dock *)
 (* let update_dock = failwith "update_dock" *)
 
 let update_state st cmd = failwith "update_state"
-(* match cmd with 
-   | Place (tile,(row,col)) -> 
-   let updated_board = insertTile st.board (Some tile) (row,col) in 
-   {board = updated_board; bag = st.init_bag; players = st.players; 
+(* match cmd with
+   | Place (tile,(row,col)) ->
+   let updated_board = insertTile st.board (Some tile) (row,col) in
+   {board = updated_board; bag = st.init_bag; players = st.players;
    current_player = st.current_player} *)
 
 let rec print_docktop dock =
   match dock with
   | [] -> print_endline ""
-  | x::xs -> print_string [Bold; white; on_black] (" " ^ x.letter ^ "  "); print_docktop xs
+  | x::xs -> print_string [Bold; white; on_black] (" " ^ x.letter ^ "  "); print_string [] "  "; print_docktop xs
 
 let rec print_dockbot dock =
   match dock with
   | [] -> print_endline ""
-  | x::xs -> print_string [Bold; white; on_black] ("  " ^ string_of_int x.value ^ " "); print_dockbot xs
+  | x::xs -> print_string [Bold; white; on_black] ("  " ^ string_of_int x.value ^ " "); print_string [] "  "; print_dockbot xs
 
 let rec print_dock player =
   let dock = player.dock in
-  print_docktop dock; print_dockbot dock
+  print_string [] "                    "; print_docktop dock;
+  print_string [] "                    "; print_dockbot dock
 
 let print_game st =
   print_board (st.board) 0;
+  print_endline "";
   print_dock (st.current_player)
