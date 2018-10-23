@@ -13,6 +13,7 @@ exception BadRow
 
 exception BadCol
 
+exception BadSelection
 (** [rm_space] string list -> string list
     A function that removes all empty strings in [lst] *)
 let rec rm_space lst =
@@ -47,6 +48,7 @@ let single_to_int str =
     Ex: "" or " "
   Malformed if misspelled verb or incorrect parameters to Command 
     Ex: "score p1" or "place v x2"*)
+
 let rec parse_cmd str = 
   (*Turnes a string into a list separated by spaces*)
   let str_lst = String.split_on_char ' ' str in 
