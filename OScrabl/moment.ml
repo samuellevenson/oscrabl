@@ -174,6 +174,22 @@ let remove_tile_from_dock player tile =
     dock = List.filter (fun x -> tile <> x) player.dock
   }
 
+(** [update_player_in_list] takes the current state and player and updates
+    the state's player list with the new player instance. **)
+let update_player_in_list st player = 
+  let rec update_player player_list player acc = 
+    match player_list with 
+    | [] -> acc
+    | h::t -> if h.name = player.name then update_player t player (player::acc) 
+      else update_player t player acc
+  in 
+  {
+    board: st.board;
+    bag: st.bag;
+    players: (update_player st.players player []);
+    current_player: st.current_player;
+  }
+
 let update_state st cmd =
   match cmd with
   | Place (letter,(row,col)) -> begin
