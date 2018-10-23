@@ -1,6 +1,6 @@
 type position = int * int
 
-type command = 
+type action = 
   | Place of string * position
   | Score
   | Quit
@@ -50,8 +50,8 @@ let single_to_int str =
 let rec parse_cmd str = 
   (*Turnes a string into a list separated by spaces*)
   let str_lst = String.split_on_char ' ' str in 
-  let command = rm_space str_lst in 
-  match command with 
+  let action = rm_space str_lst in 
+  match action with 
   | [] -> raise Blank
   | h1::h2::h3::h4::[] -> 
     if h1 = "place" then (Place (h2,(single_to_int h3, int_of_string h4)))
