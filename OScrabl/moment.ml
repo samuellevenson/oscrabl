@@ -186,6 +186,20 @@ let update_state st cmd =
   | Score -> failwith ""
   | Quit -> failwith ""
 
+let rec draw state : t =
+  if List.length state.current_player.dock = 7 then state
+  else let next_state = {
+    board = state.board;
+    players = state.players;
+    current_player = {
+      name = state.current_player.name;
+      score = state.current_player.score;
+      words = state.current_player.words;
+      dock = List.hd state.bag::state.current_player.dock
+    };
+    bag = List.tl state.bag
+  } in
+    draw next_state
 
 let rec print_docktop dock =
   match dock with
