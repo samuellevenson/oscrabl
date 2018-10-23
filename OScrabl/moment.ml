@@ -158,11 +158,11 @@ let update_board board tile (x,y) =
 (* let update_dock = failwith "update_dock" *)
 
 let update_state st cmd = failwith "update_state"
-(* match cmd with 
-   | Place (tile,(row,col)) -> 
-   let updated_board = insertTile st.board (Some tile) (row,col) in 
-   {board = updated_board; bag = st.init_bag; players = st.players; 
-   current_player = st.current_player} *)
+    match cmd with 
+    | Place (tile,(row,col)) -> 
+      let updated_board = insertTile st.board (Some tile) (row,col) in 
+      {board = updated_board; bag = st.init_bag; players = st.players; 
+       current_player = st.current_player} 
 
 let rec print_docktop dock =
   match dock with

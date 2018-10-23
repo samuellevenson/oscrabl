@@ -1,5 +1,6 @@
 open Actions
 open Moment
+open Board
 
 (*let start_game =
   print_board emptyBoard*)
@@ -7,8 +8,7 @@ open Moment
 let rec gameplay st =
   let not_used = Sys.command"clear" in
   (ANSITerminal.(print_string [red] 
-                   "\n\n             OScrable by Richard Yu, Samuel Levenson,
-                    and Max Chen \n"));
+                   "\n\n             OScrable by Richard Yu, Samuel Levenson, and Max Chen \n"));
   print_game st; print_newline(); print_string "Possible Commands:";
   print_newline(); print_string "place, quit"; print_newline();
   print_string  "> ";
