@@ -166,14 +166,25 @@ let rec letter_to_tile letter dock =
   | [] -> raise BadSelection
   | h::t -> if letter = h.letter then h else (letter_to_tile letter t)
 
+let remove_tile_from_dock player tile =
+  {
+    name = player.name;
+    score = player.score;
+    words = player.words;
+    dock = List.filter (fun x -> tile <> x) player.dock
+  }
+
 let update_state st cmd =
   match cmd with
-  | Place (letter,(row,col)) ->
-    let tile = letter_to_tile letter st.current_player.dock in
-    match tile with
-    | tile -> let updated_board = insertTile st.board (Some tile) (row,col) in
-      {board = updated_board; bag = st.bag; players = st.players;
-       current_player = st.current_player}
+  | Place (letter,(row,col)) -> begin
+      let tile = letter_to_tile letter st.current_player.dock in
+      match tile with
+      | tile -> let updated_board = insertTile st.board (Some tile) (row,col) in
+        {board = updated_board; bag = st.bag; players = st.players;
+         current_player = remove_tile_from_dock st.current_player tile}
+    end
+  | Score -> failwith ""
+  | Quit -> failwith ""
 
 
 let rec print_docktop dock =
