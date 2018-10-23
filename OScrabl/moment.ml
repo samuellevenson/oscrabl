@@ -1,8 +1,9 @@
 open Board
+open ANSITerminal
 
 type player = {
   name: string;
-  letters: tile list;
+  dock: tile list;
   score: int
 }
 
@@ -118,6 +119,36 @@ let init_bag = [
 let init_state = {
   board = emptyBoard;
   bag = init_bag;
-  players = [];
+  players = [
+    {name = "OScrabl Player";
+     dock = [
+       {letter = "A"; value = 1};
+       {letter = "B"; value = 3};
+       {letter = "C"; value = 3};
+       {letter = "D"; value = 2};
+       {letter = "E"; value = 1};
+       {letter = "F"; value = 4};
+       {letter = "G"; value = 2};
+     ];
+     score = 0;
+    }
+  ];
   current_player = -1;
 }
+
+let player_tiles state name =
+  (List.find (fun player -> player.name = name) state.players).dock
+
+let rec print_docktop dock =
+  match dock with
+  | [] -> print_endline ""
+  | x::xs -> print_string [Bold; white; on_black] (" " ^ x.letter ^ "  "); print_docktop xs
+
+let rec print_dockbot dock =
+  match dock with
+  | [] -> print_endline ""
+  | x::xs -> print_string [Bold; white; on_black] ("  " ^ string_of_int x.value ^ " "); print_dockbot xs
+
+let rec print_dock state name =
+  let dock = (List.find (fun player -> player.name = name) state.players).dock in
+  print_docktop dock; print_dockbot dock
