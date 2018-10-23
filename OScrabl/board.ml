@@ -213,12 +213,12 @@ let rec print_botline line =
     | Some tile, _ -> print_string [] ("|"); print_string [Bold; white; on_black] ("  " ^ string_of_int tile.value ^ " "); print_botline xs
 
 let print_linenum i =
-  print_string [] (string_of_int i)
+  print_string [] ((i + 65) |> Char.chr |> Char.escaped)
 
 (** [print_board board] prints a graphical representation of [board] into the
     terminal window *)
 let rec print_board board i =
-  print_endline "+————+————+————+————+————+————+————+————+————+————+————+————+————+————+————+";
+  print_endline " +————+————+————+————+————+————+————+————+————+————+————+————+————+————+————+";
   match board with
-  | [] ->  print_endline " 0    1    2    3    4    5    6    7    8    9    10   11   12   13   14";
-  | x::xs -> print_linenum i; print_topline x; print_botline x; print_board xs (i + 1)
+  | [] ->  print_endline "  0    1    2    3    4    5    6    7    8    9    10   11   12   13   14";
+  | x::xs -> print_string [] " "; print_topline x; print_linenum i; print_botline x; print_board xs (i + 1)

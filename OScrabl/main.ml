@@ -1,16 +1,10 @@
 open Board
 open Actions
-open ANSITerminal
 
 (*let start_game =
   print_board emptyBoard*)
 
 let rec gameplay board iteration =
-  print_newline();
-  (*print_string "Possible Commands:";
-    print_newline();
-    print_string "place, quit";
-    print_newline(); *)
   if iteration = 0 then (
     (ANSITerminal.resize 110 51);
     gameplay board (iteration + 1))
@@ -19,9 +13,15 @@ let rec gameplay board iteration =
     (ANSITerminal.(print_string [red] 
                      "\n\n             OScrable by Richard Yu, Samuel Levenson, and Max Chen \n"));
     print_board board 0;
+    print_newline();
+    print_string "Possible Commands:";
+    print_newline();
+    print_string "place, quit";
+    print_newline(); 
+    print_string  "> ";
     (match (parse_cmd (read_line ())) with
      | Quit -> 
-       (*print_string "Thanks for playing OScrabl!";*)
+       print_string "Thanks for playing OScrabl!";
        print_newline(); 
        exit 0
      | Place (tile,(row,col)) -> gameplay (insertTile board (Some {letter=tile; value= 5}) (row,col)) (iteration + 1)
