@@ -18,7 +18,7 @@ let rec gameplay board iteration =
     let not_used = Sys.command"clear" in
     (ANSITerminal.(print_string [red] 
                      "\n\n             OScrable by Richard Yu, Samuel Levenson, and Max Chen \n"));
-    print_board board;
+    print_board board 0;
     (match (parse_cmd (read_line ())) with
      | Quit -> 
        (*print_string "Thanks for playing OScrabl!";*)
