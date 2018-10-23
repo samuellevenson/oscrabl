@@ -16,8 +16,8 @@ let rec gameplay st =
   let cmd = parse_cmd (read_line ()) in 
   match cmd with
   | Place (tile,(row,col)) -> 
-    let updated_st = (update_st st cmd) in gameplay updated_st
-  | Exit -> print_string "Thanks for playing OScrabl!"; print_newline(); exit 0
+    let updated_st = (update_state st cmd) in gameplay updated_st
+  | Quit -> print_string "Thanks for playing OScrabl!"; print_newline(); exit 0
   | _ -> exit 0
 
 
