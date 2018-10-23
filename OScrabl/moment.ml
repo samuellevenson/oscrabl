@@ -1,16 +1,18 @@
 open Board
+open Actions
 
 type player = {
   name: string;
   letters: tile list;
-  score: int
+  score: int;
+  words: string list
 }
 
 type t = {
   board: board;
   bag: tile list;
   players: player list;
-  current_player: int;
+  current_player: player;
 }
 
 let init_bag = [
@@ -115,14 +117,25 @@ let init_bag = [
   {letter = "Z"; value = 10};
 ]
 
-let get_board (st: t): board = st.board
-let get_bag (st: t): bag = st.big 
-let get_players (st: t): players = st.players
-let current_player (st: t): current_player = st.current_player
-
 let init_state = {
   board = emptyBoard;
   bag = init_bag;
   players = [];
   current_player = -1;
 }
+
+
+let update_board board tile (x,y) = 
+  insertTile board tile (x,y)
+
+let update_dock = failwith ""
+
+let update_state st cmd = 
+  match cmd with 
+  | Place (tile,(row,col)) -> 
+    let updated_board = insertTile st.board (Some tile) (row,col) in 
+    {board = updated_board; bag = st.init_bag; players = st.players; 
+     current_player = st.current_player}
+
+let print_game st =
+  print_board (st.board) 0
