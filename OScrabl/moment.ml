@@ -18,6 +18,8 @@ type t = {
   current_player: player;
 }
 
+let rand_num = (Random.self_init ()); Random.bits
+
 (* this is randomized *)
 let init_bag = 
   let init_bag_contents = [
@@ -119,7 +121,7 @@ let init_bag =
     {letter = "Y"; value = 4};
     {letter = "Z"; value = 10};
   ] in 
-  let l1 = List.map (fun n -> ((Random.float 100000.) *. Unix.gettimeofday()), n) 
+  let l1 = List.map (fun n -> ((rand_num ()) * rand_num()), n) 
       init_bag_contents in
   let l2 = List.sort compare l1 in
   List.map snd l2
