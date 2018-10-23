@@ -12,7 +12,7 @@ let rec gameplay board iteration =
     print_string "place, quit";
     print_newline(); *)
   if iteration = 0 then (
-    (ANSITerminal.resize 110 39);
+    (ANSITerminal.resize 110 51);
     gameplay board (iteration + 1))
   else
     let not_used = Sys.command"clear" in

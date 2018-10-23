@@ -115,6 +115,11 @@ let init_bag = [
   {letter = "Z"; value = 10};
 ]
 
+let get_board (st: t): board = st.board
+let get_bag (st: t): bag = st.big 
+let get_players (st: t): players = st.players
+let current_player (st: t): current_player = st.current_player
+
 let init_state = {
   board = emptyBoard;
   bag = init_bag;
