@@ -1,5 +1,6 @@
 open Board
 open ANSITerminal
+open Actions
 
 type player = {
   name: string;
@@ -157,12 +158,23 @@ let update_board board tile (x,y) =
 (* FIX update_dock *)
 (* let update_dock = failwith "update_dock" *)
 
-let update_state st cmd = failwith "update_state"
-    match cmd with 
-    | Place (tile,(row,col)) -> 
-      let updated_board = insertTile st.board (Some tile) (row,col) in 
-      {board = updated_board; bag = st.init_bag; players = st.players; 
+(** [letter_to_tile] is a function taking a string containing a single letter
+    and a dock as input, then returns the tile containing the letter in the dock
+    if it exists.**)
+let rec letter_to_tile letter dock = 
+  match dock with 
+  | [] -> raise BadSelection
+  | h::t -> if letter = h.letter then h else (letter_to_tile letter t)
+
+let update_state st cmd =
+  match cmd with 
+  | Place (letter,(row,col)) -> 
+    let tile = letter_to_tile letter st.current_player.dock in 
+    match tile with 
+    | tile -> let updated_board = insertTile st.board (Some tile) (row,col) in 
+      {board = updated_board; bag = st.bag; players = st.players; 
        current_player = st.current_player} 
+
 
 let rec print_docktop dock =
   match dock with
