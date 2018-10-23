@@ -33,10 +33,19 @@ let rec gameplay st =
   let cmd = parse_cmd (read_line ()) in 
   match cmd with
   | Place (tile,(row,col)) -> 
-    let tile_str_list = (tile_to_str_list st.current_player.dock []) in 
-    if (check_holding_tile tile tile_str_list) then  
-      let updated_st = (update_state st cmd) in gameplay updated_st
-    else raise BadSelection
+    (try 
+       (let tile_str_list = (tile_to_str_list st.current_player.dock []) in 
+        if (check_holding_tile tile tile_str_list) then  
+          let updated_st = (update_state st cmd) in gameplay updated_st
+        else raise BadSelection)
+     with 
+
+     | BadSelection -> print_string "Bad Tile Selection."; gameplay st;
+     | BadRow -> print_string "Bad Row input."; gameplay st;
+     | BadCol -> print_string "Bad Col input."; gameplay st;
+     | Broken -> print_string "Invalid action."; gameplay st;
+     | Blank -> print_string "No action given."; gameplay st;
+     | _ -> print_string "Exception encountered."; gameplay st)
   | Quit -> print_string "Thanks for playing OScrabl!"; print_newline(); exit 0
   | _ -> exit 0
 

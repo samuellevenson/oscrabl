@@ -21,8 +21,6 @@ type t = {
 (* this is randomized *)
 let init_bag = 
   let init_bag_contents = [
-    {letter = "_"; value = 0};
-    {letter = "_"; value = 0};
     {letter = "A"; value = 1};
     {letter = "A"; value = 1};
     {letter = "A"; value = 1};
@@ -121,24 +119,24 @@ let init_bag =
     {letter = "Y"; value = 4};
     {letter = "Z"; value = 10};
   ] in 
-  let tagged_list = List.map (fun t -> (Random.bits, t)) init_bag_contents in 
-  let sorted_tagged_list = 
-    List.sort (fun (n1, t1) (n2, t2) -> (compare n1 n2)) tagged_list in 
-  List.map (fun (n,t) -> n) sorted_tagged_list
+  let l1 = List.map (fun n -> ((Random.float 100000.) *. Unix.gettimeofday()), n) 
+      init_bag_contents in
+  let l2 = List.sort compare l1 in
+  List.map snd l2
 
-let draw currentBag: (tile * bag) = 
+let draw currentBag: (tile * tile list) = 
   if (List.length currentBag) = 0 then raise EmptyBag
-  else let rec helper bg acclist = 
-         match bg with 
-         | [] -> List.rev acclist
-         | h::t -> if (List.length bg = List.length currentBag) then helper t acclist
-           else (helper t h)::acclist
-    in ((List.hd currentBag), helper currentBag [])
+  else begin let rec helper bg acclist = 
+               match bg with 
+               | [] -> List.rev acclist
+               | h::t -> if (List.length bg = List.length currentBag) then helper t acclist
+                 else (helper t) (h::acclist)
+    in ((List.hd currentBag), helper currentBag []) end
 
-let draw_n_times currentBag n: (tile list * bag) = 
+let draw_n_times currentBag n: (tile list * tile list) = 
   let rec helper bg n accTileList = 
     if (n>0) then match (draw bg) with 
-      | (ti, ba) ->  helper ba (n-1) ti::accTileList
+      | (ti, ba) ->  helper ba (n-1) (ti::accTileList)
     else (accTileList, bg) in 
   helper currentBag n []
 
@@ -146,22 +144,22 @@ let init_draw_num num_of_players = num_of_players * 7
 
 let init_state = {
   board = emptyBoard;
-  bag = match (draw_n_times init_bag (init_draw_num 1)) with 
-    | (tilelist, bg) -> bg;
-      players = [
-        {name = "OScrabl Player";
-         dock = match (draw_n_times init_bag (init_draw_num 1)) with 
-           | (tilelist, bg) -> tilelist;
-             score = 0;
-             words = [];
-        }
-      ];
-      current_player =  {name = "OScrabl Player";
-                         dock = match (draw_n_times init_bag (init_draw_num 1)) with 
-                           | (tilelist, bg) -> tilelist;
-                             score = 0;
-                             words = [];
-                        };
+  bag = (match (draw_n_times init_bag (init_draw_num 1)) with 
+      | (tilelist, bg) -> bg);
+  players = [
+    {name = "OScrabl Player";
+     dock = (match (draw_n_times init_bag (init_draw_num 1)) with 
+         | (tilelist, bg) -> tilelist);
+     score = 0;
+     words = [];
+    }
+  ];
+  current_player =  {name = "OScrabl Player";
+                     dock = (match (draw_n_times init_bag (init_draw_num 1)) with 
+                         | (tilelist, bg) -> tilelist);
+                     score = 0;
+                     words = [];
+                    };
 }
 
 let update_board board tile (x,y) =
@@ -178,14 +176,41 @@ let rec letter_to_tile letter dock =
   | [] -> raise BadSelection
   | h::t -> if letter = h.letter then h else (letter_to_tile letter t)
 
+let remove_tile_from_dock player tile =
+  {
+    name = player.name;
+    score = player.score;
+    words = player.words;
+    dock = List.filter (fun x -> tile <> x) player.dock
+  }
+
+(** [update_player_in_list] takes the current state and player and updates
+    the state's player list with the new player instance. **)
+let update_player_in_list st player = 
+  let rec update_player player_list player acc = 
+    match player_list with 
+    | [] -> acc
+    | h::t -> if h.name = player.name then update_player t player (player::acc) 
+      else update_player t player acc
+  in 
+  {
+    board = st.board;
+    bag = st.bag;
+    players = (update_player st.players player []);
+    current_player = st.current_player;
+  }
+
 let update_state st cmd =
   match cmd with
-  | Place (letter,(row,col)) ->
-    let tile = letter_to_tile letter st.current_player.dock in
-    match tile with
-    | tile -> let updated_board = insertTile st.board (Some tile) (row,col) in
-      {board = updated_board; bag = st.bag; players = st.players;
-       current_player = st.current_player}
+  | Place (letter,(row,col)) -> begin
+      let tile = letter_to_tile letter st.current_player.dock in
+      match tile with
+      | tile -> let updated_board = insertTile st.board (Some tile) (row,col) in
+        {board = updated_board; bag = st.bag; players = st.players;
+         current_player = remove_tile_from_dock st.current_player tile}
+    end
+  | Score -> failwith ""
+  | Quit -> failwith ""
 
 let rec print_docktop dock =
   match dock with
