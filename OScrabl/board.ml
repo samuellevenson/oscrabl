@@ -7,6 +7,9 @@ type tile = {
   letter: string; value: int
 }
 
+(** [tile_style] is the ANSITerminal style list for letter tiles *)
+let tile_style = [Bold; white; on_black]
+
 (** The type of score multipliers *)
 type multiplier = DoubleLetter | TripleLetter | DoubleWord | TripleWord | NaN
 
@@ -196,11 +199,22 @@ let rec print_topline line =
   | [] -> print_endline "|"
   | x::xs -> match x with
     | None, NaN -> print_string [] "|    "; print_topline xs
-    | None, DoubleLetter -> print_string [] ("|"); print_string [white; on_cyan] (" 2  "); print_topline xs
-    | None, TripleLetter -> print_string [] ("|"); print_string [white; on_blue] (" 3  "); print_topline xs
-    | None, DoubleWord -> print_string [] ("|"); print_string [white; on_magenta] (" 2  "); print_topline xs
-    | None, TripleWord -> print_string [] ("|"); print_string [white; on_red] (" 3  "); print_topline xs
-    | Some tile, _ -> print_string [] ("|"); print_string [Bold; white; on_black] (" " ^ tile.letter ^ "  "); print_topline xs
+    | None, DoubleLetter ->
+      print_string [] ("|");
+      print_string [white; on_cyan] (" 2  "); print_topline xs
+    | None, TripleLetter ->
+      print_string [] ("|");
+      print_string [white; on_blue] (" 3  "); print_topline xs
+    | None, DoubleWord ->
+      print_string [] ("|");
+      print_string [white; on_magenta] (" 2  "); print_topline xs
+    | None, TripleWord ->
+      print_string [] ("|");
+      print_string [white; on_red] (" 3  "); print_topline xs
+    | Some tile, _ ->
+      print_string [] ("|");
+      print_string tile_style (" " ^ tile.letter ^ "  ");
+      print_topline xs
 
 (** [offset tile] is the spaces needed after the value of a tile in order to
     account for differences in number of digits.*)
@@ -214,11 +228,22 @@ let rec print_botline line =
   | [] -> print_endline "|"
   | x::xs -> match x with
     | None, NaN -> print_string [] "|    "; print_botline xs
-    | None, DoubleLetter -> print_string [] ("|"); print_string [white; on_cyan] ("  L "); print_botline xs
-    | None, TripleLetter -> print_string [] ("|"); print_string [white; on_blue] ("  L "); print_botline xs
-    | None, DoubleWord -> print_string [] ("|"); print_string [white; on_magenta] ("  W "); print_botline xs
-    | None, TripleWord -> print_string [] ("|"); print_string [white; on_red] ("  W "); print_botline xs
-    | Some tile, _ -> print_string [] ("|"); print_string [Bold; white; on_black] ("  " ^ string_of_int tile.value ^ offset tile); print_botline xs
+    | None, DoubleLetter ->
+      print_string [] ("|");
+      print_string [white; on_cyan] ("  L "); print_botline xs
+    | None, TripleLetter ->
+      print_string [] ("|");
+      print_string [white; on_blue] ("  L "); print_botline xs
+    | None, DoubleWord ->
+      print_string [] ("|");
+      print_string [white; on_magenta] ("  W "); print_botline xs
+    | None, TripleWord ->
+      print_string [] ("|");
+      print_string [white; on_red] ("  W "); print_botline xs
+    | Some tile, _ ->
+      print_string [] ("|");
+      print_string tile_style ("  " ^ string_of_int tile.value ^ offset tile);
+      print_botline xs
 
 (** [print_linenum i] prints the character corresponding to the row number with
     A for row 1, B for row 2, and so on *)
@@ -232,6 +257,8 @@ let rec print_board board i =
     print_endline " +————+————+————+————+————+————+————+————+————+————+————+————+————+————+————+";
     match board with
     | [] -> ()
-    | x::xs -> print_linenum i; print_topline x; print_string [] " "; print_botline x; print_iter xs (i + 1)
+    | x::xs ->
+      print_linenum i; print_topline x; print_string [] " ";
+      print_botline x; print_iter xs (i + 1)
   in print_endline "   0    1    2    3    4    5    6    7    8    9    10   11   12   13   14";
   print_iter board i

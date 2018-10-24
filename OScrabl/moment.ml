@@ -254,7 +254,9 @@ let rec draw state : t =
 let rec print_docktop dock =
   match dock with
   | [] -> print_endline ""
-  | x::xs -> print_string [Bold; white; on_black] (" " ^ x.letter ^ "  "); print_string [] "  "; print_docktop xs
+  | x::xs ->
+    print_string tile_style (" " ^ x.letter ^ "  ");
+    print_string [] "  "; print_docktop xs
 
 (** [offset tile] is the spaces needed after the value of a tile in order to
     account for differences in number of digits.*)
@@ -265,7 +267,9 @@ let offset tile =
 let rec print_dockbot dock =
   match dock with
   | [] -> print_endline ""
-  | x::xs -> print_string [Bold; white; on_black] ("  " ^ string_of_int x.value ^ offset x); print_string [] "  "; print_dockbot xs
+  | x::xs ->
+    print_string tile_style ("  " ^ string_of_int x.value ^ offset x);
+    print_string [] "  "; print_dockbot xs
 
 (** [print_dock player] prints all of the tiles in a players docks *)
 let rec print_dock player =
