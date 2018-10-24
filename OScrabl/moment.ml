@@ -2,8 +2,10 @@ open Board
 open ANSITerminal
 open Actions
 
+(** the exception raised when there is an attempt to draw from an empty bag *)
 exception EmptyBag
 
+(** the type of the player *)
 type player = {
   name: string;
   dock: tile list;
@@ -11,6 +13,7 @@ type player = {
   words: string list
 }
 
+(** the type of the moment (state) *)
 type t = {
   board: board;
   bag: tile list;
@@ -18,11 +21,13 @@ type t = {
   current_player: player;
 }
 
+(** [rand_num] is a random integer of 30 bits *)
 let rand_num = (Random.self_init ()); Random.bits
 
-(* this is randomized *)
+(* creates a bag of tiles containing the distribution of 100 scrabble tiles in
+   a random order *)
 let init_bag =
-  let init_bag_contents = [
+  let init_bag_unmixed = [
     {letter = "A"; value = 1};
     {letter = "A"; value = 1};
     {letter = "A"; value = 1};
@@ -120,12 +125,14 @@ let init_bag =
     {letter = "Y"; value = 4};
     {letter = "Y"; value = 4};
     {letter = "Z"; value = 10};
-  ] in
-  let l1 = List.map (fun n -> ((rand_num ()) * rand_num()), n)
-      init_bag_contents in
-  let l2 = List.sort compare l1 in
-  List.map snd l2
+  ]
+  in let l1 = List.map (fun n -> ((rand_num ()) * rand_num()), n)
+         init_bag_unmixed
+  in let l2 = List.sort compare l1
+  in List.map snd l2
 
+(** [draw currentBag] draws one tile from the given bag and returns a tuple
+    containing the drawn tile and a bag with the remaining tiles *)
 let draw currentBag: (tile * tile list) =
   if (List.length currentBag) = 0 then raise EmptyBag
   else begin let rec helper bg acclist =
@@ -135,6 +142,9 @@ let draw currentBag: (tile * tile list) =
                  else (helper t) (h::acclist)
     in ((List.hd currentBag), helper currentBag []) end
 
+(** [draw_n_times currentBag n] draws [n] tiles from the given bag and returns a
+    tuple containing a list of the drawn tiles and a bag with the remaining
+    tiles *)
 let draw_n_times currentBag n: (tile list * tile list) =
   let rec helper bg n accTileList =
     if (n>0) then match (draw bg) with
@@ -142,8 +152,12 @@ let draw_n_times currentBag n: (tile list * tile list) =
     else (accTileList, bg) in
   helper currentBag n []
 
+(** [init_draw_num] is the number of tiles to draw from the bag at the start of
+    the game *)
 let init_draw_num num_of_players = num_of_players * 7
 
+(** [init_state] creates a state with an empty board, a player with 7 random
+    tiles drawn from a bag, and a bag with all tiles except for those 7 *)
 let init_state = {
   board = emptyBoard;
   bag = (match (draw_n_times init_bag (init_draw_num 1)) with
@@ -206,6 +220,8 @@ let update_player_in_list st player =
     current_player = st.current_player;
   }
 
+(** [updated_state st cmd] is the new state of the game after applying the
+    command [cmd] to the old state [st] *)
 let update_state st cmd =
   match cmd with
   | Place (letter,(row,col)) -> begin
@@ -218,6 +234,7 @@ let update_state st cmd =
   | Score -> failwith ""
   | Quit -> failwith ""
 
+(** unused *)
 let rec draw state : t =
   if List.length state.current_player.dock = 7 then state
   else let next_state = {
@@ -233,25 +250,30 @@ let rec draw state : t =
     } in
     draw next_state
 
+(** [print_docktop dock] prints the top line of a players dock of tiles *)
 let rec print_docktop dock =
   match dock with
   | [] -> print_endline ""
   | x::xs -> print_string [Bold; white; on_black] (" " ^ x.letter ^ "  "); print_string [] "  "; print_docktop xs
 
+(** [offset tile] is the spaces needed after the value of a tile in order to
+    account for differences in number of digits.*)
 let offset tile =
-  if tile.value >= 10 then ""
-  else " "
+  if tile.value >= 10 then "" else " "
 
+(** [print_dockbot dock] prints the bottom line a players dock of tiles *)
 let rec print_dockbot dock =
   match dock with
   | [] -> print_endline ""
   | x::xs -> print_string [Bold; white; on_black] ("  " ^ string_of_int x.value ^ offset x); print_string [] "  "; print_dockbot xs
 
+(** [print_dock player] prints all of the tiles in a players docks *)
 let rec print_dock player =
   let dock = player.dock in
   print_string [] "                    "; print_docktop dock;
   print_string [] "                    "; print_dockbot dock
 
+(** [print_game st] prints the board and dock of the state [st] *)
 let print_game st =
   print_board (st.board) 0;
   print_endline "";

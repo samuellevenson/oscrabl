@@ -202,9 +202,10 @@ let rec print_topline line =
     | None, TripleWord -> print_string [] ("|"); print_string [white; on_red] (" 3  "); print_topline xs
     | Some tile, _ -> print_string [] ("|"); print_string [Bold; white; on_black] (" " ^ tile.letter ^ "  "); print_topline xs
 
+(** [offset tile] is the spaces needed after the value of a tile in order to
+    account for differences in number of digits.*)
 let offset tile =
-  if tile.value >= 10 then ""
-  else " "
+  if tile.value >= 10 then "" else " "
 
 (** [print_topline line] prints the bottom half of [line], where [line] is one
     row of a board *)
@@ -219,6 +220,8 @@ let rec print_botline line =
     | None, TripleWord -> print_string [] ("|"); print_string [white; on_red] ("  W "); print_botline xs
     | Some tile, _ -> print_string [] ("|"); print_string [Bold; white; on_black] ("  " ^ string_of_int tile.value ^ offset tile); print_botline xs
 
+(** [print_linenum i] prints the character corresponding to the row number with
+    A for row 1, B for row 2, and so on *)
 let print_linenum i =
   print_string [] ((i + 65) |> Char.chr |> Char.escaped)
 
