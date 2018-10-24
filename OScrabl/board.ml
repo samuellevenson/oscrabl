@@ -14,7 +14,7 @@ type square = (tile option) * (multiplier)
 (** The type of the scrabble® board *)
 type board = square list list
 
-(** The square list that represents the 0th column of a scrabble board at the 
+(** The square list that represents the 0th column of a scrabble board at the
     start of a game *)
 let def_col_zero : square list =
   let rec helper row acclist =
@@ -33,7 +33,7 @@ let def_col_zero : square list =
     else List.rev acclist
   in helper 0 []
 
-(** The square list that represents the 1st column of a scrabble board at the 
+(** The square list that represents the 1st column of a scrabble board at the
     start of a game *)
 let def_col_one =
   let rec helper row acclist =
@@ -52,7 +52,7 @@ let def_col_one =
     else List.rev acclist
   in helper 0 []
 
-(** The square list that represents the 2nd column of a scrabble board at the 
+(** The square list that represents the 2nd column of a scrabble board at the
     start of a game *)
 let def_col_two =
   let rec helper row acclist =
@@ -71,7 +71,7 @@ let def_col_two =
     else List.rev acclist
   in helper 0 []
 
-(** The square list that represents the 3rd column of a scrabble board at the 
+(** The square list that represents the 3rd column of a scrabble board at the
     start of a game *)
 let def_col_three =
   let rec helper row acclist =
@@ -90,7 +90,7 @@ let def_col_three =
     else List.rev acclist
   in helper 0 []
 
-(** The square list that represents the 4th column of a scrabble board at the 
+(** The square list that represents the 4th column of a scrabble board at the
     start of a game *)
 let def_col_four =
   let rec helper row acclist =
@@ -105,7 +105,7 @@ let def_col_four =
     else List.rev acclist
   in helper 0 []
 
-(** The square list that represents the 5th column of a scrabble board at the 
+(** The square list that represents the 5th column of a scrabble board at the
     start of a game *)
 let def_col_five =
   let rec helper row acclist =
@@ -124,7 +124,7 @@ let def_col_five =
     else List.rev acclist
   in helper 0 []
 
-(** The square list that represents the 6th column of a scrabble board at the 
+(** The square list that represents the 6th column of a scrabble board at the
     start of a game *)
 let def_col_six =
   let rec helper row acclist =
@@ -143,7 +143,7 @@ let def_col_six =
     else List.rev acclist
   in helper 0 []
 
-(** The square list that represents the 7th column of a scrabble board at the 
+(** The square list that represents the 7th column of a scrabble board at the
     start of a game *)
 let def_col_seven =
   let rec helper row acclist =
@@ -199,6 +199,10 @@ let rec print_topline line =
     | None, TripleWord -> print_string [] ("|"); print_string [white; on_red] (" 3  "); print_topline xs
     | Some tile, _ -> print_string [] ("|"); print_string [Bold; white; on_black] (" " ^ tile.letter ^ "  "); print_topline xs
 
+let offset tile =
+  if tile.value >= 10 then ""
+  else " "
+
 (** [print_topline line] prints the bottom half of [line], where [line] is one
     row of a board *)
 let rec print_botline line =
@@ -210,7 +214,7 @@ let rec print_botline line =
     | None, TripleLetter -> print_string [] ("|"); print_string [white; on_blue] ("  L "); print_botline xs
     | None, DoubleWord -> print_string [] ("|"); print_string [white; on_magenta] ("  W "); print_botline xs
     | None, TripleWord -> print_string [] ("|"); print_string [white; on_red] ("  W "); print_botline xs
-    | Some tile, _ -> print_string [] ("|"); print_string [Bold; white; on_black] ("  " ^ string_of_int tile.value ^ " "); print_botline xs
+    | Some tile, _ -> print_string [] ("|"); print_string [Bold; white; on_black] ("  " ^ string_of_int tile.value ^ offset tile); print_botline xs
 
 let print_linenum i =
   print_string [] ((i + 65) |> Char.chr |> Char.escaped)
@@ -218,7 +222,10 @@ let print_linenum i =
 (** [print_board board] prints a graphical representation of [board] into the
     terminal window *)
 let rec print_board board i =
-  print_endline " +————+————+————+————+————+————+————+————+————+————+————+————+————+————+————+";
-  match board with
-  | [] ->  print_endline "  0    1    2    3    4    5    6    7    8    9    10   11   12   13   14";
-  | x::xs -> print_string [] " "; print_topline x; print_linenum i; print_botline x; print_board xs (i + 1)
+  let rec print_iter board i =
+    print_endline " +————+————+————+————+————+————+————+————+————+————+————+————+————+————+————+";
+    match board with
+    | [] -> ()
+    | x::xs -> print_linenum i; print_topline x; print_string [] " "; print_botline x; print_iter xs (i + 1)
+  in print_endline "   0    1    2    3    4    5    6    7    8    9    10   11   12   13   14";
+  print_iter board i

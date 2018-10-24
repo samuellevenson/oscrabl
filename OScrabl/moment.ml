@@ -120,8 +120,8 @@ let init_bag =
     {letter = "Y"; value = 4};
     {letter = "Y"; value = 4};
     {letter = "Z"; value = 10};
-  ] in 
-  let l1 = List.map (fun n -> ((rand_num ()) * rand_num()), n) 
+  ] in
+  let l1 = List.map (fun n -> ((rand_num ()) * rand_num()), n)
       init_bag_contents in
   let l2 = List.sort compare l1 in
   List.map snd l2
@@ -149,19 +149,23 @@ let init_state = {
   bag = (match (draw_n_times init_bag (init_draw_num 1)) with
       | (tilelist, bg) -> bg);
   players = [
-    {name = "OScrabl Player";
-     dock = (match (draw_n_times init_bag (init_draw_num 1)) with
+    {
+      name = "OScrabl Player";
+      dock =
+        (match (draw_n_times init_bag (init_draw_num 1)) with
          | (tilelist, bg) -> tilelist);
-     score = 0;
-     words = [];
+      score = 0;
+      words = [];
     }
   ];
-  current_player =  {name = "OScrabl Player";
-                     dock = (match (draw_n_times init_bag (init_draw_num 1)) with
-                         | (tilelist, bg) -> tilelist);
-                     score = 0;
-                     words = [];
-                    };
+  current_player =  {
+    name = "OScrabl Player";
+    dock =
+      (match (draw_n_times init_bag (init_draw_num 1)) with
+       | (tilelist, bg) -> tilelist);
+    score = 0;
+    words = [];
+  };
 }
 
 let update_board board tile (x,y) =
@@ -234,10 +238,14 @@ let rec print_docktop dock =
   | [] -> print_endline ""
   | x::xs -> print_string [Bold; white; on_black] (" " ^ x.letter ^ "  "); print_string [] "  "; print_docktop xs
 
+let offset tile =
+  if tile.value >= 10 then ""
+  else " "
+
 let rec print_dockbot dock =
   match dock with
   | [] -> print_endline ""
-  | x::xs -> print_string [Bold; white; on_black] ("  " ^ string_of_int x.value ^ " "); print_string [] "  "; print_dockbot xs
+  | x::xs -> print_string [Bold; white; on_black] ("  " ^ string_of_int x.value ^ offset x); print_string [] "  "; print_dockbot xs
 
 let rec print_dock player =
   let dock = player.dock in
