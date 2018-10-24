@@ -1,5 +1,7 @@
 open ANSITerminal
 
+exception Can'tPlaceTile
+
 (** The type of tiles *)
 type tile = {
   letter: string; value: int
@@ -172,19 +174,20 @@ let emptyBoard =
 (** [insertTile b t (x,y)] is the scrabble board [b] with a tile [t] square
     at the [x]th row and [y]th column of the board *)
 let insertTile board tile (x,y) =
-  let rec rowIter row col new_col =
-    if row < y then rowIter (row + 1) col ((List.nth col row)::new_col)
-    else if row = y then
-      let multi = match (List.nth col row) with
-        | (a, b) -> b in rowIter (row + 1) col ((tile, multi)::new_col)
-    else if row < 15 then rowIter (row + 1) col ((List.nth col row)::new_col)
-    else List.rev new_col in
-  let rec columnIter col list_of_cols =
-    if col < x then columnIter (col + 1) ((List.nth board col)::list_of_cols)
-    else if col = x then columnIter (col + 1) ((rowIter 0 (List.nth board col) [])::list_of_cols)
-    else if col < 15 then columnIter (col + 1) ((List.nth board col)::list_of_cols)
-    else List.rev list_of_cols in
-  columnIter 0 []
+  if fst (List.nth (List.nth board x) y) <> None then raise Can'tPlaceTile else
+    let rec rowIter row col new_col =
+      if row < y then rowIter (row + 1) col ((List.nth col row)::new_col)
+      else if row = y then
+        let multi = match (List.nth col row) with
+          | (a, b) -> b in rowIter (row + 1) col ((tile, multi)::new_col)
+      else if row < 15 then rowIter (row + 1) col ((List.nth col row)::new_col)
+      else List.rev new_col in
+    let rec columnIter col list_of_cols =
+      if col < x then columnIter (col + 1) ((List.nth board col)::list_of_cols)
+      else if col = x then columnIter (col + 1) ((rowIter 0 (List.nth board col) [])::list_of_cols)
+      else if col < 15 then columnIter (col + 1) ((List.nth board col)::list_of_cols)
+      else List.rev list_of_cols in
+    columnIter 0 []
 
 (** [print_topline line] prints the top half of [line], where [line] is one row
     of a board *)
