@@ -46,6 +46,7 @@ let rec gameplay st msg =
    | BadCol -> gameplay st "Bad Col input.";
    | Broken -> gameplay st "Invalid action.";
    | Blank -> gameplay st "No action given.";
+   | Can'tPlaceTile -> gameplay st "Can't place a tile there!";
    | _ -> gameplay st "Exception encountered.")
 
 
