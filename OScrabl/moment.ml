@@ -24,10 +24,17 @@ type t = {
 (** [rand_num] is a random integer of 30 bits *)
 let rand_num = (Random.self_init ()); Random.bits
 
+(** [shuffle_bag bag] is [bag] with its contents in a random order *)
+let shuffle_bag bag =
+  bag
+  |> List.map (fun n -> ((rand_num ()) * rand_num()), n)
+  |> List.sort compare
+  |> List.map snd
+
 (* creates a bag of tiles containing the distribution of 100 scrabble tiles in
    a random order *)
 let init_bag =
-  let init_bag_unmixed = [
+  shuffle_bag [
     {letter = "A"; value = 1};
     {letter = "A"; value = 1};
     {letter = "A"; value = 1};
@@ -126,10 +133,6 @@ let init_bag =
     {letter = "Y"; value = 4};
     {letter = "Z"; value = 10};
   ]
-  in let l1 = List.map (fun n -> ((rand_num ()) * rand_num()), n)
-         init_bag_unmixed
-  in let l2 = List.sort compare l1
-  in List.map snd l2
 
 (** [draw currentBag] draws one tile from the given bag and returns a tuple
     containing the drawn tile and a bag with the remaining tiles *)
@@ -182,26 +185,34 @@ let init_state = {
   };
 }
 
-let update_board board tile (x,y) =
-  insertTile board tile (x,y)
-
-(* FIX update_dock *)
-(* let update_dock = failwith "update_dock" *)
-
 (** [letter_to_tile] is a function taking a string containing a single letter
     and a dock as input, then returns the tile containing the letter in the dock
     if it exists.**)
-let rec letter_to_tile letter dock =
-  match dock with
-  | [] -> raise BadSelection
-  | h::t -> if letter = h.letter then h else (letter_to_tile letter t)
+let letter_to_tile letter state =
+  let rec dock_iter = function
+    | [] -> raise BadSelection
+    | h::t -> if letter = h.letter then h else (dock_iter t)
+  in dock_iter state.current_player.dock
 
-let remove_tile_from_dock player tile =
+(* alternate using List module function *)
+let letter_to_tile letter state =
+  try List.find (fun x -> x.letter = letter) state.current_player.dock
+  with
+  | _ -> raise BadSelection
+
+(** [remove_tile_from_dock state tile] returns the state in which [tile] has
+    been removed from the current players dock in [state] *)
+let remove_tile_from_dock state tile =
+  let rec dock_iter tile dock acc =
+    match dock with
+    | [] -> List.rev acc
+    | x::xs -> if x = tile then (acc@xs)
+      else (dock_iter tile xs (acc@[x])) in
   {
-    name = player.name;
-    score = player.score;
-    words = player.words;
-    dock = List.filter (fun x -> tile <> x) player.dock
+    name = state.current_player.name;
+    score = state.current_player.score;
+    words = state.current_player.words;
+    dock = dock_iter tile state.current_player.dock []
   }
 
 (** [update_player_in_list] takes the current state and player and updates
@@ -220,35 +231,36 @@ let update_player_in_list st player =
     current_player = st.current_player;
   }
 
-(** [updated_state st cmd] is the new state of the game after applying the
-    command [cmd] to the old state [st] *)
-let update_state st cmd =
-  match cmd with
-  | Place (letter,(row,col)) -> begin
-      let tile = letter_to_tile letter st.current_player.dock in
-      match tile with
-      | tile -> let updated_board = insertTile st.board (Some tile) (row,col) in
-        {board = updated_board; bag = st.bag; players = st.players;
-         current_player = remove_tile_from_dock st.current_player tile}
-    end
-  | Score -> failwith ""
-  | Quit -> failwith ""
+(** TODO: all the stuff that happens when a player ends their turn including:
+    -1. check if the game is over
+    0. (check word is valid)
+    0.5. update the current player's score
+    1. the current player draws tiles to refill their dock
+    2. the bag is updated to reflect the tiles the current player draw
+    3. the list of players is updated to reflect the changes to current_player
+    made over the course of their turn
+    4. the current player is updated to be the next player
+*)
+let end_turn state =
+  {
+    board = state.board;
+    bag = state.bag;
+    players = state.current_player::(List.filter (fun x -> x.name <> state.current_player.name) state.players);
+    current_player = List.hd state.players
+  }
 
-(** unused *)
-let rec draw state : t =
-  if List.length state.current_player.dock = 7 then state
-  else let next_state = {
-      board = state.board;
-      players = state.players;
-      current_player = {
-        name = state.current_player.name;
-        score = state.current_player.score;
-        words = state.current_player.words;
-        dock = List.hd state.bag::state.current_player.dock
-      };
-      bag = List.tl state.bag
-    } in
-    draw next_state
+(** [place_tile state (letter,(row,col))] is the new state after a tile
+    corresponding to [letter] has been taken from the current player's dock and
+    placed onto the board at the position specified by (row,col). Raises
+    BadSelection is there is no tile in the player's dock of that letter. *)
+let place_tile state (letter,(row,col)) =
+  let tile = letter_to_tile letter state in
+  {
+    board = insertTile state.board (Some tile) (row,col);
+    bag = state.bag;
+    players = state.players;
+    current_player = remove_tile_from_dock state tile
+  }
 
 (** [print_docktop dock] prints the top line of a players dock of tiles *)
 let rec print_docktop dock =
@@ -274,11 +286,12 @@ let rec print_dockbot dock =
 (** [print_dock player] prints all of the tiles in a players docks *)
 let rec print_dock player =
   let dock = player.dock in
-  print_string [] "                    "; print_docktop dock;
-  print_string [] "                    "; print_dockbot dock
+  print_string [] "                  "; print_docktop dock;
+  print_string [] "                  "; print_dockbot dock
 
 (** [print_game st] prints the board and dock of the state [st] *)
 let print_game st =
   print_board (st.board) 0;
   print_endline "";
-  print_dock (st.current_player)
+  print_dock (st.current_player);
+  print_endline "";

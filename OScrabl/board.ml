@@ -201,16 +201,16 @@ let rec print_topline line =
     | None, NaN -> print_string [] "|    "; print_topline xs
     | None, DoubleLetter ->
       print_string [] ("|");
-      print_string [white; on_cyan] (" 2  "); print_topline xs
+      print_string [on_cyan] (" 2  "); print_topline xs
     | None, TripleLetter ->
       print_string [] ("|");
-      print_string [white; on_blue] (" 3  "); print_topline xs
+      print_string [on_blue] (" 3  "); print_topline xs
     | None, DoubleWord ->
       print_string [] ("|");
-      print_string [white; on_magenta] (" 2  "); print_topline xs
+      print_string [on_magenta] (" 2  "); print_topline xs
     | None, TripleWord ->
       print_string [] ("|");
-      print_string [white; on_red] (" 3  "); print_topline xs
+      print_string [on_red] (" 3  "); print_topline xs
     | Some tile, _ ->
       print_string [] ("|");
       print_string tile_style (" " ^ tile.letter ^ "  ");
@@ -230,16 +230,16 @@ let rec print_botline line =
     | None, NaN -> print_string [] "|    "; print_botline xs
     | None, DoubleLetter ->
       print_string [] ("|");
-      print_string [white; on_cyan] ("  L "); print_botline xs
+      print_string [on_cyan] ("  L "); print_botline xs
     | None, TripleLetter ->
       print_string [] ("|");
-      print_string [white; on_blue] ("  L "); print_botline xs
+      print_string [on_blue] ("  L "); print_botline xs
     | None, DoubleWord ->
       print_string [] ("|");
-      print_string [white; on_magenta] ("  W "); print_botline xs
+      print_string [on_magenta] ("  W "); print_botline xs
     | None, TripleWord ->
       print_string [] ("|");
-      print_string [white; on_red] ("  W "); print_botline xs
+      print_string [on_red] ("  W "); print_botline xs
     | Some tile, _ ->
       print_string [] ("|");
       print_string tile_style ("  " ^ string_of_int tile.value ^ offset tile);
