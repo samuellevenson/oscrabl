@@ -1,4 +1,4 @@
-MODULES = board actions main
+MODULES = board actions moment main
 OBJECTS=$(MODULES:=.cmo)
 MLS=$(MODULES:=.ml)
 TEST=test.byte
