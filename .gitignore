@@ -24,3 +24,6 @@ setup.log
 
 # temp stuff
 .DS_Store
+
+# zip
+src.zip

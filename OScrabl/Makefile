@@ -28,4 +28,4 @@ clean:
 	rm -rf doc
 
 zip:
-	zip a2src.zip *.ml* *.json _tags Makefile
+	zip src.zip *.ml* *.json _tags Makefile
