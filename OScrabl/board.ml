@@ -1,4 +1,5 @@
 open ANSITerminal
+open Words
 
 exception Can'tPlaceTile
 
@@ -262,3 +263,35 @@ let rec print_board board i =
       print_botline x; print_iter xs (i + 1)
   in print_endline "   0    1    2    3    4    5    6    7    8    9    10   11   12   13   14";
   print_iter board i
+
+(**[squares_to_wordpoints sqL] returns the string that is formed by the list of 
+   tiles from [sqL], and the point value for the string after factoring in
+   multiplers **)
+let squares_to_wordpoints squareList = 
+  let rec helper tL accStr accPts accMults= 
+    match tL with
+    | ({letter; value},multiplier)::t -> let int_word = accStr ^ letter in 
+      begin match multiplier with 
+        | DoubleLetter -> helper t int_word (accPts + (value * 2)) accMults
+        | TripleLetter -> helper t int_word (accPts + (value * 3)) accMults
+        | DoubleWord -> helper t int_word (accPts + (value)) (accMults * 2)
+        | TripleWord -> helper t int_word (accPts + (value)) (accMults * 3)
+        | NaN -> helper t int_word (accPts + (value)) (accMults)
+      end
+    | _ -> (accStr, (accPts * accMults)) in 
+  helper squareList "" 0 1
+
+(**[is_word s] returns [true] if [s] is a string in dictionary.json, 
+   otherwise [false]. *)
+let is_word str = 
+  (Words.validity str word_set)
+
+(**[all_are_words strList] returns [true] if all strings in [strList] are in the
+   dictionary.json, otherwise [false] *)
+let rec all_are_words strList = 
+  match strList with 
+  | h::t -> if (is_word h) then (all_are_words t) else false
+  | _ -> true
+
+
+
