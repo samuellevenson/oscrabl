@@ -136,7 +136,7 @@ let init_bag =
 
 (** [draw currentBag] draws one tile from the given bag and returns a tuple
     containing the drawn tile and a bag with the remaining tiles *)
-let draw currentBag: (tile * tile list) =
+let draw currentBag: (pretile * pretile list) =
   if (List.length currentBag) = 0 then raise EmptyBag
   else begin let rec helper bg acclist =
                match bg with
@@ -148,7 +148,7 @@ let draw currentBag: (tile * tile list) =
 (** [draw_n_times currentBag n] draws [n] tiles from the given bag and returns a
     tuple containing a list of the drawn tiles and a bag with the remaining
     tiles *)
-let draw_n_times currentBag n: (tile list * tile list) =
+let draw_n_times currentBag n: (pretile list * pretile list) =
   let rec helper bg n accTileList =
     if (n>0) then match (draw bg) with
       | (ti, ba) ->  helper ba (n-1) (ti::accTileList)
@@ -256,7 +256,7 @@ let end_turn state =
 let place_tile state (letter,(row,col)) =
   let tile = letter_to_tile letter state in
   {
-    board = insertTile state.board (Some tile) (row,col);
+    board = insertTile state.board (Unfinal tile) (row,col);
     bag = state.bag;
     players = state.players;
     current_player = remove_tile_from_dock state tile
