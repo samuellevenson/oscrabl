@@ -3,6 +3,9 @@ type position = int * int
 type action = 
   | Place of string * position
   | Score
+  | End
+  | Draw
+  | Exchange
   | Quit
 
 exception Blank
@@ -61,5 +64,8 @@ let rec parse_cmd str =
     else raise Broken
   | h::t -> 
     if h = "score" && t = [] then Score
+    else if h = "end" && t = [] then End
+    else if h = "draw" && t = [] then Draw
+    else if h = "exchange" && t = [] then Exchange
     else if h = "quit" && t = [] then Quit 
     else raise Broken

@@ -18,7 +18,8 @@ let word_set = Hashtbl.create ~random:false (Array.length word_array)
 
 (** [add_hash_set] ('_a, 'b) Hashtbl.t -> '_a array -> ('_a -> 'b) -> unit
     Iterates through an array and hashes a given set*)
-let add_hash_set set arr hashFn = Array.iter (fun x -> Hashtbl.add set x (hashFn x)) word_array
+let add_hash_set set arr hashFn = 
+  Array.iter (fun x -> Hashtbl.add set x (hashFn x)) word_array
 
 (** [validity] 'a -> ('_a, 'b) Hashtbl.t -> bool
     Checks whether a string exists in the OScrabl dictionary. *)
