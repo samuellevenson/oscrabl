@@ -8,7 +8,7 @@ exception EmptyBag
 (** the type of the player *)
 type player = {
   name: string;
-  dock: tile list;
+  dock: pretile list;
   score: int;
   words: string list
 }
@@ -16,7 +16,7 @@ type player = {
 (** the type of the moment (state) *)
 type t = {
   board: board;
-  bag: tile list;
+  bag: pretile list;
   players: player list;
   current_player: player;
 }
