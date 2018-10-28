@@ -6,7 +6,6 @@ exception Can'tPlaceTile
 type pretile = {
   letter: string; value: int
 }
-
 type tile = Final of pretile | Unfinal of pretile | Nothing
 
 (** [tile_style] is the ANSITerminal style list for letter tiles *)
