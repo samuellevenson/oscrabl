@@ -1,6 +1,11 @@
 open ANSITerminal
+open Words
 
 exception Can'tPlaceTile
+exception InvalidSquare
+exception InvalidRow
+exception InvalidColumn
+exception NothingSquare
 
 (** The type of tiles *)
 type pretile = {
@@ -263,3 +268,126 @@ let rec print_board board i =
       print_botline x; print_iter xs (i + 1)
   in print_endline "   0    1    2    3    4    5    6    7    8    9    10   11   12   13   14";
   print_iter board i
+
+(** [tileSqrs_to_preTileSqrs sqrList] returns [sqrList] with all [Final(a)] and 
+    [Unfinal(a)] tiles converted to [a] pretiles. *)
+let tileSqrs_to_preTileSqrs squareList = 
+  let rec helper (sqrList: square list) (accList: (pretile * multiplier) list) = 
+    match squareList with 
+    | (Final(pt), multiplier)::t -> let ptSqr = (pt, multiplier) in
+      helper t (ptSqr::accList)
+    | (Unfinal(pt), multiplier)::t -> let ptSqr = (pt, multiplier) in 
+      helper t (ptSqr::accList)
+    | (Nothing, multiplier)::t -> helper t accList
+    | _ -> List.rev accList
+  in helper squareList []
+
+(**[squares_to_wordpoints sqL] returns the string that is formed by the list of 
+   tiles from [sqL], and the point value for the string after factoring in
+   multiplers **)
+let squares_to_word_and_points squareList = 
+  let pretileSqrList = tileSqrs_to_preTileSqrs squareList in 
+  let rec helper tL accStr accPts accMults= 
+    match tL with
+    | ({letter; value},multiplier)::t -> let int_word = accStr ^ letter in 
+      begin match multiplier with 
+        | DoubleLetter -> helper t int_word (accPts + (value * 2)) accMults
+        | TripleLetter -> helper t int_word (accPts + (value * 3)) accMults
+        | DoubleWord -> helper t int_word (accPts + (value)) (accMults * 2)
+        | TripleWord -> helper t int_word (accPts + (value)) (accMults * 3)
+        | NaN -> helper t int_word (accPts + (value)) (accMults)
+      end
+    | _ -> (accStr, (accPts * accMults)) in 
+  helper pretileSqrList "" 0 1
+
+(**[is_word s] returns [true] if [s] is a string in dictionary.json, 
+   otherwise [false]. *)
+let is_word str = 
+  (Words.validity str word_set)
+
+(**[all_are_words strList] returns [true] if all strings in [strList] are in the
+   dictionary.json, otherwise [false] *)
+let rec all_are_words strList = 
+  match strList with 
+  | h::t -> if (is_word h) then (all_are_words t) else false
+  | _ -> true
+
+(**[get_square brd (x,y)] returns the square at coordinate position [(x,y)] on
+   [brd]. Raises [Invalid_Square] if the square does not exist. *)
+let get_square board (x,y) = if (x >= 0 && x<= 14) && (y>=0 && y<= 14) then 
+    List.nth (List.nth board x) y else raise InvalidSquare
+
+(**[get_row_sqrs board y] returns the list of squares of row [y] on [board]. 
+   Raises [Invalid_Row] if the row does not exist. *)
+let get_row_sqrs board y = 
+  if (y>=0 && y<15) then 
+    let rec helper xPos accList = 
+      if (xPos < 15) 
+      then helper (xPos + 1) (accList@List.nth((List.nth board xPos)) y)
+      else accList
+    in helper 0 []
+  else raise InvalidRow
+
+(**[get_col_sqrs board x] returns the list of squares of column [x] on [board]. 
+   Raises [Invalid_Column] if the column does not exist. *)
+let get_col_sqrs board x = 
+  if (x>= 0 && x<15) then List.nth board x 
+  else raise InvalidColumn
+
+(**[get_rowadj_notNothing_sqrs board (x,y)] returns the list of horizontally 
+   connected squares that don't contain any Nothing tiles. The list includes the 
+   square at position [(x,y)] on [board]. If the square at position [(x,y)] 
+   contains a Nothing tile, raises [NothingSquare]. *)
+let get_rowadj_notNothing_sqrs board (x,y) = 
+  let sqr = get_square board (x,y) in 
+  match sqr with 
+  | (Nothing, multiplier) -> raise NothingSquare
+  | _ -> begin 
+      let rec rightHelper xPos (accSqrList: square list) = 
+        if (xPos<15) then (let tentSqr = get_square board (xPos,y) in 
+                           match tentSqr with
+                           | (Nothing, multiplier) -> accSqrList
+                           | _ -> rightHelper (xPos+1) (accSqrList@[tentSqr])) 
+        else accSqrList in  
+      let rec leftHelper xPos (accSqrList: square list) = 
+        if (xPos>=0) then (let tentSqr = get_square board (xPos,y) in 
+                           match tentSqr with
+                           | (Nothing, multiplier) -> accSqrList
+                           | _ -> leftHelper (xPos-1) (tentSqr::accSqrList)) 
+        else accSqrList in  
+      let rightList = rightHelper (x+1) [sqr] in 
+      let leftList = leftHelper (x-1) [] in 
+      leftList@rightList
+    end
+
+(**[get_coladj_notNothing_sqrs board (x,y)] returns the list of vertically 
+   connected squares that don't contain any Nothing tiles. The list includes the 
+   square at position [(x,y)] on [board]. If the square at position [(x,y)] 
+   contains a Nothing tile, raises [NothingSquare]. *)
+let get_coladj_notNothing_sqrs board (x,y) = 
+  let sqr = get_square board (x,y) in 
+  match sqr with 
+  | (Nothing, multiplier) -> raise NothingSquare
+  | _ -> begin 
+      let rec botHelper yPos (accSqrList: square list) = 
+        if (yPos<15) then (let tentSqr = get_square board (x,yPos) in 
+                           match tentSqr with
+                           | (Nothing, multiplier) -> accSqrList
+                           | _ -> botHelper (yPos+1) (accSqrList@[tentSqr])) 
+        else accSqrList in  
+      let rec topHelper yPos (accSqrList: square list) = 
+        if (yPos>=0) then (let tentSqr = get_square board (x,yPos) in 
+                           match tentSqr with
+                           | (Nothing, multiplier) -> accSqrList
+                           | _ -> topHelper (yPos-1) (tentSqr::accSqrList)) 
+        else accSqrList in  
+      let botList = botHelper (y+1) [sqr] in 
+      let topList = topHelper (y-1) [] in 
+      topList@botList
+    end
+
+
+
+
+
+
