@@ -215,15 +215,18 @@ let remove_tile_from_dock state tile =
     dock = dock_iter tile state.current_player.dock []
   }
 
+(** [update_player]  player list -> player -> player list  -> player list
+    takes a given player list and updated player, and replaces the older version
+    of that player with the updated version in the list.*)
+let rec update_player player_list player acc =
+  match player_list with
+  | [] -> acc
+  | h::t -> if h.name = player.name then update_player t player (player::acc)
+    else update_player t player acc
+
 (** [update_player_in_list] takes the current state and player and updates
     the state's player list with the new player instance. **)
 let update_player_in_list st player =
-  let rec update_player player_list player acc =
-    match player_list with
-    | [] -> acc
-    | h::t -> if h.name = player.name then update_player t player (player::acc)
-      else update_player t player acc
-  in
   {
     board = st.board;
     bag = st.bag;
@@ -244,6 +247,26 @@ let end_turn state : t =
       score = calc_score state.board;
       words = state.current_player.words (* tracking words is gonna require some reworking *)
     }
+  }
+
+(** [refill] t -> t
+    Refill takes in a state and then returns a state in which the current player's
+    dock has been refilled to 7 tiles. *)
+let refill state =
+  let tiles_to_draw =  7 - (List.length state.current_player.dock) in
+  let list_bag_tuple = draw_n_times state.bag tiles_to_draw in
+  let updated_current_player =
+    {
+      name = state.current_player.name;
+      dock = (fst list_bag_tuple) @ state.current_player.dock;
+      score = state.current_player.score;
+      words = state.current_player.words;
+    } in
+  {
+    board = state.board;
+    bag = snd list_bag_tuple;
+    players = (update_player state.players updated_current_player []);
+    current_player = updated_current_player;
   }
 
 (** [place_tile state (letter,(row,col))] is the new state after a tile
