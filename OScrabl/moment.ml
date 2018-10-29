@@ -231,28 +231,54 @@ let update_player_in_list st player =
     current_player = st.current_player;
   }
 
-(** TODO: all the stuff that happens when a player ends their turn including:
-    -1. check if the game is over
-    0. (check word is valid)
-    0.5. update the current player's score
-    1. the current player draws tiles to refill their dock
-    2. the bag is updated to reflect the tiles the current player draw
-    3. the list of players is updated to reflect the changes to current_player
-    made over the course of their turn
-    4. the current player is updated to be the next player
-*)
+(** TODO: all the stuff that happens when a player ends their turn *)
 let end_turn state =
-  {
-    board = state.board;
-    bag = state.bag;
-    players = state.current_player::(List.filter (fun x -> x.name <> state.current_player.name) state.players);
-    current_player = List.hd state.players
-  }
+  failwith "TODO"
+
+(** finds the position of some unfinal tile on the board, returns it as (x,y) *)
+let rec find_unfinal board: (int * int) =
+  let rec board_iter x y =
+    match fst (get_square board (x, y)) with
+    | Unfinal tile -> (x,y)
+    | _ ->
+      if x < 15 then (board_iter (x+1) y)
+      else if y < 15 then (board_iter 0 (y+1))
+      else failwith "no unfinal tiles on this board"
+  in board_iter 0 0
+
+(** returns true if all squares outside of the cross centered on (x,y) do not
+    contain unfinal tiles *)
+let check_uncrossed board (x_fix, y_fix) =
+  let rec board_iter x y =
+    match fst (get_square board (x, y)) with
+    | Unfinal tile ->
+      if x <> x_fix && y <> y_fix then false
+      else if x < 15 then board_iter (x+1) y
+      else if y < 15 then board_iter 0 (y+1)
+      else true
+    | _ ->
+      if x < 15 then board_iter (x+1) y
+      else if y < 15 then board_iter 0 (y+1)
+      else true
+  in board_iter 0 0
+
+(** prefix exclusive or operator *)
+let xor p1 p2 =
+  (p1 && not p2) || (not p1 && p2)
+
+(** [valid_tile_positions board] is whether the tiles of [board] are placed in
+    a valid configuration by the rules of Scrabble®
+*)
+let valid_tile_positions board: bool =
+  let center = find_unfinal board in
+  check_uncrossed board center && (xor
+     (List.length (get_rowadj_notNothing_sqrs board center) > 1)
+     (List.length (get_rowadj_notNothing_sqrs board center) > 1))
 
 (** [place_tile state (letter,(row,col))] is the new state after a tile
     corresponding to [letter] has been taken from the current player's dock and
     placed onto the board at the position specified by (row,col). Raises
-    BadSelection is there is no tile in the player's dock of that letter. *)
+    BadSelection if there is no tile in the player's dock of that letter. *)
 let place_tile state (letter,(row,col)) =
   let tile = letter_to_tile letter state in
   {
