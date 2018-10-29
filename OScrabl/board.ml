@@ -1,5 +1,5 @@
 open ANSITerminal
-(* open Words *)
+open Words
 
 exception Can'tPlaceTile
 exception InvalidSquare
@@ -302,15 +302,15 @@ let squares_to_word_and_points squareList =
 
 (**[is_word s] returns [true] if [s] is a string in dictionary.json,
    otherwise [false]. *)
-(* let is_word str =
-  (Words.validity str word_set) *)
+let is_word str =
+  (Words.validity str word_set)
 
 (**[all_are_words strList] returns [true] if all strings in [strList] are in the
    dictionary.json, otherwise [false] *)
-(* let rec all_are_words strList =
+let rec all_are_words strList =
   match strList with
   | h::t -> if (is_word h) then (all_are_words t) else false
-  | _ -> true *)
+  | _ -> true
 
 (**[get_square brd (x,y)] returns the square at coordinate position [(x,y)] on
    [brd]. Raises [Invalid_Square] if the square does not exist. *)
