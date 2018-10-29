@@ -29,6 +29,7 @@ let rec gameplay st msg =
     Prompts for the game to play, then starts it. *)
 let main () =
   resize 80 56;
+  Words.add_hash_set Words.word_set Words.word_array Hashtbl.hash;
   gameplay init_state "Possible Commands: place, quit"
 
 (* Execute the game engine. *)
