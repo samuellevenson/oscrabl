@@ -319,18 +319,18 @@ let get_square board (x,y) = if (x >= 0 && x<= 14) && (y>=0 && y<= 14) then
 
 (**[get_row_sqrs board y] returns the list of squares of row [y] on [board].
    Raises [Invalid_Row] if the row does not exist. *)
-let get_row_sqrs board y =
+let get_row_sqrs (board:board) y =
   if (y>=0 && y<15) then
     let rec helper xPos accList =
       if (xPos < 15)
-      then helper (xPos + 1) (accList@List.nth((List.nth board xPos)) y)
+      then helper (xPos + 1) (accList@[List.nth (List.nth board xPos) y])
       else accList
     in helper 0 []
   else raise InvalidRow
 
 (**[get_col_sqrs board x] returns the list of squares of column [x] on [board].
    Raises [Invalid_Column] if the column does not exist. *)
-let get_col_sqrs board x =
+let get_col_sqrs (board:board) x =
   if (x>= 0 && x<15) then List.nth board x
   else raise InvalidColumn
 
@@ -385,3 +385,31 @@ let get_coladj_notNothing_sqrs board (x,y) =
       let topList = topHelper (y-1) [] in
       topList@botList
     end
+
+(** [row_is_connected board y] is true when the row does not contain any squares
+    of type Nothing in between the Unfinal squares *)
+let row_is_connected (board:board) y =
+  let rec row_iter (passed_unfinal:bool) (passed_nothing:bool) (row:square list) =
+    match row with
+    | [] -> true
+    | x::xs -> match fst x with
+      | Unfinal _ when passed_nothing -> false
+      | Unfinal _ -> row_iter true passed_nothing xs
+      | Final _ -> row_iter passed_unfinal passed_nothing xs
+      | Nothing when passed_unfinal -> row_iter passed_unfinal true xs
+      | Nothing -> row_iter passed_unfinal passed_nothing xs
+  in row_iter false false (get_row_sqrs board y)
+
+(** [col_is_connected board y] is true when the col does not contain any squares
+    of type Nothing in between the Unfinal squares *)
+let col_is_connected (board:board) x =
+  let rec col_iter (passed_unfinal:bool) (passed_nothing:bool) row =
+    match row with
+    | [] -> true
+    | x::xs -> match fst x with
+      | Unfinal _ when passed_nothing -> false
+      | Unfinal _ -> col_iter true passed_nothing xs
+      | Final _ -> col_iter passed_unfinal passed_nothing xs
+      | Nothing when passed_unfinal -> col_iter passed_unfinal true xs
+      | Nothing -> col_iter passed_unfinal passed_nothing xs
+  in col_iter false false (get_col_sqrs board x)

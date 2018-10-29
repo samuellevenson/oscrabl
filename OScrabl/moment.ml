@@ -270,10 +270,11 @@ let xor p1 p2 =
     a valid configuration by the rules of Scrabble®
 *)
 let valid_tile_positions board: bool =
-  let center = find_unfinal board in
-  check_uncrossed board center && (xor
-     (List.length (get_rowadj_notNothing_sqrs board center) > 1)
-     (List.length (get_rowadj_notNothing_sqrs board center) > 1))
+  let (x,y) = find_unfinal board in
+  check_uncrossed board (x,y) &&
+  (xor (List.length (get_rowadj_notNothing_sqrs board (x,y)) > 1)
+     (List.length (get_coladj_notNothing_sqrs board (x,y)) > 1))
+  && row_is_connected board y && col_is_connected board x
 
 (** [place_tile state (letter,(row,col))] is the new state after a tile
     corresponding to [letter] has been taken from the current player's dock and
