@@ -6,6 +6,8 @@ exception InvalidSquare
 exception InvalidRow
 exception InvalidColumn
 exception NothingSquare
+exception InvalidWord of string
+exception InvalidTilePlacement
 
 (** The type of tiles *)
 type pretile = {
@@ -413,3 +415,75 @@ let col_is_connected (board:board) x =
       | Nothing when passed_unfinal -> col_iter passed_unfinal true xs
       | Nothing -> col_iter passed_unfinal passed_nothing xs
   in col_iter false false (get_col_sqrs board x)
+
+
+(** finds the position of some unfinal tile on the board, returns it as (x,y) *)
+let rec find_unfinal board: (int * int) =
+  let rec board_iter x y =
+    match fst (get_square board (x, y)) with
+    | Unfinal tile -> (x,y)
+    | _ ->
+      if x < 15 then (board_iter (x+1) y)
+      else if y < 15 then (board_iter 0 (y+1))
+      else failwith "no unfinal tiles on this board"
+  in board_iter 0 0
+
+(** returns true if all squares outside of the cross centered on (x,y) do not
+    contain unfinal tiles *)
+let check_uncrossed board (x_fix, y_fix) =
+  let rec board_iter x y =
+    match fst (get_square board (x, y)) with
+    | Unfinal tile ->
+      if x <> x_fix && y <> y_fix then false
+      else if x < 15 then board_iter (x+1) y
+      else if y < 15 then board_iter 0 (y+1)
+      else true
+    | _ ->
+      if x < 15 then board_iter (x+1) y
+      else if y < 15 then board_iter 0 (y+1)
+      else true
+  in board_iter 0 0
+
+(** prefix exclusive or operator *)
+let xor p1 p2 =
+  (p1 && not p2) || (not p1 && p2)
+
+(** [valid_tile_positions board] is whether the tiles of [board] are placed in
+    a valid configuration by the rules of Scrabble®
+*)
+let valid_tile_positions board: bool =
+  let (x,y) = find_unfinal board in
+  check_uncrossed board (x,y) &&
+  (xor (List.length (get_rowadj_notNothing_sqrs board (x,y)) > 1)
+     (List.length (get_coladj_notNothing_sqrs board (x,y)) > 1))
+  && row_is_connected board y && col_is_connected board x
+
+(** [find_words board] finds all the "words" created by the unfinal tiles on the
+    board. These words may not be English words *)
+let find_words board : square list list =
+  let rec board_iter x y words_acc =
+    match fst (get_square board (x, y)) with
+    | Unfinal tile ->
+      let to_add =
+        [(get_coladj_notNothing_sqrs board (x,y));(get_rowadj_notNothing_sqrs board (x,y))] in
+      if x < 15 then (board_iter (x+1) y) (to_add@words_acc)
+      else if y < 15 then (board_iter 0 (y+1)) (to_add@words_acc)
+      else (to_add@words_acc)
+    | _ ->
+      if x < 15 then (board_iter (x+1) y) words_acc
+      else if y < 15 then (board_iter 0 (y+1)) words_acc
+      else words_acc
+  in (board_iter 0 0 []) |> List.filter (fun x -> List.length x > 1) |> List.sort_uniq compare
+
+(** Score? *)
+let score board : int =
+  let rec words_iter assoc score_acc =
+    match assoc with
+    | [] -> score_acc
+    | (word,score)::xs ->
+      if Words.validity word word_set then words_iter xs (score_acc + score)
+      else raise (InvalidWord word)
+  in
+  if valid_tile_positions board
+  then words_iter (List.map squares_to_word_and_points (find_words board)) 0
+  else raise InvalidTilePlacement
