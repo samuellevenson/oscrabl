@@ -14,6 +14,8 @@ let rec gameplay st msg =
     match parse_cmd (read_line ()) with
     | Place (letter,pos) ->
       gameplay (place_tile st (letter,pos)) ("Placed " ^ letter)
+    | Score -> gameplay st (get_score st)
+    | End -> gameplay (end_turn st) "Next turn"
     | Quit -> print_endline "Thanks for playing OScrabl!"; exit 0
     | _ -> exit 0
   with
@@ -23,7 +25,9 @@ let rec gameplay st msg =
   | Broken -> gameplay st "Invalid action.";
   | Blank -> gameplay st "No action given.";
   | Can'tPlaceTile -> gameplay st "Can't place a tile there!";
-  | _ -> gameplay st "Exception encountered."
+  | InvalidWord msg -> gameplay st (msg ^ " is not a word.")
+  | InvalidTilePlacement -> gameplay st "Your tiles are placed incorrectly."
+  (* | _ -> gameplay st "Exception encountered." *)
 
 (** [main ()] unit -> unit
     Prompts for the game to play, then starts it. *)

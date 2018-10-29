@@ -476,7 +476,7 @@ let find_words board : square list list =
   in (board_iter 0 0 []) |> List.filter (fun x -> List.length x > 1) |> List.sort_uniq compare
 
 (** Score? *)
-let score board : int =
+let calc_score board : int =
   let rec words_iter assoc score_acc =
     match assoc with
     | [] -> score_acc
@@ -487,3 +487,7 @@ let score board : int =
   if valid_tile_positions board
   then words_iter (List.map squares_to_word_and_points (find_words board)) 0
   else raise InvalidTilePlacement
+
+(** [finalize_board board] turns all the Unfinal tiles into Final tiles *)
+let finalize board =
+  board

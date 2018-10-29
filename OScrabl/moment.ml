@@ -231,9 +231,20 @@ let update_player_in_list st player =
     current_player = st.current_player;
   }
 
-(** TODO: all the stuff that happens when a player ends their turn *)
-let end_turn state =
-  failwith "TODO"
+(** turn ending implemented for 1 player game *)
+let end_turn state : t =
+  let draw_num = 7 - List.length state.current_player.dock in
+  {
+    board = finalize state.board;
+    bag = snd (draw_n_times state.bag draw_num);
+    players = state.players;
+    current_player = {
+      name = state.current_player.name;
+      dock = fst (draw_n_times state.bag draw_num);
+      score = calc_score state.board;
+      words = state.current_player.words (* tracking words is gonna require some reworking *)
+    }
+  }
 
 (** [place_tile state (letter,(row,col))] is the new state after a tile
     corresponding to [letter] has been taken from the current player's dock and
@@ -247,6 +258,10 @@ let place_tile state (letter,(row,col)) =
     players = state.players;
     current_player = remove_tile_from_dock state tile
   }
+
+(** TODO: docs *)
+let get_score state =
+  state.current_player.score |> string_of_int
 
 (** [print_docktop dock] prints the top line of a players dock of tiles *)
 let rec print_docktop dock =
