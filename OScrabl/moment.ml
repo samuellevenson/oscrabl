@@ -259,47 +259,6 @@ let refill state =
 let end_turn state =
   failwith "TODO"
 
-(** finds the position of some unfinal tile on the board, returns it as (x,y) *)
-let rec find_unfinal board: (int * int) =
-  let rec board_iter x y =
-    match fst (get_square board (x, y)) with
-    | Unfinal tile -> (x,y)
-    | _ ->
-      if x < 15 then (board_iter (x+1) y)
-      else if y < 15 then (board_iter 0 (y+1))
-      else failwith "no unfinal tiles on this board"
-  in board_iter 0 0
-
-(** returns true if all squares outside of the cross centered on (x,y) do not
-    contain unfinal tiles *)
-let check_uncrossed board (x_fix, y_fix) =
-  let rec board_iter x y =
-    match fst (get_square board (x, y)) with
-    | Unfinal tile ->
-      if x <> x_fix && y <> y_fix then false
-      else if x < 15 then board_iter (x+1) y
-      else if y < 15 then board_iter 0 (y+1)
-      else true
-    | _ ->
-      if x < 15 then board_iter (x+1) y
-      else if y < 15 then board_iter 0 (y+1)
-      else true
-  in board_iter 0 0
-
-(** prefix exclusive or operator *)
-let xor p1 p2 =
-  (p1 && not p2) || (not p1 && p2)
-
-(** [valid_tile_positions board] is whether the tiles of [board] are placed in
-    a valid configuration by the rules of Scrabble®
-*)
-let valid_tile_positions board: bool =
-  let (x,y) = find_unfinal board in
-  check_uncrossed board (x,y) &&
-  (xor (List.length (get_rowadj_notNothing_sqrs board (x,y)) > 1)
-     (List.length (get_coladj_notNothing_sqrs board (x,y)) > 1))
-  && row_is_connected board y && col_is_connected board x
-
 (** [place_tile state (letter,(row,col))] is the new state after a tile
     corresponding to [letter] has been taken from the current player's dock and
     placed onto the board at the position specified by (row,col). Raises
