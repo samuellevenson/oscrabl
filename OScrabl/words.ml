@@ -48,4 +48,13 @@ let validity x s = StringHashTbl.mem s x
 (** [delete] 'a -> ('_a, 'b) Hashtbl.t -> unit
     Removes a string from the OScrabl dictionary. *)
 let delete x s = StringHashTbl.remove s x
+
+(** [check_word_list] string list -> int StringHashTbl.t -> bool
+    is whether an entire list of string exists in a set.
+*)
+let rec check_word_list (lst:string list) (set:int StringHashTbl.t) = 
+  match lst with 
+  | [] -> true
+  | h::t -> if (validity h set) then check_word_list t set else false
+
 (** IMPERATIVE STUFF *)
