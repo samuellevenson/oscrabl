@@ -66,6 +66,7 @@ let rec parse_cmd str =
   | [] -> raise Blank
   | h1::h2::h3::h4::[] -> 
     if h1 = "place" then (Place ((String.uppercase_ascii h2),(single_to_int h3, int_of_string h4)))
+    else if h1 = "exchange" then Exchange (to_upper_case [h2;h3;h4])
     else raise Broken
   | h::t -> 
     if h = "score" && t = [] then Score

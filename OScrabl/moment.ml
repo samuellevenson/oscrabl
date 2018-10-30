@@ -296,24 +296,28 @@ let refill_set_num state num =
 let rec pretile_to_string (pretile_lst: pretile list) : string list =
   List.map (fun x -> x.letter) pretile_lst
 
-(** [check_tiles_are_valid] t -> string list -> bool
-    is a function that checks whether all strings in a string list are in the
-    current player's dock. *)
-let check_tiles_are_valid (state:t) (lst: string list) : bool =
-  let rec check_tiles_are_valid_helper (st:t) (str_lst:string list)
-      (pretile_to_string_lst:string list) =
-    match str_lst with
-    | [] -> true
-    | h::t -> if List.mem h pretile_to_string_lst
-      then check_tiles_are_valid_helper st t pretile_to_string_lst
-      else false
-  in check_tiles_are_valid_helper state lst (pretile_to_string (state.current_player.dock) )
-
+(** [remove_first_instance c l acc] is [l] with the first instance of [c] 
+    removed. Requires: [acc] is the emtpy list. *)
 let rec remove_first_instance to_check lst acc =
   match lst with
   | [] -> List.rev acc
   | h::t -> if h = to_check then (acc@t)
     else (remove_first_instance to_check t (acc@[h]))
+
+(** [check_tiles_are_valid] t -> string list -> bool
+    is a function that checks whether all strings in a string list are in the
+    current player's dock. *)
+let check_tiles_are_valid (state:t) (lst: string list) : bool =
+  let rec check_tiles_are_valid_helper (str_lst:string list)
+      (pretile_to_string_lst:string list) =
+    match (str_lst,pretile_to_string_lst) with
+    | [],_::_ -> true
+    | _::_, [] -> false
+    | [], [] -> true
+    | (h::t,dock) -> if List.mem h pretile_to_string_lst
+      then check_tiles_are_valid_helper t (remove_first_instance h dock [])
+      else false
+  in check_tiles_are_valid_helper lst (pretile_to_string (state.current_player.dock) )
 
 (**[return_to_dock st tiles] is the game state [st] with [tiles] appended to the
    current player's dock *)
@@ -336,8 +340,7 @@ let recall st =
 (** [exchange] t -> string list -> t
     takes in the current game state and a string list from user input and
     removes them from the dock, then refills the dock,
-    effectively "exchanging" the tiles.
-    current issue: exchange does not work when three letters are specified.*)
+    effectively "exchanging" the tiles.*)
 let exchange state lst =
   if check_tiles_are_valid state lst then
     (*get the remaining letters in the dock after removing them. *)

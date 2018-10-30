@@ -13,25 +13,25 @@ let rec gameplay st msg =
   try
     match parse_cmd (read_line ()) with
     | Place (letter,pos) ->
-      gameplay (place_tile st (letter,pos)) ("Placed " ^ letter)
+      gameplay (place_tile st (letter,pos)) ("Placed " ^ letter ^ "!")
     | Score -> gameplay st (get_score st)
-    | End -> gameplay (end_turn st) "Next turn"
-    | Refill -> gameplay (refill st) "Refilled."
-    | Exchange lst -> gameplay (exchange st lst) "Letters exchanged"
+    | End -> gameplay (end_turn st) "Next turn!"
+    | Refill -> gameplay (refill st) "Refilled!"
+    | Exchange lst -> gameplay (exchange st lst) "Letters exchanged! Next turn!"
     | Quit -> print_endline "Thanks for playing OScrabl!"; exit 0
     | Recall -> gameplay (recall st) "Tiles recalled!";
     | _ -> exit 0
   with
-  | BadSelection -> gameplay st "Bad Tile Selection.";
-  | BadRow -> gameplay st "Bad Row input.";
-  | BadCol -> gameplay st "Bad Col input.";
+  | BadSelection -> gameplay st "Bad Tile Selection!";
+  | BadRow -> gameplay st "Bad Row input!";
+  | BadCol -> gameplay st "Bad Col input!";
   | Broken -> gameplay st "Invalid command!";
   | Blank -> gameplay st "No command given!";
-  | Can'tPlaceTile -> gameplay st "Can't place a tile there! Use 'recall' to recall all tiles placed on the board!";
-  | InvalidWord msg -> gameplay st (msg ^ " is not a word. Use 'recall' to recall all tiles placed on the board!")
-  | InvalidTilePlacement -> gameplay st "Your tiles are placed incorrectly. Use 'recall' to recall all tiles placed on the board!"
+  | Can'tPlaceTile -> gameplay st "Can't place a tile there! Use 'recall' to recall tiles placed on the board!";
+  | InvalidWord msg -> gameplay st (msg ^ " is not a word. Use 'recall' to recall tiles placed on the board!")
+  | InvalidTilePlacement -> gameplay st "Tiles placed incorrectly! Use 'recall' to recall tiles placed on the board!"
   | InvalidExchange -> gameplay st
-                         "You don't have the letters you are attempting to exchange."
+                         "You don't have the letters you are attempting to exchange!"
 
 (** [main ()] unit -> unit
     Prompts for the game to play, then starts it. *)
