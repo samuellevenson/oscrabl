@@ -244,8 +244,8 @@ let end_turn state : t =
     players = state.players;
     current_player = {
       name = state.current_player.name;
-      dock = fst (draw_n_times state.bag draw_num);
-      score = calc_score state.board;
+      dock = state.current_player.dock @ fst (draw_n_times state.bag draw_num);
+      score = state.current_player.score + calc_score state.board;
       words = state.current_player.words (* tracking words is gonna require some reworking *)
     };
   }
@@ -290,21 +290,21 @@ let refill_set_num state num =
     current_player = updated_current_player;
   }
 
-(** [pretile_to_string] pretile list -> string list -> string list 
+(** [pretile_to_string] pretile list -> string list -> string list
     is a function that takes a list of pretiles and returns a string list where
     each element is the character string associated with the pretile.*)
-let rec pretile_to_string (pretile_lst: pretile list) : string list = 
+let rec pretile_to_string (pretile_lst: pretile list) : string list =
   List.map (fun x -> x.letter) pretile_lst
 
 (** [check_tiles_are_valid] t -> string list -> bool
     is a function that checks whether all strings in a string list are in the
     current player's dock. *)
-let check_tiles_are_valid (state:t) (lst: string list) : bool = 
-  let rec check_tiles_are_valid_helper (st:t) (str_lst:string list) 
-      (pretile_to_string_lst:string list) = 
-    match str_lst with 
+let check_tiles_are_valid (state:t) (lst: string list) : bool =
+  let rec check_tiles_are_valid_helper (st:t) (str_lst:string list)
+      (pretile_to_string_lst:string list) =
+    match str_lst with
     | [] -> true
-    | h::t -> if List.mem h pretile_to_string_lst 
+    | h::t -> if List.mem h pretile_to_string_lst
       then check_tiles_are_valid_helper st t pretile_to_string_lst
       else false
   in check_tiles_are_valid_helper state lst (pretile_to_string (state.current_player.dock) )
@@ -316,21 +316,21 @@ let rec remove_first_instance to_check lst acc =
     else (remove_first_instance to_check t (acc@[h]))
 
 (** [exchange] t -> string list -> t
-    takes in the current game state and a string list from user input and 
-    removes them from the dock, then refills the dock, 
-    effectively "exchanging" the tiles. 
+    takes in the current game state and a string list from user input and
+    removes them from the dock, then refills the dock,
+    effectively "exchanging" the tiles.
     current issue: exchange does not work when three letters are specified.*)
-let exchange state lst = 
+let exchange state lst =
   if check_tiles_are_valid state lst then
     (*get the remaining letters in the dock after removing them. *)
     let rec exchange_helper (dock:Board.pretile list) (str_lst:string list) acc=
       let upper_str_lst = to_upper_case str_lst in
-      match dock with 
+      match dock with
       | [] ->  acc
       | h::t -> if (List.mem (h.letter) upper_str_lst) then
-          (exchange_helper t (remove_first_instance h.letter upper_str_lst []) acc) 
+          (exchange_helper t (remove_first_instance h.letter upper_str_lst []) acc)
         else (exchange_helper t upper_str_lst (h::acc))
-    in 
+    in
     let new_state = {
       board = state.board;
       bag = state.bag;
@@ -345,10 +345,6 @@ let exchange state lst =
     in
     refill_set_num new_state (List.length lst)
   else raise InvalidExchange
-
-(** TODO: all the stuff that happens when a player ends their turn *)
-let end_turn state =
-  failwith "TODO"
 
 (** [place_tile state (letter,(row,col))] is the new state after a tile
     corresponding to [letter] has been taken from the current player's dock and

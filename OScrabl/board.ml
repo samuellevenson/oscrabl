@@ -281,10 +281,11 @@ let tileSqrs_to_preTileSqrs squareList =
     match sqrList with
     | (Final(pt), multiplier)::t -> let ptSqr = (pt, multiplier) in
       helper t (ptSqr::accList)
-    | (Unfinal(pt), multiplier)::t -> let ptSqr = (pt, multiplier) in
+    | (Unfinal(pt), multiplier)::t ->
+      let ptSqr = (pt, multiplier) in
       helper t (ptSqr::accList)
     | (Nothing, multiplier)::t -> helper t accList
-    | _ -> List.rev accList
+    | [] -> List.rev accList
   in helper squareList []
 
 (**[squares_to_wordpoints sqL] returns the string that is formed by the list of
@@ -294,15 +295,16 @@ let squares_to_word_and_points squareList =
   let pretileSqrList = tileSqrs_to_preTileSqrs squareList in
   let rec helper tL accStr accPts accMults=
     match tL with
-    | ({letter; value},multiplier)::t -> let int_word = accStr ^ letter in
+    | (pt,multiplier)::t ->
+      let int_word = accStr ^ pt.letter in
       begin match multiplier with
-        | DoubleLetter -> helper t int_word (accPts + (value * 2)) accMults
-        | TripleLetter -> helper t int_word (accPts + (value * 3)) accMults
-        | DoubleWord -> helper t int_word (accPts + (value)) (accMults * 2)
-        | TripleWord -> helper t int_word (accPts + (value)) (accMults * 3)
-        | NaN -> helper t int_word (accPts + (value)) (accMults)
+        | DoubleLetter -> helper t int_word (accPts + (pt.value * 2)) accMults
+        | TripleLetter -> helper t int_word (accPts + (pt.value * 3)) accMults
+        | DoubleWord -> helper t int_word (accPts + (pt.value)) (accMults * 2)
+        | TripleWord -> helper t int_word (accPts + (pt.value)) (accMults * 3)
+        | NaN -> helper t int_word (accPts + (pt.value)) (accMults)
       end
-    | _ -> (accStr, (accPts * accMults)) in
+    | [] -> (accStr, (accPts * accMults)) in
   helper pretileSqrList "" 0 1
 
 (**[is_word s] returns [true] if [s] is a string in dictionary.json,
@@ -476,7 +478,8 @@ let xor p1 p2 =
     a valid configuration by the rules of Scrabble® *)
 let valid_tile_positions board: bool =
   let (x,y) = find_unfinal board in
-  check_uncrossed board (x,y) &&
+  check_uncrossed board (x,y)
+  &&
   (xor (List.length (get_rowadj_notNothing_sqrs board (x,y)) > 1)
      (List.length (get_coladj_notNothing_sqrs board (x,y)) > 1))
   && row_is_connected board y && col_is_connected board x
@@ -493,8 +496,8 @@ let find_strings board : square list list =
       else if y < 14 then (board_iter 0 (y+1)) (to_add@words_acc)
       else (to_add@words_acc) 
     | _ ->
-      if x < 14 then (board_iter (x+1) y) words_acc
-      else if y < 14 then (board_iter 0 (y+1)) words_acc
+      if x < 14 then board_iter (x+1) y words_acc
+      else if y < 14 then board_iter 0 (y+1) words_acc
       else words_acc
   in (board_iter 0 0 []) |> List.filter (fun x -> List.length x > 1) |> List.sort_uniq compare
 
