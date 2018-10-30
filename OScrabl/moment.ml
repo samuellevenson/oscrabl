@@ -4,6 +4,7 @@ open Actions
 
 (** the exception raised when there is an attempt to draw from an empty bag *)
 exception EmptyBag
+exception InvalidExchange
 
 (** the type of the player *)
 type player = {
@@ -254,6 +255,64 @@ let refill state =
     current_player = updated_current_player;
   }
 
+(** [pretile_to_string] pretile list -> string list -> string list 
+    is a function that takes a list of pretiles and returns a string list where
+    each element is the character string associated with the pretile.*)
+let rec pretile_to_string (pretile_lst: pretile list) (acc: string list) 
+  : string list = 
+  match pretile_lst with 
+  | [] -> acc 
+  | h::t -> pretile_to_string t (h.letter::acc)
+
+(** [check_tiles_are_valid] t -> string list -> bool
+    is a function that checks whether all strings in a string list are in the
+    current player's dock. *)
+let check_tiles_are_valid (state:t) (lst: string list) : bool = 
+  let rec check_tiles_are_valid_helper (st:t) (str_lst:string list) 
+      (pretile_to_string_lst:string list) = 
+    match str_lst with 
+    | [] -> true
+    | h::t -> if List.mem h pretile_to_string_lst 
+      then check_tiles_are_valid_helper st t pretile_to_string_lst
+      else false
+  in check_tiles_are_valid_helper state lst (pretile_to_string (state.current_player.dock) [])
+
+(** [exchange] t -> string list -> t
+    takes in the current game state and a string list from user input and 
+    removes them from the dock, then refills the dock, 
+    effectively "exchanging" the tiles. *)
+let exchange state lst = 
+  if check_tiles_are_valid state lst then
+    (*get the remaining letters in the dock after removing them. *)
+    let rec exchange_helper (dock:Board.pretile list) (str_lst:string list) acc=
+      let string_dock = (pretile_to_string dock []) in 
+      match str_lst with 
+      | [] ->  acc
+      | h::t -> if List.mem h string_dock then
+          exchange_helper dock t acc 
+        else exchange_helper dock t (h::acc)
+    in 
+    let remaining_strings = exchange_helper state.current_player.dock lst [] in 
+    (* turn remaining letters into remaining tiles. *)
+    let rec remaining_tiles rem_str acc = 
+      match rem_str with 
+      | [] -> acc
+      | h::t -> remaining_tiles t ((letter_to_tile h state)::acc) 
+    in
+    let new_state = {
+      board = state.board;
+      bag = state.bag;
+      players = state.players;
+      current_player = {
+        name = state.current_player.name;
+        dock = remaining_tiles remaining_strings [];
+        score = state.current_player.score;
+        words = state.current_player.words;
+      };
+    }
+    in
+    refill new_state
+  else raise InvalidExchange
 
 (** TODO: all the stuff that happens when a player ends their turn *)
 let end_turn state =
