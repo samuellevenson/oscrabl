@@ -19,25 +19,26 @@ let rec gameplay st msg =
     | Refill -> gameplay (refill st) "Refilled."
     | Exchange lst -> gameplay (exchange st lst) "Letters exchanged"
     | Quit -> print_endline "Thanks for playing OScrabl!"; exit 0
+    | Recall -> gameplay (recall st) "Tiles recalled!";
     | _ -> exit 0
   with
   | BadSelection -> gameplay st "Bad Tile Selection.";
   | BadRow -> gameplay st "Bad Row input.";
   | BadCol -> gameplay st "Bad Col input.";
-  | Broken -> gameplay st "Invalid action.";
-  | Blank -> gameplay st "No action given.";
-  | Can'tPlaceTile -> gameplay st "Can't place a tile there!";
-  | InvalidWord msg -> gameplay st (msg ^ " is not a word.")
-  | InvalidTilePlacement -> gameplay st "Your tiles are placed incorrectly."
+  | Broken -> gameplay st "Invalid command!";
+  | Blank -> gameplay st "No command given!";
+  | Can'tPlaceTile -> gameplay st "Can't place a tile there! Use 'recall' to recall all tiles placed on the board!";
+  | InvalidWord msg -> gameplay st (msg ^ " is not a word. Use 'recall' to recall all tiles placed on the board!")
+  | InvalidTilePlacement -> gameplay st "Your tiles are placed incorrectly. Use 'recall' to recall all tiles placed on the board!"
   | InvalidExchange -> gameplay st
-                         "You do not possess the letters you are attempting to exchange."
+                         "You don't have the letters you are attempting to exchange."
 
 (** [main ()] unit -> unit
     Prompts for the game to play, then starts it. *)
 let main () =
   resize 80 56;
   Words.add_hash_set Words.word_set Words.word_array Hashtbl.hash;
-  gameplay init_state "Possible Commands: place, quit, exchange, refill."
+  gameplay init_state "Possible Commands: place, recall, quit, exchange, refill."
 
 (* Execute the game engine. *)
 let () = main ()

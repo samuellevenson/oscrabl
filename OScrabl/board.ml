@@ -27,11 +27,8 @@ type square = tile * multiplier
 (** The type of the scrabble® board *)
 type board = square list list
 
-(** The type of orientation the placement of tiles can have *)
-type orientation = Vertical | Horizontal | NoOrientation
-
 (** [to_lower_case lst] is the all lower_case ascii characters version of [lst]*)
-let to_lower_case lst = 
+let to_lower_case lst =
   List.map (fun x -> String.lowercase_ascii x) lst
 
 (** The square list that represents the 0th column of a scrabble board at the
@@ -366,11 +363,11 @@ let get_rowadj_notNothing_sqrs board (x,y) =
                            | (Nothing, multiplier) -> accSqrList
                            | _ -> leftHelper (xPos-1) (tentSqr::accSqrList))
         else accSqrList in
-      if (x<14 && x>0) then 
-        let leftList = leftHelper (x+1) [sqr] in  
+      if (x<14 && x>0) then
+        let leftList = leftHelper (x+1) [sqr] in
         let rightList = rightHelper (x-1) [] in leftList@rightList;
-      else if (x=14) then leftHelper (x-1) [sqr] 
-      else rightHelper (x+1) [sqr] 
+      else if (x=14) then leftHelper (x-1) [sqr]
+      else rightHelper (x+1) [sqr]
     end
 
 (**[get_coladj_notNothing_sqrs board (x,y)] returns the list of vertically
@@ -381,7 +378,7 @@ let get_coladj_notNothing_sqrs board (x,y) =
   let sqr = get_square board (x,y) in
   match sqr with
   | (Nothing, multiplier) -> raise NothingSquare
-  | _ -> begin 
+  | _ -> begin
       let rec botHelper yPos (accSqrList: square list) =
         if (yPos<14) then (let tentSqr = get_square board (x,yPos) in
                            match tentSqr with
@@ -395,28 +392,11 @@ let get_coladj_notNothing_sqrs board (x,y) =
                            | _ -> topHelper (yPos-1) (tentSqr::accSqrList))
         else accSqrList in
       if (y<14 && y>0) then
-        let botList = botHelper (y+1) [sqr] in  
+        let botList = botHelper (y+1) [sqr] in
         let topList = topHelper (y-1) [] in topList@botList
-      else if (y=14) then topHelper (y-1) [sqr] 
-      else botHelper (y+1) [sqr] 
+      else if (y=14) then topHelper (y-1) [sqr]
+      else botHelper (y+1) [sqr]
     end
-
-(**[tile_orientation coords] is the orientation of tiles with their respective 
-   board coordinates in [coords] *)
-let tile_orientation (coords: (int * int) list) : orientation = 
-  let rec helper crds (cur_orientation_data: (orientation * int)) = 
-    match crds with 
-    | (x,y)::t -> if (fst cur_orientation_data = Vertical) && 
-                     (x = snd cur_orientation_data) then helper t cur_orientation_data
-      else if (fst cur_orientation_data = Horizontal) && 
-              (y = snd cur_orientation_data) then helper t cur_orientation_data
-      else NoOrientation
-    | _ -> fst cur_orientation_data in 
-  match coords with 
-  | (x,y)::(x1,y1)::t -> if (x = x1) then helper t (Vertical, x) 
-    else if (y = y1) then helper t (Horizontal, y) else NoOrientation
-  | _ -> NoOrientation
-
 
 (** [row_is_connected board y] is true when the row does not contain any squares
     of type Nothing in between the Unfinal squares *)
@@ -458,6 +438,32 @@ let rec find_unfinal board: (int * int) =
       else raise InvalidTilePlacement
   in board_iter 0 0
 
+(** [pop_unfinals brd] returns a tuple, with the first element being [brd] with
+    all unfinal tiles converted to nothing tiles, and the second element being 
+    the unfinal tile list. *)
+let pop_unfinals board: (board * (pretile list)) = 
+  let rec find_unfinals index1 acclist1 = 
+    if index1 < 15 then let rec helper col acclist2 = 
+                          match col with 
+                          | (Unfinal a, multiplier)::t -> helper t (a::acclist2)
+                          | (b, multiplier)::t -> helper t acclist2
+                          | _ -> List.rev acclist2 in 
+      let col_unfinals = helper (List.nth board index1) [] in 
+      find_unfinals (index1 + 1) acclist1@col_unfinals
+    else acclist1 in 
+  let pretile_list = find_unfinals 0 [] in  
+  let rec pop_board index2 acclist3 = 
+    if index2 < 15 then let rec helper2 col acclist4 = 
+                          match (col: square list) with 
+                          | (Unfinal a, multiplier):: t -> helper2 t ((Nothing, multiplier)::acclist4)
+                          | (b, multiplier)::t -> helper2 t ((b, multiplier)::acclist4)
+                          | _ -> List.rev acclist4 in 
+      let col_squares = helper2 (List.nth board index2) [] in 
+      pop_board (index2 + 1) (col_squares::acclist3) 
+    else (List.rev acclist3: board) in 
+  let new_board = pop_board 0 [] in 
+  (new_board, pretile_list)
+
 (** returns true if all squares outside of the cross centered on (x,y) do not
     contain unfinal tiles *)
 let check_uncrossed board (x_fix, y_fix) =
@@ -498,7 +504,7 @@ let find_strings board : square list list =
         [(get_coladj_notNothing_sqrs board (x,y));(get_rowadj_notNothing_sqrs board (x,y))] in
       if x < 14 then (board_iter (x+1) y) (to_add@words_acc)
       else if y < 14 then (board_iter 0 (y+1)) (to_add@words_acc)
-      else (to_add@words_acc) 
+      else (to_add@words_acc)
     | _ ->
       if x < 14 then board_iter (x+1) y words_acc
       else if y < 14 then board_iter 0 (y+1) words_acc
@@ -510,13 +516,8 @@ let calc_score board : int =
   let rec words_iter assoc score_acc =
     match assoc with
     | [] -> score_acc
-    | (word,score)::xs ->
-<<<<<<< HEAD
-      if Words.validity (List.hd (to_lower_case [word])) word_set 
-      then words_iter xs (score_acc + score)
-=======
-      if Words.validity word Words.word_set then words_iter xs (score_acc + score)
->>>>>>> 96edd09dc3f2088701acf20662c1f4cd5b0b0fd8
+    | (word,score)::xs -> 
+      if Words.validity (List.hd (to_lower_case [word])) word_set then words_iter xs (score_acc + score)
       else raise (InvalidWord word)
   in
   if valid_tile_positions board

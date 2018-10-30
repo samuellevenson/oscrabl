@@ -7,6 +7,7 @@ type action =
   | Draw
   | Exchange of string list
   | Refill
+  | Recall
   | Quit
 
 exception Blank
@@ -73,4 +74,5 @@ let rec parse_cmd str =
     else if h = "end" && t = [] then End
     else if h = "draw" && t = [] then Draw
     else if h = "quit" && t = [] then Quit 
+    else if h = "recall" && t = [] then Recall
     else raise Broken
