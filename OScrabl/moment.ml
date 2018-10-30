@@ -243,8 +243,8 @@ let end_turn state : t =
     players = state.players;
     current_player = {
       name = state.current_player.name;
-      dock = fst (draw_n_times state.bag draw_num);
-      score = calc_score state.board;
+      dock = state.current_player.dock @ fst (draw_n_times state.bag draw_num);
+      score = state.current_player.score + calc_score state.board;
       words = state.current_player.words (* tracking words is gonna require some reworking *)
     }
   }
