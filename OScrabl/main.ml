@@ -29,9 +29,8 @@ let rec gameplay st msg =
   | Can'tPlaceTile -> gameplay st "Can't place a tile there!";
   | InvalidWord msg -> gameplay st (msg ^ " is not a word.")
   | InvalidTilePlacement -> gameplay st "Your tiles are placed incorrectly."
-  | InvalidExchange -> gameplay st 
+  | InvalidExchange -> gameplay st
                          "You do not possess the letters you are attempting to exchange."
-  | _ -> gameplay st "Exception encountered."
 
 (** [main ()] unit -> unit
     Prompts for the game to play, then starts it. *)
