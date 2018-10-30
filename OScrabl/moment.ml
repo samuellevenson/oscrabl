@@ -315,21 +315,21 @@ let rec remove_first_instance to_check lst acc =
   | h::t -> if h = to_check then (acc@t)
     else (remove_first_instance to_check t (acc@[h]))
 
-(**[return_to_dock st tiles] is the game state [st] with [tiles] appended to the 
+(**[return_to_dock st tiles] is the game state [st] with [tiles] appended to the
    current player's dock *)
-let return_to_dock st tiles : t = 
-  let new_dock = (st.current_player.dock@tiles) in 
-  let new_curplayer = {name = st.current_player.name; dock = new_dock; 
-                       score = st.current_player.score; words = st.current_player.words} in 
-  {board = st.board; bag = st.bag; players = st.players; 
+let return_to_dock st tiles : t =
+  let new_dock = (st.current_player.dock@tiles) in
+  let new_curplayer = {name = st.current_player.name; dock = new_dock;
+                       score = st.current_player.score; words = st.current_player.words} in
+  {board = st.board; bag = st.bag; players = st.players;
    current_player = new_curplayer}
 
 (**[recall st] is the updated [st] after Unfinal tiles are recalled. *)
-let recall st = 
+let recall st =
   let board_and_pretiles = pop_unfinals st.board in
-  let new_dockstate = return_to_dock st (snd board_and_pretiles) in 
-  {board = (fst board_and_pretiles); bag = new_dockstate.bag; 
-   players = new_dockstate.players; 
+  let new_dockstate = return_to_dock st (snd board_and_pretiles) in
+  {board = (fst board_and_pretiles); bag = new_dockstate.bag;
+   players = new_dockstate.players;
    current_player = new_dockstate.current_player}
 
 

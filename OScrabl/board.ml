@@ -439,29 +439,29 @@ let rec find_unfinal board: (int * int) =
   in board_iter 0 0
 
 (** [pop_unfinals brd] returns a tuple, with the first element being [brd] with
-    all unfinal tiles converted to nothing tiles, and the second element being 
+    all unfinal tiles converted to nothing tiles, and the second element being
     the unfinal tile list. *)
-let pop_unfinals board: (board * (pretile list)) = 
-  let rec find_unfinals index1 acclist1 = 
-    if index1 < 15 then let rec helper col acclist2 = 
-                          match col with 
+let pop_unfinals board: (board * (pretile list)) =
+  let rec find_unfinals index1 acclist1 =
+    if index1 < 15 then let rec helper col acclist2 =
+                          match col with
                           | (Unfinal a, multiplier)::t -> helper t (a::acclist2)
                           | (b, multiplier)::t -> helper t acclist2
-                          | _ -> List.rev acclist2 in 
-      let col_unfinals = helper (List.nth board index1) [] in 
+                          | _ -> List.rev acclist2 in
+      let col_unfinals = helper (List.nth board index1) [] in
       find_unfinals (index1 + 1) acclist1@col_unfinals
-    else acclist1 in 
-  let pretile_list = find_unfinals 0 [] in  
-  let rec pop_board index2 acclist3 = 
-    if index2 < 15 then let rec helper2 col acclist4 = 
-                          match (col: square list) with 
+    else acclist1 in
+  let pretile_list = find_unfinals 0 [] in
+  let rec pop_board index2 acclist3 =
+    if index2 < 15 then let rec helper2 col acclist4 =
+                          match (col: square list) with
                           | (Unfinal a, multiplier):: t -> helper2 t ((Nothing, multiplier)::acclist4)
                           | (b, multiplier)::t -> helper2 t ((b, multiplier)::acclist4)
-                          | _ -> List.rev acclist4 in 
-      let col_squares = helper2 (List.nth board index2) [] in 
-      pop_board (index2 + 1) (col_squares::acclist3) 
-    else (List.rev acclist3: board) in 
-  let new_board = pop_board 0 [] in 
+                          | _ -> List.rev acclist4 in
+      let col_squares = helper2 (List.nth board index2) [] in
+      pop_board (index2 + 1) (col_squares::acclist3)
+    else (List.rev acclist3: board) in
+  let new_board = pop_board 0 [] in
   (new_board, pretile_list)
 
 (** returns true if all squares outside of the cross centered on (x,y) do not
@@ -516,8 +516,8 @@ let calc_score board : int =
   let rec words_iter assoc score_acc =
     match assoc with
     | [] -> score_acc
-    | (word,score)::xs -> 
-      if Words.validity (List.hd (to_lower_case [word])) word_set then words_iter xs (score_acc + score)
+    | (word,score)::xs ->
+      if Words.validity word word_set then words_iter xs (score_acc + score)
       else raise (InvalidWord word)
   in
   if valid_tile_positions board
