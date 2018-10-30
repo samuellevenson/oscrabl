@@ -235,13 +235,28 @@ let update_player_in_list st player =
     current_player = st.current_player;
   }
 
+(** turn ending implemented for 1 player game *)
+let end_turn state : t =
+  let draw_num = 7 - List.length state.current_player.dock in
+  {
+    board = finalize state.board;
+    bag = snd (draw_n_times state.bag draw_num);
+    players = state.players;
+    current_player = {
+      name = state.current_player.name;
+      dock = fst (draw_n_times state.bag draw_num);
+      score = calc_score state.board;
+      words = state.current_player.words (* tracking words is gonna require some reworking *)
+    }
+  }
+
 (** [refill] t -> t
     Refill takes in a state and then returns a state in which the current player's
     dock has been refilled to 7 tiles. *)
-let refill state = 
+let refill state =
   let tiles_to_draw =  7 - (List.length state.current_player.dock) in
-  let list_bag_tuple = draw_n_times state.bag tiles_to_draw in 
-  let updated_current_player = 
+  let list_bag_tuple = draw_n_times state.bag tiles_to_draw in
+  let updated_current_player =
     {
       name = state.current_player.name;
       dock = (fst list_bag_tuple) @ state.current_player.dock;
@@ -330,6 +345,10 @@ let place_tile state (letter,(row,col)) =
     players = state.players;
     current_player = remove_tile_from_dock state tile
   }
+
+(** TODO: docs *)
+let get_score state =
+  state.current_player.score |> string_of_int
 
 (** [print_docktop dock] prints the top line of a players dock of tiles *)
 let rec print_docktop dock =
