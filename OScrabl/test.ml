@@ -1,7 +1,6 @@
 open OUnit2
 open Actions
 
-
 let make_parse_tests 
     (name: string)
     (str : string) 
@@ -67,10 +66,107 @@ let word_tests =
     make_validity_tests "valid 3" "1" test_empty_set_3 false;
     make_validity_tests "valid 4" "99" test_empty_set_3 false;
   ]
+
+let make_refill_tests 
+    (name: string)
+    (state: Moment.t)
+    (exp: int) =
+  name >:: (fun _ -> 
+      assert_equal (List.length state.current_player.dock) 
+        exp;
+    )
+
+let state_3_elements : Moment.t = {
+  board = Board.emptyBoard;
+  bag = Moment.init_bag;
+  players = [
+    {
+      name = "OScrabl Player";
+      dock =
+        [{letter = "A"; value = 1};
+         {letter = "A"; value = 1};
+         {letter = "A"; value = 1};];
+      score = 0;
+      words = [];
+    }
+  ];
+  current_player = {
+    name = "OScrabl Player";
+    dock =
+      [{letter = "A"; value = 1};
+       {letter = "A"; value = 1};
+       {letter = "A"; value = 1};];
+    score = 0;
+    words = [];
+  };
+}
+let state_0_elements : Moment.t = {
+  board = Board.emptyBoard;
+  bag = Moment.init_bag;
+  players = [
+    {
+      name = "OScrabl Player";
+      dock =
+        [];
+      score = 0;
+      words = [];
+    }
+  ];
+  current_player = {
+    name = "OScrabl Player";
+    dock =
+      [];
+    score = 0;
+    words = [];
+  };
+}
+let state_7_elements : Moment.t = {
+  board = Board.emptyBoard;
+  bag = Moment.init_bag;
+  players = [
+    {
+      name = "OScrabl Player";
+      dock =
+        [{letter = "A"; value = 1};
+         {letter = "A"; value = 1};
+         {letter = "A"; value = 1};
+         {letter = "A"; value = 1};
+         {letter = "A"; value = 1};
+         {letter = "A"; value = 1};
+         {letter = "A"; value = 1};];
+      score = 0;
+      words = [];
+    }
+  ];
+  current_player = {
+    name = "OScrabl Player";
+    dock =
+      [{letter = "A"; value = 1};
+       {letter = "A"; value = 1};
+       {letter = "A"; value = 1};
+       {letter = "A"; value = 1};
+       {letter = "A"; value = 1};
+       {letter = "A"; value = 1};
+       {letter = "A"; value = 1};];
+    score = 0;
+    words = [];
+  };
+}
+let moment_tests = 
+  [
+    make_refill_tests "Between 0 and 7 tiles" 
+      (Moment.refill state_3_elements;) 7;
+    make_refill_tests "empty dock to start" 
+      (Moment.refill state_0_elements;) 7;
+    make_refill_tests "full dock to start" 
+      (Moment.refill state_7_elements;) 7;
+  ]
+
 let suite =
   "OScrabl test suite"  >::: List.flatten [
     action_tests;
     word_tests;
+    moment_tests;
   ]
 
 let _ = run_test_tt_main suite
