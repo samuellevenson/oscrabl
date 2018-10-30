@@ -28,7 +28,7 @@ let word_array =
   (** [json_list] is the expression representing the list of jsons representing
       words in the OScrabl dictionary. *)
   let json_list = (to_list file) in
-  Array.map (fun x -> to_string x) (Array.of_list json_list)
+  Array.map (fun x -> String.uppercase_ascii (to_string x)) (Array.of_list json_list)
 
 (** [word_set] is the Hash Table that will hold all of the hash values for each
     valid word in the OScrabl dictionary. It is initialized to an empty table, but

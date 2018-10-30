@@ -247,7 +247,7 @@ let end_turn state : t =
       dock = state.current_player.dock @ fst (draw_n_times state.bag draw_num);
       score = state.current_player.score + calc_score state.board;
       words = state.current_player.words (* tracking words is gonna require some reworking *)
-    }
+    };
   }
 
 (** [refill] t -> t
@@ -356,7 +356,7 @@ let place_tile state (letter,(row,col)) =
     board = insertTile state.board (Unfinal tile) (row,col);
     bag = state.bag;
     players = state.players;
-    current_player = remove_tile_from_dock state tile
+    current_player = remove_tile_from_dock state tile;
   }
 
 (** TODO: docs *)
