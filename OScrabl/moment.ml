@@ -270,6 +270,26 @@ let refill state =
     current_player = updated_current_player;
   }
 
+(** [refill]_set_num t -> t
+    [refill_set_num] is [refill], but with the number of tiles to draw specified.
+*)
+let refill_set_num state num =
+  let tiles_to_draw =  num in
+  let list_bag_tuple = draw_n_times state.bag tiles_to_draw in
+  let updated_current_player =
+    {
+      name = state.current_player.name;
+      dock = (fst list_bag_tuple) @ state.current_player.dock;
+      score = state.current_player.score;
+      words = state.current_player.words;
+    } in
+  {
+    board = state.board;
+    bag = snd list_bag_tuple;
+    players = (update_player state.players updated_current_player []);
+    current_player = updated_current_player;
+  }
+
 (** [pretile_to_string] pretile list -> string list -> string list
     is a function that takes a list of pretiles and returns a string list where
     each element is the character string associated with the pretile.*)
@@ -289,10 +309,17 @@ let check_tiles_are_valid (state:t) (lst: string list) : bool =
       else false
   in check_tiles_are_valid_helper state lst (pretile_to_string (state.current_player.dock) )
 
+let rec remove_first_instance to_check lst acc =
+  match lst with
+  | [] -> List.rev acc
+  | h::t -> if h = to_check then (acc@t)
+    else (remove_first_instance to_check t (acc@[h]))
+
 (** [exchange] t -> string list -> t
     takes in the current game state and a string list from user input and
     removes them from the dock, then refills the dock,
-    effectively "exchanging" the tiles. *)
+    effectively "exchanging" the tiles.
+    current issue: exchange does not work when three letters are specified.*)
 let exchange state lst =
   if check_tiles_are_valid state lst then
     (*get the remaining letters in the dock after removing them. *)
@@ -301,7 +328,7 @@ let exchange state lst =
       match dock with
       | [] ->  acc
       | h::t -> if (List.mem (h.letter) upper_str_lst) then
-          (exchange_helper t upper_str_lst acc)
+          (exchange_helper t (remove_first_instance h.letter upper_str_lst []) acc)
         else (exchange_helper t upper_str_lst (h::acc))
     in
     let new_state = {
@@ -316,7 +343,7 @@ let exchange state lst =
       };
     }
     in
-    refill new_state
+    refill_set_num new_state (List.length lst)
   else raise InvalidExchange
 
 (** [place_tile state (letter,(row,col))] is the new state after a tile

@@ -275,13 +275,15 @@ let rec print_board board i =
     [Unfinal(a)] tiles converted to [a] pretiles. *)
 let tileSqrs_to_preTileSqrs squareList =
   let rec helper (sqrList: square list) (accList: (pretile * multiplier) list) =
-    match squareList with
-    | (Final(pt), multiplier)::t -> let ptSqr = (pt, multiplier) in
+    match sqrList with
+    | (Final(pt), multiplier)::t ->
+      let ptSqr = (pt, multiplier) in
       helper t (ptSqr::accList)
-    | (Unfinal(pt), multiplier)::t -> let ptSqr = (pt, multiplier) in
+    | (Unfinal(pt), multiplier)::t ->
+      let ptSqr = (pt, multiplier) in
       helper t (ptSqr::accList)
     | (Nothing, multiplier)::t -> helper t accList
-    | _ -> List.rev accList
+    | [] -> List.rev accList
   in helper squareList []
 
 (**[squares_to_wordpoints sqL] returns the string that is formed by the list of
@@ -291,15 +293,16 @@ let squares_to_word_and_points squareList =
   let pretileSqrList = tileSqrs_to_preTileSqrs squareList in
   let rec helper tL accStr accPts accMults=
     match tL with
-    | ({letter; value},multiplier)::t -> let int_word = accStr ^ letter in
+    | (pt,multiplier)::t ->
+      let int_word = accStr ^ pt.letter in
       begin match multiplier with
-        | DoubleLetter -> helper t int_word (accPts + (value * 2)) accMults
-        | TripleLetter -> helper t int_word (accPts + (value * 3)) accMults
-        | DoubleWord -> helper t int_word (accPts + (value)) (accMults * 2)
-        | TripleWord -> helper t int_word (accPts + (value)) (accMults * 3)
-        | NaN -> helper t int_word (accPts + (value)) (accMults)
+        | DoubleLetter -> helper t int_word (accPts + (pt.value * 2)) accMults
+        | TripleLetter -> helper t int_word (accPts + (pt.value * 3)) accMults
+        | DoubleWord -> helper t int_word (accPts + (pt.value)) (accMults * 2)
+        | TripleWord -> helper t int_word (accPts + (pt.value)) (accMults * 3)
+        | NaN -> helper t int_word (accPts + (pt.value)) (accMults)
       end
-    | _ -> (accStr, (accPts * accMults)) in
+    | [] -> (accStr, (accPts * accMults)) in
   helper pretileSqrList "" 0 1
 
 (**[is_word s] returns [true] if [s] is a string in dictionary.json,
@@ -453,7 +456,8 @@ let xor p1 p2 =
 *)
 let valid_tile_positions board: bool =
   let (x,y) = find_unfinal board in
-  check_uncrossed board (x,y) &&
+  check_uncrossed board (x,y)
+  &&
   (xor (List.length (get_rowadj_notNothing_sqrs board (x,y)) > 1)
      (List.length (get_coladj_notNothing_sqrs board (x,y)) > 1))
   && row_is_connected board y && col_is_connected board x
@@ -464,14 +468,14 @@ let find_words board : square list list =
   let rec board_iter x y words_acc =
     match fst (get_square board (x, y)) with
     | Unfinal tile ->
-      let to_add =
-        [(get_coladj_notNothing_sqrs board (x,y));(get_rowadj_notNothing_sqrs board (x,y))] in
-      if x < 14 then (board_iter (x+1) y) (to_add@words_acc)
-      else if y < 14 then (board_iter 0 (y+1)) (to_add@words_acc)
-      else (to_add@words_acc)
+      let new_words =
+        (get_coladj_notNothing_sqrs board (x,y))::(get_rowadj_notNothing_sqrs board (x,y))::words_acc in
+      if x < 14 then board_iter (x+1) y (new_words)
+      else if y < 14 then board_iter 0 (y+1) (new_words)
+      else new_words
     | _ ->
-      if x < 14 then (board_iter (x+1) y) words_acc
-      else if y < 14 then (board_iter 0 (y+1)) words_acc
+      if x < 14 then board_iter (x+1) y words_acc
+      else if y < 14 then board_iter 0 (y+1) words_acc
       else words_acc
   in (board_iter 0 0 []) |> List.filter (fun x -> List.length x > 1) |> List.sort_uniq compare
 
