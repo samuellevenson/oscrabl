@@ -16,6 +16,8 @@ let rec gameplay st msg =
       gameplay (place_tile st (letter,pos)) ("Placed " ^ letter)
     | Score -> gameplay st (get_score st)
     | End -> gameplay (end_turn st) "Next turn"
+    | Refill -> gameplay (refill st) "Refilled."
+    | Exchange lst -> gameplay (exchange st lst) "Letters exchanged"
     | Quit -> print_endline "Thanks for playing OScrabl!"; exit 0
     | _ -> exit 0
   with
@@ -27,6 +29,8 @@ let rec gameplay st msg =
   | Can'tPlaceTile -> gameplay st "Can't place a tile there!";
   | InvalidWord msg -> gameplay st (msg ^ " is not a word.")
   | InvalidTilePlacement -> gameplay st "Your tiles are placed incorrectly."
+  | InvalidExchange -> gameplay st 
+                         "You do not possess the letters you are attempting to exchange."
   | _ -> gameplay st "Exception encountered."
 
 (** [main ()] unit -> unit
@@ -34,7 +38,7 @@ let rec gameplay st msg =
 let main () =
   resize 80 56;
   Words.add_hash_set Words.word_set Words.word_array Hashtbl.hash;
-  gameplay init_state "Possible Commands: place, quit"
+  gameplay init_state "Possible Commands: place, quit, exchange, refill."
 
 (* Execute the game engine. *)
 let () = main ()
