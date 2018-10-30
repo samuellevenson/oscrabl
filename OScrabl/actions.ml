@@ -5,7 +5,8 @@ type action =
   | Score
   | End
   | Draw
-  | Exchange
+  | Exchange of string list
+  | Refill
   | Quit
 
 exception Blank
@@ -53,6 +54,9 @@ let single_to_int str =
   Malformed if misspelled verb or incorrect parameters to Command 
     Ex: "score p1" or "place v x2"*)
 
+let to_upper_case lst = 
+  List.map (fun x -> String.uppercase_ascii x) lst
+
 let rec parse_cmd str = 
   (*Turnes a string into a list separated by spaces*)
   let str_lst = String.split_on_char ' ' str in 
@@ -64,8 +68,9 @@ let rec parse_cmd str =
     else raise Broken
   | h::t -> 
     if h = "score" && t = [] then Score
+    else if h = "refill" && t = [] then Refill
+    else if h = "exchange" && (List.length t > 0) then Exchange (to_upper_case t)
     else if h = "end" && t = [] then End
     else if h = "draw" && t = [] then Draw
-    else if h = "exchange" && t = [] then Exchange
     else if h = "quit" && t = [] then Quit 
     else raise Broken

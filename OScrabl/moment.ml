@@ -254,7 +254,7 @@ let end_turn state : t =
     Refill takes in a state and then returns a state in which the current player's
     dock has been refilled to 7 tiles. *)
 let refill state =
-  let tiles_to_draw =  7 - (List.length state.current_player.dock) in
+  let tiles_to_draw =  (7 - (List.length state.current_player.dock)) in
   let list_bag_tuple = draw_n_times state.bag tiles_to_draw in
   let updated_current_player =
     {
@@ -273,11 +273,8 @@ let refill state =
 (** [pretile_to_string] pretile list -> string list -> string list 
     is a function that takes a list of pretiles and returns a string list where
     each element is the character string associated with the pretile.*)
-let rec pretile_to_string (pretile_lst: pretile list) (acc: string list) 
-  : string list = 
-  match pretile_lst with 
-  | [] -> acc 
-  | h::t -> pretile_to_string t (h.letter::acc)
+let rec pretile_to_string (pretile_lst: pretile list) : string list = 
+  List.map (fun x -> x.letter) pretile_lst
 
 (** [check_tiles_are_valid] t -> string list -> bool
     is a function that checks whether all strings in a string list are in the
@@ -290,7 +287,7 @@ let check_tiles_are_valid (state:t) (lst: string list) : bool =
     | h::t -> if List.mem h pretile_to_string_lst 
       then check_tiles_are_valid_helper st t pretile_to_string_lst
       else false
-  in check_tiles_are_valid_helper state lst (pretile_to_string (state.current_player.dock) [])
+  in check_tiles_are_valid_helper state lst (pretile_to_string (state.current_player.dock) )
 
 (** [exchange] t -> string list -> t
     takes in the current game state and a string list from user input and 
@@ -300,27 +297,20 @@ let exchange state lst =
   if check_tiles_are_valid state lst then
     (*get the remaining letters in the dock after removing them. *)
     let rec exchange_helper (dock:Board.pretile list) (str_lst:string list) acc=
-      let string_dock = (pretile_to_string dock []) in 
-      match str_lst with 
+      let upper_str_lst = to_upper_case str_lst in
+      match dock with 
       | [] ->  acc
-      | h::t -> if List.mem h string_dock then
-          exchange_helper dock t acc 
-        else exchange_helper dock t (h::acc)
+      | h::t -> if (List.mem (h.letter) upper_str_lst) then
+          (exchange_helper t upper_str_lst acc) 
+        else (exchange_helper t upper_str_lst (h::acc))
     in 
-    let remaining_strings = exchange_helper state.current_player.dock lst [] in 
-    (* turn remaining letters into remaining tiles. *)
-    let rec remaining_tiles rem_str acc = 
-      match rem_str with 
-      | [] -> acc
-      | h::t -> remaining_tiles t ((letter_to_tile h state)::acc) 
-    in
     let new_state = {
       board = state.board;
       bag = state.bag;
       players = state.players;
       current_player = {
         name = state.current_player.name;
-        dock = remaining_tiles remaining_strings [];
+        dock = List.rev (exchange_helper state.current_player.dock lst []);
         score = state.current_player.score;
         words = state.current_player.words;
       };
