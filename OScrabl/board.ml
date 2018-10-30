@@ -464,6 +464,20 @@ let pop_unfinals board: (board * (pretile list)) =
   let new_board = pop_board 0 [] in
   (new_board, pretile_list)
 
+(** [push_board brd] is [brd] with all Unfinal tiles converted to Final tiles. *)
+let push_board (board:board): board = 
+  let rec helper index acclist =
+    if index < 15 then begin
+      let rec helper2 col acclist2 =
+        match (col: square list) with
+        | (Unfinal a, multiplier):: t -> helper2 t ((Final a, multiplier)::acclist2)
+        | (b, multiplier)::t -> helper2 t ((b, multiplier)::acclist2)
+        | _ -> List.rev acclist2 in
+      let col_squares = helper2 (List.nth board index) [] in
+      helper (index + 1) (col_squares::acclist) end
+    else (List.rev acclist: board) in 
+  helper 0 []
+
 (** returns true if all squares outside of the cross centered on (x,y) do not
     contain unfinal tiles *)
 let check_uncrossed board (x_fix, y_fix) =
@@ -526,4 +540,4 @@ let calc_score board : int =
 
 (** [finalize_board board] turns all the Unfinal tiles into Final tiles *)
 let finalize board =
-  board
+  push_board board
