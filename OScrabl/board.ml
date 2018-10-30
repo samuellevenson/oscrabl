@@ -511,8 +511,12 @@ let calc_score board : int =
     match assoc with
     | [] -> score_acc
     | (word,score)::xs ->
+<<<<<<< HEAD
       if Words.validity (List.hd (to_lower_case [word])) word_set 
       then words_iter xs (score_acc + score)
+=======
+      if Words.validity word Words.word_set then words_iter xs (score_acc + score)
+>>>>>>> 96edd09dc3f2088701acf20662c1f4cd5b0b0fd8
       else raise (InvalidWord word)
   in
   if valid_tile_positions board
