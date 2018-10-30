@@ -27,7 +27,7 @@ let rec gameplay st msg =
   | Can'tPlaceTile -> gameplay st "Can't place a tile there!";
   | InvalidWord msg -> gameplay st (msg ^ " is not a word.")
   | InvalidTilePlacement -> gameplay st "Your tiles are placed incorrectly."
-  (* | _ -> gameplay st "Exception encountered." *)
+  | _ -> gameplay st "Exception encountered."
 
 (** [main ()] unit -> unit
     Prompts for the game to play, then starts it. *)

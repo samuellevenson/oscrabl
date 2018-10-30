@@ -423,9 +423,9 @@ let rec find_unfinal board: (int * int) =
     match fst (get_square board (x, y)) with
     | Unfinal tile -> (x,y)
     | _ ->
-      if x < 15 then (board_iter (x+1) y)
-      else if y < 15 then (board_iter 0 (y+1))
-      else failwith "no unfinal tiles on this board"
+      if x < 14 then (board_iter (x+1) y)
+      else if y < 14 then (board_iter 0 (y+1))
+      else raise InvalidTilePlacement
   in board_iter 0 0
 
 (** returns true if all squares outside of the cross centered on (x,y) do not
@@ -435,12 +435,12 @@ let check_uncrossed board (x_fix, y_fix) =
     match fst (get_square board (x, y)) with
     | Unfinal tile ->
       if x <> x_fix && y <> y_fix then false
-      else if x < 15 then board_iter (x+1) y
-      else if y < 15 then board_iter 0 (y+1)
+      else if x < 14 then board_iter (x+1) y
+      else if y < 14 then board_iter 0 (y+1)
       else true
     | _ ->
-      if x < 15 then board_iter (x+1) y
-      else if y < 15 then board_iter 0 (y+1)
+      if x < 14 then board_iter (x+1) y
+      else if y < 14 then board_iter 0 (y+1)
       else true
   in board_iter 0 0
 
@@ -466,12 +466,12 @@ let find_words board : square list list =
     | Unfinal tile ->
       let to_add =
         [(get_coladj_notNothing_sqrs board (x,y));(get_rowadj_notNothing_sqrs board (x,y))] in
-      if x < 15 then (board_iter (x+1) y) (to_add@words_acc)
-      else if y < 15 then (board_iter 0 (y+1)) (to_add@words_acc)
+      if x < 14 then (board_iter (x+1) y) (to_add@words_acc)
+      else if y < 14 then (board_iter 0 (y+1)) (to_add@words_acc)
       else (to_add@words_acc)
     | _ ->
-      if x < 15 then (board_iter (x+1) y) words_acc
-      else if y < 15 then (board_iter 0 (y+1)) words_acc
+      if x < 14 then (board_iter (x+1) y) words_acc
+      else if y < 14 then (board_iter 0 (y+1)) words_acc
       else words_acc
   in (board_iter 0 0 []) |> List.filter (fun x -> List.length x > 1) |> List.sort_uniq compare
 
