@@ -65,6 +65,7 @@ let word_tests =
     make_validity_tests "valid 2" "5" test_empty_set_3 true;
     make_validity_tests "valid 3" "1" test_empty_set_3 false;
     make_validity_tests "valid 4" "99" test_empty_set_3 false;
+    make_validity_tests "valid 5" "6" test_empty_set_3 true;
   ]
 
 let make_refill_tests 
