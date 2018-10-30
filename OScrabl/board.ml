@@ -30,6 +30,10 @@ type board = square list list
 (** The type of orientation the placement of tiles can have *)
 type orientation = Vertical | Horizontal | NoOrientation
 
+(** [to_lower_case lst] is the all lower_case ascii characters version of [lst]*)
+let to_lower_case lst = 
+  List.map (fun x -> String.lowercase_ascii x) lst
+
 (** The square list that represents the 0th column of a scrabble board at the
     start of a game *)
 let def_col_zero : square list =
@@ -507,7 +511,8 @@ let calc_score board : int =
     match assoc with
     | [] -> score_acc
     | (word,score)::xs ->
-      if Words.validity word word_set then words_iter xs (score_acc + score)
+      if Words.validity (List.hd (to_lower_case [word])) word_set 
+      then words_iter xs (score_acc + score)
       else raise (InvalidWord word)
   in
   if valid_tile_positions board
