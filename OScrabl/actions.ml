@@ -71,7 +71,7 @@ let rec parse_game_mode str =
   match gm with
   | [] -> raise Blank
   | h::t -> if h = "multiplayer" then MultiPlayer
-    else raise InvalidGameMode
+    else if h = "singleplayer" then SinglePlayer else raise InvalidGameMode
 
 let rec parse_cmd str = 
   (*Turnes a string into a list separated by spaces*)
