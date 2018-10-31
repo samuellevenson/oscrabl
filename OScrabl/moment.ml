@@ -170,7 +170,7 @@ let init_state = {
     {
       name = "OScrabl Player";
       dock =
-        (match (draw_n_times init_bag (init_draw_num 1)) with
+        (match (draw_n_times (shuffle_bag (shuffle_bag init_bag)) (init_draw_num 1)) with
          | (tilelist, bg) -> tilelist);
       score = 0;
       words = [];
@@ -185,6 +185,30 @@ let init_state = {
     words = [];
   };
 }
+
+(** [generate_initial_state] player list -> t
+    creates an initial game state given the list of players.*)
+let generate_initial_state player_list = {
+  board = emptyBoard;
+  bag = (match (draw_n_times init_bag (init_draw_num 2)) with
+      | (tilelist, bg) -> bg);
+  players = player_list;
+  current_player =  List.hd player_list;
+}
+
+
+(** [generate_player] string -> player 
+    Creates a player given a string containing a name as input.*)
+let generate_player nm st = 
+  {
+    name = nm;
+    dock =
+      (match (draw_n_times st.bag 7) with
+       | (tilelist, bg) -> tilelist);
+    score = 0;
+    words = [];
+  }
+
 
 (** [letter_to_tile] is a function taking a string containing a single letter
     and a dock as input, then returns the tile containing the letter in the dock
@@ -238,16 +262,23 @@ let update_player_in_list st player =
 (** turn ending implemented for 1 player game *)
 let end_turn state : t =
   let draw_num = 7 - List.length state.current_player.dock in
+  let curr_player = {
+    name = state.current_player.name;
+    dock = state.current_player.dock @ fst (draw_n_times state.bag draw_num);
+    score = state.current_player.score + calc_score state.board;
+    words = state.current_player.words (* tracking words is gonna require some reworking *)
+  } in 
   {
     board = finalize state.board;
     bag = snd (draw_n_times state.bag draw_num);
-    players = state.players;
-    current_player = {
-      name = state.current_player.name;
-      dock = state.current_player.dock @ fst (draw_n_times state.bag draw_num);
-      score = state.current_player.score + calc_score state.board;
-      words = state.current_player.words (* tracking words is gonna require some reworking *)
-    };
+    players = List.rev (curr_player::(List.tl (state.players))) ;
+    current_player = List.hd (List.tl state.players);
+    (* current_player = {
+       name = state.current_player.name;
+       dock = state.current_player.dock @ fst (draw_n_times state.bag draw_num);
+       score = state.current_player.score + calc_score state.board;
+       words = state.current_player.words (* tracking words is gonna require some reworking *)
+       }; *)
   }
 
 (** [refill] t -> t
