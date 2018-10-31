@@ -527,7 +527,7 @@ let rec row_iter row unfinals =
 in row_iter (get_row_sqrs board y) 0
 
 (** TODO: docs *)
-let unfinals_singley_oriented board (x,y) =
+let unfinals_singly_oriented board (x,y) =
   xor (unfinals_are_horizontal board x > 1) (unfinals_are_vertical board y > 1)
   || (unfinals_are_horizontal board x = 1 && unfinals_are_vertical board y = 1)
 
@@ -536,7 +536,7 @@ let unfinals_singley_oriented board (x,y) =
 let valid_tile_positions board: bool =
   let (x,y) = find_unfinal board in
   check_uncrossed board (x,y)
-  && unfinals_singley_oriented board (x,y)
+  && unfinals_singly_oriented board (x,y)
   && row_is_connected board y && col_is_connected board x
 
 (** [find_strings board] finds all the strings created by the unfinal tiles on the

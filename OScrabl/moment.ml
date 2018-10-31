@@ -258,22 +258,23 @@ let update_player_in_list st player =
   }
 
 (** turn ending implemented for 1 player game *)
-let end_turn state : t =
+let end_turn state : (t * string) =
   let draw_num = 7 - List.length state.current_player.dock in
+  let score = calc_score state.board in
   let curr_player = {
     name = state.current_player.name;
     dock = state.current_player.dock @ fst (draw_n_times state.bag draw_num);
-    score = state.current_player.score + calc_score state.board;
-    words = state.current_player.words (* tracking words is gonna require some reworking *)
+    score = state.current_player.score + score;
+    words = state.current_player.words
   } in
-  {
+  ({
     board = finalize state.board;
     bag = snd (draw_n_times state.bag draw_num);
     players = List.rev (curr_player::(List.tl (state.players))) ;
     current_player =
       if List.length state.players > 1 then List.hd (List.tl state.players)
       else curr_player;
-  }
+  }, string_of_int score)
 
 (** [refill] t -> t
     Refill takes in a state and then returns a state in which the current player's
@@ -406,9 +407,9 @@ let place_tile state (letter,pos) =
   }
 
 (** TODO: docs *)
-let pickup_tile state pos : t =
+let pickup_tile state pos : (t * string) =
   let (new_board, tile) = (remove_tile state.board pos) in
-  {
+  ({
     board = new_board;
     bag = state.bag;
     players = state.players;
@@ -419,7 +420,7 @@ let pickup_tile state pos : t =
         words = p.words;
         dock = tile::p.dock;
       }
-  }
+  }, tile.letter)
 
 (** TODO: docs *)
 let get_score state =

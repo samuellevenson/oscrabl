@@ -18,9 +18,12 @@ let rec gameplay st msg =
     | Place (letter,pos) ->
       gameplay (place_tile st (letter,pos)) ("Placed " ^ letter ^ "!")
     | Pickup pos ->
-      gameplay (pickup_tile st pos) "Picked up tile"
-    | Score -> gameplay st (get_score st)
-    | End -> gameplay (end_turn st) "Next turn!"
+      let (next_st, tile) = (pickup_tile st pos) in
+      gameplay next_st ("Picked up " ^ tile)
+    | Score -> gameplay st ("Your score is " ^ get_score st)
+    | End ->
+      let (next_st, score) = (end_turn st) in
+      gameplay next_st ("You scored " ^ score ^ " points. Next turn!")
     | Refill -> gameplay (refill st) "Refilled!"
     | Exchange lst -> gameplay (exchange st lst) "Letters exchanged! Next turn!"
     | Quit -> print_endline "Thanks for playing OScrabl!"; exit 0
@@ -36,8 +39,7 @@ let rec gameplay st msg =
   | Can'tPickupTile -> gameplay st "Can't pick up that tile"
   | InvalidWord msg -> gameplay st (msg ^ " is not a word. Use 'recall' to recall tiles placed on the board!")
   | InvalidTilePlacement -> gameplay st "Tiles placed incorrectly! Use 'recall' to recall tiles placed on the board!"
-  | InvalidExchange -> gameplay st
-                         "You don't have the letters you are attempting to exchange!"
+  | InvalidExchange -> gameplay st "You don't have the letters you are attempting to exchange!"
 
 let initiate_game () =
   print_string [red] "OScrabl by Richard Yu, Samuel Levenson, and Max Chen \n";
