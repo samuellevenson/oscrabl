@@ -448,7 +448,6 @@ let col_is_connected (board:board) x =
       | Nothing -> col_iter passed_unfinal passed_nothing xs
   in col_iter false false (get_col_sqrs board x)
 
-
 (** finds the position of some unfinal tile on the board, returns it as (x,y) *)
 let rec find_unfinal board: (int * int) =
   let rec board_iter x y =
@@ -518,18 +517,35 @@ let unfinals_are_horizontal board x =
 
 (** TODO: docs *)
 let unfinals_are_vertical board y =
-let rec row_iter row unfinals =
-  match row with
-  | [] -> unfinals
-  | x::xs  -> match fst x with
-    | Unfinal tile -> row_iter xs (unfinals + 1)
-    | _ -> row_iter xs unfinals
-in row_iter (get_row_sqrs board y) 0
+  let rec row_iter row unfinals =
+    match row with
+    | [] -> unfinals
+    | x::xs  -> match fst x with
+      | Unfinal tile -> row_iter xs (unfinals + 1)
+      | _ -> row_iter xs unfinals
+  in row_iter (get_row_sqrs board y) 0
 
 (** TODO: docs *)
 let unfinals_singly_oriented board (x,y) =
   xor (unfinals_are_horizontal board x > 1) (unfinals_are_vertical board y > 1)
   || (unfinals_are_horizontal board x = 1 && unfinals_are_vertical board y = 1)
+
+let is_firstmove (board:board) : bool = 
+  let (flattened_board: square list) = List.flatten board in 
+  let rec helper list = 
+    match list with 
+    |(Final a, _)::t -> false
+    | h::t -> helper t 
+    | _ -> true
+  in helper flattened_board
+
+let valid_first_move (board:board): bool = 
+  if is_firstmove board then 
+    let center_tile = (get_square board (7,7)) in 
+    match center_tile with
+    | (Unfinal a, _) -> true
+    | _ -> false
+  else true
 
 (** [valid_tile_positions board] is whether the tiles of [board] are placed in
     a valid configuration by the rules of Scrabble® *)
@@ -537,7 +553,7 @@ let valid_tile_positions board: bool =
   let (x,y) = find_unfinal board in
   check_uncrossed board (x,y)
   && unfinals_singly_oriented board (x,y)
-  && row_is_connected board y && col_is_connected board x
+  && row_is_connected board y && col_is_connected board x && (valid_first_move board)
 
 (** [find_strings board] finds all the strings created by the unfinal tiles on the
     board. These strings may not be English words *)
@@ -563,8 +579,7 @@ let calc_score board : int =
     | [] -> score_acc
     | (word,score)::xs ->
       if Words.validity word word_set then words_iter xs (score_acc + score)
-      else raise (InvalidWord word)
-  in
+      else raise (InvalidWord word)in
   if valid_tile_positions board
   then words_iter (List.map squares_to_word_and_points (find_strings board)) 0
   else raise InvalidTilePlacement
