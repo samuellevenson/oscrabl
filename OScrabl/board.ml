@@ -437,8 +437,8 @@ let row_is_connected (board:board) y =
 (** [col_is_connected board y] is true when the col does not contain any squares
     of type Nothing in between the Unfinal squares *)
 let col_is_connected (board:board) x =
-  let rec col_iter (passed_unfinal:bool) (passed_nothing:bool) row =
-    match row with
+  let rec col_iter (passed_unfinal:bool) (passed_nothing:bool) col =
+    match col with
     | [] -> true
     | x::xs -> match fst x with
       | Unfinal _ when passed_nothing -> false
@@ -506,14 +506,37 @@ let check_uncrossed board (x_fix, y_fix) =
 let xor p1 p2 =
   (p1 && not p2) || (not p1 && p2)
 
+(** TODO: docs *)
+let unfinals_are_horizontal board x =
+  let rec col_iter col unfinals =
+    match col with
+    | [] -> unfinals
+    | x::xs  -> match fst x with
+      | Unfinal tile -> col_iter xs (unfinals + 1)
+      | _ -> col_iter xs unfinals
+  in col_iter (get_col_sqrs board x) 0
+
+(** TODO: docs *)
+let unfinals_are_vertical board y =
+let rec row_iter row unfinals =
+  match row with
+  | [] -> unfinals
+  | x::xs  -> match fst x with
+    | Unfinal tile -> row_iter xs (unfinals + 1)
+    | _ -> row_iter xs unfinals
+in row_iter (get_row_sqrs board y) 0
+
+(** TODO: docs *)
+let unfinals_singley_oriented board (x,y) =
+  xor (unfinals_are_horizontal board x > 1) (unfinals_are_vertical board y > 1)
+  || (unfinals_are_horizontal board x = 1 && unfinals_are_vertical board y = 1)
+
 (** [valid_tile_positions board] is whether the tiles of [board] are placed in
     a valid configuration by the rules of Scrabble® *)
 let valid_tile_positions board: bool =
   let (x,y) = find_unfinal board in
   check_uncrossed board (x,y)
-  &&
-  (xor (List.length (get_rowadj_notNothing_sqrs board (x,y)) > 1)
-     (List.length (get_coladj_notNothing_sqrs board (x,y)) > 1))
+  && unfinals_singley_oriented board (x,y)
   && row_is_connected board y && col_is_connected board x
 
 (** [find_strings board] finds all the strings created by the unfinal tiles on the
