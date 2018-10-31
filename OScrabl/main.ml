@@ -14,6 +14,8 @@ let rec gameplay st msg =
     match parse_cmd (read_line ()) with
     | Place (letter,pos) ->
       gameplay (place_tile st (letter,pos)) ("Placed " ^ letter ^ "!")
+    | Pickup pos ->
+      gameplay (pickup_tile st pos) "Picked up tile"
     | Score -> gameplay st (get_score st)
     | End -> gameplay (end_turn st) "Next turn!"
     | Refill -> gameplay (refill st) "Refilled!"
@@ -28,6 +30,7 @@ let rec gameplay st msg =
   | Broken -> gameplay st "Invalid command!";
   | Blank -> gameplay st "No command given!";
   | Can'tPlaceTile -> gameplay st "Can't place a tile there! Use 'recall' to recall tiles placed on the board!";
+  | Can'tPickupTile -> gameplay st "Can't pick up that tile"
   | InvalidWord msg -> gameplay st (msg ^ " is not a word. Use 'recall' to recall tiles placed on the board!")
   | InvalidTilePlacement -> gameplay st "Tiles placed incorrectly! Use 'recall' to recall tiles placed on the board!"
   | InvalidExchange -> gameplay st

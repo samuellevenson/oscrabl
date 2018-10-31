@@ -296,7 +296,7 @@ let refill_set_num state num =
 let rec pretile_to_string (pretile_lst: pretile list) : string list =
   List.map (fun x -> x.letter) pretile_lst
 
-(** [remove_first_instance c l acc] is [l] with the first instance of [c] 
+(** [remove_first_instance c l acc] is [l] with the first instance of [c]
     removed. Requires: [acc] is the emtpy list. *)
 let rec remove_first_instance to_check lst acc =
   match lst with
@@ -362,9 +362,9 @@ let exchange state lst =
         score = state.current_player.score;
         words = state.current_player.words;
       };
-    } 
+    }
     in
-    let newnew_state = recall new_state in 
+    let newnew_state = recall new_state in
     refill_set_num newnew_state (List.length lst)
   else raise InvalidExchange
 
@@ -372,13 +372,29 @@ let exchange state lst =
     corresponding to [letter] has been taken from the current player's dock and
     placed onto the board at the position specified by (row,col). Raises
     BadSelection if there is no tile in the player's dock of that letter. *)
-let place_tile state (letter,(row,col)) =
+let place_tile state (letter,pos) =
   let tile = letter_to_tile letter state in
   {
-    board = insertTile state.board (Unfinal tile) (row,col);
+    board = insertTile state.board (Unfinal tile) pos;
     bag = state.bag;
     players = state.players;
     current_player = remove_tile_from_dock state tile;
+  }
+
+(** TODO: docs *)
+let pickup_tile state pos : t =
+  let (new_board, tile) = (remove_tile state.board pos) in
+  {
+    board = new_board;
+    bag = state.bag;
+    players = state.players;
+    current_player = let p = state.current_player in
+      {
+        name = p.name;
+        score = p.score;
+        words = p.words;
+        dock = tile::p.dock;
+      }
   }
 
 (** TODO: docs *)
