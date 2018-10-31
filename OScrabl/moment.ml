@@ -197,9 +197,9 @@ let generate_initial_state player_list = {
 }
 
 
-(** [generate_player] string -> player 
+(** [generate_player] string -> player
     Creates a player given a string containing a name as input.*)
-let generate_player nm st = 
+let generate_player nm st =
   {
     name = nm;
     dock =
@@ -267,18 +267,14 @@ let end_turn state : t =
     dock = state.current_player.dock @ fst (draw_n_times state.bag draw_num);
     score = state.current_player.score + calc_score state.board;
     words = state.current_player.words (* tracking words is gonna require some reworking *)
-  } in 
+  } in
   {
     board = finalize state.board;
     bag = snd (draw_n_times state.bag draw_num);
     players = List.rev (curr_player::(List.tl (state.players))) ;
-    current_player = List.hd (List.tl state.players);
-    (* current_player = {
-       name = state.current_player.name;
-       dock = state.current_player.dock @ fst (draw_n_times state.bag draw_num);
-       score = state.current_player.score + calc_score state.board;
-       words = state.current_player.words (* tracking words is gonna require some reworking *)
-       }; *)
+    current_player =
+      if List.length state.players > 1 then List.hd (List.tl state.players)
+      else curr_player;
   }
 
 (** [refill] t -> t

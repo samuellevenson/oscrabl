@@ -229,333 +229,333 @@ let remove_tile board (x,y) =
   match fst (List.nth (List.nth board x) y) with
   | Unfinal tile ->
     (columnIter 0 [], tile)
-    | _ -> raise Can'tPickupTile
+  | _ -> raise Can'tPickupTile
 
-     (** [print_topline line] prints the top half of [line], where [line] is one row
-         of a board *)
-     let rec print_topline line =
-       match line with
-       | [] -> print_endline "|"
-       | x::xs -> match x with
-         | Nothing, NaN -> print_string [] "|    "; print_topline xs
-         | Nothing, DoubleLetter ->
-           print_string [] ("|");
-           print_string [on_cyan] (" 2  "); print_topline xs
-         | Nothing, TripleLetter ->
-           print_string [] ("|");
-           print_string [on_blue] (" 3  "); print_topline xs
-         | Nothing, DoubleWord ->
-           print_string [] ("|");
-           print_string [on_magenta] (" 2  "); print_topline xs
-         | Nothing, TripleWord ->
-           print_string [] ("|");
-           print_string [on_red] (" 3  "); print_topline xs
-         | Final tile, _ | Unfinal tile, _ ->
-           print_string [] ("|");
-           print_string tile_style (" " ^ tile.letter ^ "  ");
-           print_topline xs
+(** [print_topline line] prints the top half of [line], where [line] is one row
+    of a board *)
+let rec print_topline line =
+  match line with
+  | [] -> print_endline "|"
+  | x::xs -> match x with
+    | Nothing, NaN -> print_string [] "|    "; print_topline xs
+    | Nothing, DoubleLetter ->
+      print_string [] ("|");
+      print_string [on_cyan] (" 2  "); print_topline xs
+    | Nothing, TripleLetter ->
+      print_string [] ("|");
+      print_string [on_blue] (" 3  "); print_topline xs
+    | Nothing, DoubleWord ->
+      print_string [] ("|");
+      print_string [on_magenta] (" 2  "); print_topline xs
+    | Nothing, TripleWord ->
+      print_string [] ("|");
+      print_string [on_red] (" 3  "); print_topline xs
+    | Final tile, _ | Unfinal tile, _ ->
+      print_string [] ("|");
+      print_string tile_style (" " ^ tile.letter ^ "  ");
+      print_topline xs
 
-     (** [offset tile] is the spaces needed after the value of a tile in order to
-         account for differences in number of digits.*)
-     let offset tile =
-       if tile.value >= 10 then "" else " "
+(** [offset tile] is the spaces needed after the value of a tile in order to
+    account for differences in number of digits.*)
+let offset tile =
+  if tile.value >= 10 then "" else " "
 
-     (** [print_topline line] prints the bottom half of [line], where [line] is one
-         row of a board *)
-     let rec print_botline line =
-       match line with
-       | [] -> print_endline "|"
-       | x::xs -> match x with
-         | Nothing, NaN -> print_string [] "|    "; print_botline xs
-         | Nothing, DoubleLetter ->
-           print_string [] ("|");
-           print_string [on_cyan] ("  L "); print_botline xs
-         | Nothing, TripleLetter ->
-           print_string [] ("|");
-           print_string [on_blue] ("  L "); print_botline xs
-         | Nothing, DoubleWord ->
-           print_string [] ("|");
-           print_string [on_magenta] ("  W "); print_botline xs
-         | Nothing, TripleWord ->
-           print_string [] ("|");
-           print_string [on_red] ("  W "); print_botline xs
-         | Final tile, _ | Unfinal tile, _ ->
-           print_string [] ("|");
-           print_string tile_style ("  " ^ string_of_int tile.value ^ offset tile);
-           print_botline xs
+(** [print_topline line] prints the bottom half of [line], where [line] is one
+    row of a board *)
+let rec print_botline line =
+  match line with
+  | [] -> print_endline "|"
+  | x::xs -> match x with
+    | Nothing, NaN -> print_string [] "|    "; print_botline xs
+    | Nothing, DoubleLetter ->
+      print_string [] ("|");
+      print_string [on_cyan] ("  L "); print_botline xs
+    | Nothing, TripleLetter ->
+      print_string [] ("|");
+      print_string [on_blue] ("  L "); print_botline xs
+    | Nothing, DoubleWord ->
+      print_string [] ("|");
+      print_string [on_magenta] ("  W "); print_botline xs
+    | Nothing, TripleWord ->
+      print_string [] ("|");
+      print_string [on_red] ("  W "); print_botline xs
+    | Final tile, _ | Unfinal tile, _ ->
+      print_string [] ("|");
+      print_string tile_style ("  " ^ string_of_int tile.value ^ offset tile);
+      print_botline xs
 
-     (** [print_linenum i] prints the character corresponding to the row number with
-         A for row 1, B for row 2, and so on *)
-     let print_linenum i =
-       print_string [] ((i + 65) |> Char.chr |> Char.escaped)
+(** [print_linenum i] prints the character corresponding to the row number with
+    A for row 1, B for row 2, and so on *)
+let print_linenum i =
+  print_string [] ((i + 65) |> Char.chr |> Char.escaped)
 
-     (** [print_board board] prints a graphical representation of [board] into the
-         terminal window *)
-     let rec print_board board i =
-       let rec print_iter board i =
-         print_endline " +————+————+————+————+————+————+————+————+————+————+————+————+————+————+————+";
-         match board with
-         | [] -> ()
-         | x::xs ->
-           print_linenum i; print_topline x; print_string [] " ";
-           print_botline x; print_iter xs (i + 1)
-       in print_endline "   0    1    2    3    4    5    6    7    8    9    10   11   12   13   14";
-       print_iter board i
+(** [print_board board] prints a graphical representation of [board] into the
+    terminal window *)
+let rec print_board board i =
+  let rec print_iter board i =
+    print_endline " +————+————+————+————+————+————+————+————+————+————+————+————+————+————+————+";
+    match board with
+    | [] -> ()
+    | x::xs ->
+      print_linenum i; print_topline x; print_string [] " ";
+      print_botline x; print_iter xs (i + 1)
+  in print_endline "   0    1    2    3    4    5    6    7    8    9    10   11   12   13   14";
+  print_iter board i
 
-     (** [tileSqrs_to_preTileSqrs sqrList] returns [sqrList] with all [Final(a)] and
-         [Unfinal(a)] tiles converted to [a] pretiles. [Nothing] tiles are removed. *)
-     let tileSqrs_to_preTileSqrs squareList =
-       let rec helper (sqrList: square list) (accList: (pretile * multiplier) list) =
-         match sqrList with
-         | (Final(pt), multiplier)::t -> let ptSqr = (pt, multiplier) in
-           helper t (ptSqr::accList)
-         | (Unfinal(pt), multiplier)::t ->
-           let ptSqr = (pt, multiplier) in
-           helper t (ptSqr::accList)
-         | (Nothing, multiplier)::t -> helper t accList
-         | [] -> List.rev accList
-       in helper squareList []
+(** [tileSqrs_to_preTileSqrs sqrList] returns [sqrList] with all [Final(a)] and
+    [Unfinal(a)] tiles converted to [a] pretiles. [Nothing] tiles are removed. *)
+let tileSqrs_to_preTileSqrs squareList =
+  let rec helper (sqrList: square list) (accList: (pretile * multiplier) list) =
+    match sqrList with
+    | (Final(pt), multiplier)::t -> let ptSqr = (pt, multiplier) in
+      helper t (ptSqr::accList)
+    | (Unfinal(pt), multiplier)::t ->
+      let ptSqr = (pt, multiplier) in
+      helper t (ptSqr::accList)
+    | (Nothing, multiplier)::t -> helper t accList
+    | [] -> List.rev accList
+  in helper squareList []
 
-     (**[squares_to_wordpoints sqL] returns the string that is formed by the list of
-        tiles from [sqL], and the point value for the string after factoring in
-        multiplers **)
-     let squares_to_word_and_points squareList =
-       let pretileSqrList = tileSqrs_to_preTileSqrs squareList in
-       let rec helper tL accStr accPts accMults=
-         match tL with
-         | (pt,multiplier)::t ->
-           let int_word = accStr ^ pt.letter in
-           begin match multiplier with
-             | DoubleLetter -> helper t int_word (accPts + (pt.value * 2)) accMults
-             | TripleLetter -> helper t int_word (accPts + (pt.value * 3)) accMults
-             | DoubleWord -> helper t int_word (accPts + (pt.value)) (accMults * 2)
-             | TripleWord -> helper t int_word (accPts + (pt.value)) (accMults * 3)
-             | NaN -> helper t int_word (accPts + (pt.value)) (accMults)
-           end
-         | [] -> (accStr, (accPts * accMults)) in
-       helper pretileSqrList "" 0 1
+(**[squares_to_wordpoints sqL] returns the string that is formed by the list of
+   tiles from [sqL], and the point value for the string after factoring in
+   multiplers **)
+let squares_to_word_and_points squareList =
+  let pretileSqrList = tileSqrs_to_preTileSqrs squareList in
+  let rec helper tL accStr accPts accMults=
+    match tL with
+    | (pt,multiplier)::t ->
+      let int_word = accStr ^ pt.letter in
+      begin match multiplier with
+        | DoubleLetter -> helper t int_word (accPts + (pt.value * 2)) accMults
+        | TripleLetter -> helper t int_word (accPts + (pt.value * 3)) accMults
+        | DoubleWord -> helper t int_word (accPts + (pt.value)) (accMults * 2)
+        | TripleWord -> helper t int_word (accPts + (pt.value)) (accMults * 3)
+        | NaN -> helper t int_word (accPts + (pt.value)) (accMults)
+      end
+    | [] -> (accStr, (accPts * accMults)) in
+  helper pretileSqrList "" 0 1
 
-     (**[is_word s] returns [true] if [s] is a string in dictionary.json,
-        otherwise [false]. *)
-     let is_word str =
-       (Words.validity str word_set)
+(**[is_word s] returns [true] if [s] is a string in dictionary.json,
+   otherwise [false]. *)
+let is_word str =
+  (Words.validity str word_set)
 
-     (**[all_are_words strList] returns [true] if all strings in [strList] are in the
-        dictionary.json, otherwise [false] *)
-     let rec all_are_words strList =
-       match strList with
-       | h::t -> if (is_word h) then (all_are_words t) else false
-       | _ -> true
+(**[all_are_words strList] returns [true] if all strings in [strList] are in the
+   dictionary.json, otherwise [false] *)
+let rec all_are_words strList =
+  match strList with
+  | h::t -> if (is_word h) then (all_are_words t) else false
+  | _ -> true
 
-     (**[get_row_sqrs board y] returns the list of squares of row [y] on [board].
-        Raises [Invalid_Row] if the row does not exist. *)
-     let get_row_sqrs (board:board) y =
-       if (y>=0 && y<15) then
-         let rec helper xPos accList =
-           if (xPos < 15)
-           then helper (xPos + 1) (accList@[List.nth (List.nth board xPos) y])
-           else accList
-         in helper 0 []
-       else raise InvalidRow
+(**[get_row_sqrs board y] returns the list of squares of row [y] on [board].
+   Raises [Invalid_Row] if the row does not exist. *)
+let get_row_sqrs (board:board) y =
+  if (y>=0 && y<15) then
+    let rec helper xPos accList =
+      if (xPos < 15)
+      then helper (xPos + 1) (accList@[List.nth (List.nth board xPos) y])
+      else accList
+    in helper 0 []
+  else raise InvalidRow
 
-     (**[get_col_sqrs board x] returns the list of squares of column [x] on [board].
-        Raises [Invalid_Column] if the column does not exist. *)
-     let get_col_sqrs (board:board) x =
-       if (x>= 0 && x<15) then List.nth board x
-       else raise InvalidColumn
+(**[get_col_sqrs board x] returns the list of squares of column [x] on [board].
+   Raises [Invalid_Column] if the column does not exist. *)
+let get_col_sqrs (board:board) x =
+  if (x>= 0 && x<15) then List.nth board x
+  else raise InvalidColumn
 
-     (**[get_rowadj_notNothing_sqrs board (x,y)] returns the list of horizontally
-        connected squares that don't contain any Nothing tiles. The list includes the
-        square at position [(x,y)] on [board]. If the square at position [(x,y)]
-        contains a Nothing tile, raises [NothingSquare]. *)
-     let get_rowadj_notNothing_sqrs board (x,y) =
-       let sqr = get_square board (x,y) in
-       match sqr with
-       | (Nothing, multiplier) -> raise NothingSquare
-       | _ -> begin
-           let rec rightHelper xPos (accSqrList: square list) =
-             if (xPos<14) then (let tentSqr = get_square board (xPos,y) in
-                                match tentSqr with
-                                | (Nothing, multiplier) -> accSqrList
-                                | _ -> rightHelper (xPos+1) (accSqrList@[tentSqr]))
-             else accSqrList in
-           let rec leftHelper xPos (accSqrList: square list) =
-             if (xPos>=0) then (let tentSqr = get_square board (xPos,y) in
-                                match tentSqr with
-                                | (Nothing, multiplier) -> accSqrList
-                                | _ -> leftHelper (xPos-1) (tentSqr::accSqrList))
-             else accSqrList in
-           if (x<14 && x>0) then
-             let leftList = leftHelper (x+1) [sqr] in
-             let rightList = rightHelper (x-1) [] in leftList@rightList;
-           else if (x=14) then leftHelper (x-1) [sqr]
-           else rightHelper (x+1) [sqr]
-         end
+(**[get_rowadj_notNothing_sqrs board (x,y)] returns the list of horizontally
+   connected squares that don't contain any Nothing tiles. The list includes the
+   square at position [(x,y)] on [board]. If the square at position [(x,y)]
+   contains a Nothing tile, raises [NothingSquare]. *)
+let get_rowadj_notNothing_sqrs board (x,y) =
+  let sqr = get_square board (x,y) in
+  match sqr with
+  | (Nothing, multiplier) -> raise NothingSquare
+  | _ -> begin
+      let rec rightHelper xPos (accSqrList: square list) =
+        if (xPos<14) then (let tentSqr = get_square board (xPos,y) in
+                           match tentSqr with
+                           | (Nothing, multiplier) -> accSqrList
+                           | _ -> rightHelper (xPos+1) (accSqrList@[tentSqr]))
+        else accSqrList in
+      let rec leftHelper xPos (accSqrList: square list) =
+        if (xPos>=0) then (let tentSqr = get_square board (xPos,y) in
+                           match tentSqr with
+                           | (Nothing, multiplier) -> accSqrList
+                           | _ -> leftHelper (xPos-1) (tentSqr::accSqrList))
+        else accSqrList in
+      if (x<14 && x>0) then
+        let leftList = leftHelper (x+1) [sqr] in
+        let rightList = rightHelper (x-1) [] in leftList@rightList;
+      else if (x=14) then leftHelper (x-1) [sqr]
+      else rightHelper (x+1) [sqr]
+    end
 
-     (**[get_coladj_notNothing_sqrs board (x,y)] returns the list of vertically
-        connected squares that don't contain any Nothing tiles. The list includes the
-        square at position [(x,y)] on [board]. If the square at position [(x,y)]
-        contains a Nothing tile, raises [NothingSquare]. *)
-     let get_coladj_notNothing_sqrs board (x,y) =
-       let sqr = get_square board (x,y) in
-       match sqr with
-       | (Nothing, multiplier) -> raise NothingSquare
-       | _ -> begin
-           let rec botHelper yPos (accSqrList: square list) =
-             if (yPos<14) then (let tentSqr = get_square board (x,yPos) in
-                                match tentSqr with
-                                | (Nothing, multiplier) -> accSqrList
-                                | _ -> botHelper (yPos+1) (accSqrList@[tentSqr]))
-             else accSqrList in
-           let rec topHelper yPos (accSqrList: square list) =
-             if (yPos>=0) then (let tentSqr = get_square board (x,yPos) in
-                                match tentSqr with
-                                | (Nothing, multiplier) -> accSqrList
-                                | _ -> topHelper (yPos-1) (tentSqr::accSqrList))
-             else accSqrList in
-           if (y<14 && y>0) then
-             let botList = botHelper (y+1) [sqr] in
-             let topList = topHelper (y-1) [] in topList@botList
-           else if (y=14) then topHelper (y-1) [sqr]
-           else botHelper (y+1) [sqr]
-         end
+(**[get_coladj_notNothing_sqrs board (x,y)] returns the list of vertically
+   connected squares that don't contain any Nothing tiles. The list includes the
+   square at position [(x,y)] on [board]. If the square at position [(x,y)]
+   contains a Nothing tile, raises [NothingSquare]. *)
+let get_coladj_notNothing_sqrs board (x,y) =
+  let sqr = get_square board (x,y) in
+  match sqr with
+  | (Nothing, multiplier) -> raise NothingSquare
+  | _ -> begin
+      let rec botHelper yPos (accSqrList: square list) =
+        if (yPos<14) then (let tentSqr = get_square board (x,yPos) in
+                           match tentSqr with
+                           | (Nothing, multiplier) -> accSqrList
+                           | _ -> botHelper (yPos+1) (accSqrList@[tentSqr]))
+        else accSqrList in
+      let rec topHelper yPos (accSqrList: square list) =
+        if (yPos>=0) then (let tentSqr = get_square board (x,yPos) in
+                           match tentSqr with
+                           | (Nothing, multiplier) -> accSqrList
+                           | _ -> topHelper (yPos-1) (tentSqr::accSqrList))
+        else accSqrList in
+      if (y<14 && y>0) then
+        let botList = botHelper (y+1) [sqr] in
+        let topList = topHelper (y-1) [] in topList@botList
+      else if (y=14) then topHelper (y-1) [sqr]
+      else botHelper (y+1) [sqr]
+    end
 
-     (** [row_is_connected board y] is true when the row does not contain any squares
-         of type Nothing in between the Unfinal squares *)
-     let row_is_connected (board:board) y =
-       let rec row_iter (passed_unfinal:bool) (passed_nothing:bool) (row:square list) =
-         match row with
-         | [] -> true
-         | x::xs -> match fst x with
-           | Unfinal _ when passed_nothing -> false
-           | Unfinal _ -> row_iter true passed_nothing xs
-           | Final _ -> row_iter passed_unfinal passed_nothing xs
-           | Nothing when passed_unfinal -> row_iter passed_unfinal true xs
-           | Nothing -> row_iter passed_unfinal passed_nothing xs
-       in row_iter false false (get_row_sqrs board y)
+(** [row_is_connected board y] is true when the row does not contain any squares
+    of type Nothing in between the Unfinal squares *)
+let row_is_connected (board:board) y =
+  let rec row_iter (passed_unfinal:bool) (passed_nothing:bool) (row:square list) =
+    match row with
+    | [] -> true
+    | x::xs -> match fst x with
+      | Unfinal _ when passed_nothing -> false
+      | Unfinal _ -> row_iter true passed_nothing xs
+      | Final _ -> row_iter passed_unfinal passed_nothing xs
+      | Nothing when passed_unfinal -> row_iter passed_unfinal true xs
+      | Nothing -> row_iter passed_unfinal passed_nothing xs
+  in row_iter false false (get_row_sqrs board y)
 
-     (** [col_is_connected board y] is true when the col does not contain any squares
-         of type Nothing in between the Unfinal squares *)
-     let col_is_connected (board:board) x =
-       let rec col_iter (passed_unfinal:bool) (passed_nothing:bool) row =
-         match row with
-         | [] -> true
-         | x::xs -> match fst x with
-           | Unfinal _ when passed_nothing -> false
-           | Unfinal _ -> col_iter true passed_nothing xs
-           | Final _ -> col_iter passed_unfinal passed_nothing xs
-           | Nothing when passed_unfinal -> col_iter passed_unfinal true xs
-           | Nothing -> col_iter passed_unfinal passed_nothing xs
-       in col_iter false false (get_col_sqrs board x)
+(** [col_is_connected board y] is true when the col does not contain any squares
+    of type Nothing in between the Unfinal squares *)
+let col_is_connected (board:board) x =
+  let rec col_iter (passed_unfinal:bool) (passed_nothing:bool) row =
+    match row with
+    | [] -> true
+    | x::xs -> match fst x with
+      | Unfinal _ when passed_nothing -> false
+      | Unfinal _ -> col_iter true passed_nothing xs
+      | Final _ -> col_iter passed_unfinal passed_nothing xs
+      | Nothing when passed_unfinal -> col_iter passed_unfinal true xs
+      | Nothing -> col_iter passed_unfinal passed_nothing xs
+  in col_iter false false (get_col_sqrs board x)
 
 
-     (** finds the position of some unfinal tile on the board, returns it as (x,y) *)
-     let rec find_unfinal board: (int * int) =
-       let rec board_iter x y =
-         match fst (get_square board (x, y)) with
-         | Unfinal tile -> (x,y)
-         | _ ->
-           if x < 14 then (board_iter (x+1) y)
-           else if y < 14 then (board_iter 0 (y+1))
-           else raise InvalidTilePlacement
-       in board_iter 0 0
+(** finds the position of some unfinal tile on the board, returns it as (x,y) *)
+let rec find_unfinal board: (int * int) =
+  let rec board_iter x y =
+    match fst (get_square board (x, y)) with
+    | Unfinal tile -> (x,y)
+    | _ ->
+      if x < 14 then (board_iter (x+1) y)
+      else if y < 14 then (board_iter 0 (y+1))
+      else raise InvalidTilePlacement
+  in board_iter 0 0
 
-     (** [pop_unfinals brd] returns a tuple, with the first element being [brd] with
-         all unfinal tiles converted to nothing tiles, and the second element being
-         the unfinal tile list. *)
-     let pop_unfinals board: (board * (pretile list)) =
-       let rec find_unfinals index1 acclist1 =
-         if index1 < 15 then let rec helper col acclist2 =
-                               match col with
-                               | (Unfinal a, multiplier)::t -> helper t (a::acclist2)
-                               | (b, multiplier)::t -> helper t acclist2
-                               | _ -> List.rev acclist2 in
-           let col_unfinals = helper (List.nth board index1) [] in
-           find_unfinals (index1 + 1) acclist1@col_unfinals
-         else acclist1 in
-       let pretile_list = find_unfinals 0 [] in
-       let rec pop_board index2 acclist3 =
-         if index2 < 15 then let rec helper2 col acclist4 =
-                               match (col: square list) with
-                               | (Unfinal a, multiplier):: t -> helper2 t ((Nothing, multiplier)::acclist4)
-                               | (b, multiplier)::t -> helper2 t ((b, multiplier)::acclist4)
-                               | _ -> List.rev acclist4 in
-           let col_squares = helper2 (List.nth board index2) [] in
-           pop_board (index2 + 1) (col_squares::acclist3)
-         else (List.rev acclist3: board) in
-       let new_board = pop_board 0 [] in
-       (new_board, pretile_list)
+(** [pop_unfinals brd] returns a tuple, with the first element being [brd] with
+    all unfinal tiles converted to nothing tiles, and the second element being
+    the unfinal tile list. *)
+let pop_unfinals board: (board * (pretile list)) =
+  let rec find_unfinals index1 acclist1 =
+    if index1 < 15 then let rec helper col acclist2 =
+                          match col with
+                          | (Unfinal a, multiplier)::t -> helper t (a::acclist2)
+                          | (b, multiplier)::t -> helper t acclist2
+                          | _ -> List.rev acclist2 in
+      let col_unfinals = helper (List.nth board index1) [] in
+      find_unfinals (index1 + 1) acclist1@col_unfinals
+    else acclist1 in
+  let pretile_list = find_unfinals 0 [] in
+  let rec pop_board index2 acclist3 =
+    if index2 < 15 then let rec helper2 col acclist4 =
+                          match (col: square list) with
+                          | (Unfinal a, multiplier):: t -> helper2 t ((Nothing, multiplier)::acclist4)
+                          | (b, multiplier)::t -> helper2 t ((b, multiplier)::acclist4)
+                          | _ -> List.rev acclist4 in
+      let col_squares = helper2 (List.nth board index2) [] in
+      pop_board (index2 + 1) (col_squares::acclist3)
+    else (List.rev acclist3: board) in
+  let new_board = pop_board 0 [] in
+  (new_board, pretile_list)
 
-     (** returns true if all squares outside of the cross centered on (x,y) do not
-         contain unfinal tiles *)
-     let check_uncrossed board (x_fix, y_fix) =
-       let rec board_iter x y =
-         match fst (get_square board (x, y)) with
-         | Unfinal tile ->
-           if x <> x_fix && y <> y_fix then false
-           else if x < 14 then board_iter (x+1) y
-           else if y < 14 then board_iter 0 (y+1)
-           else true
-         | _ ->
-           if x < 14 then board_iter (x+1) y
-           else if y < 14 then board_iter 0 (y+1)
-           else true
-       in board_iter 0 0
+(** returns true if all squares outside of the cross centered on (x,y) do not
+    contain unfinal tiles *)
+let check_uncrossed board (x_fix, y_fix) =
+  let rec board_iter x y =
+    match fst (get_square board (x, y)) with
+    | Unfinal tile ->
+      if x <> x_fix && y <> y_fix then false
+      else if x < 14 then board_iter (x+1) y
+      else if y < 14 then board_iter 0 (y+1)
+      else true
+    | _ ->
+      if x < 14 then board_iter (x+1) y
+      else if y < 14 then board_iter 0 (y+1)
+      else true
+  in board_iter 0 0
 
-     (** prefix exclusive or operator *)
-     let xor p1 p2 =
-       (p1 && not p2) || (not p1 && p2)
+(** prefix exclusive or operator *)
+let xor p1 p2 =
+  (p1 && not p2) || (not p1 && p2)
 
-     (** [valid_tile_positions board] is whether the tiles of [board] are placed in
-         a valid configuration by the rules of Scrabble® *)
-     let valid_tile_positions board: bool =
-       let (x,y) = find_unfinal board in
-       check_uncrossed board (x,y)
-       &&
-       (xor (List.length (get_rowadj_notNothing_sqrs board (x,y)) > 1)
-          (List.length (get_coladj_notNothing_sqrs board (x,y)) > 1))
-       && row_is_connected board y && col_is_connected board x
+(** [valid_tile_positions board] is whether the tiles of [board] are placed in
+    a valid configuration by the rules of Scrabble® *)
+let valid_tile_positions board: bool =
+  let (x,y) = find_unfinal board in
+  check_uncrossed board (x,y)
+  &&
+  (xor (List.length (get_rowadj_notNothing_sqrs board (x,y)) > 1)
+     (List.length (get_coladj_notNothing_sqrs board (x,y)) > 1))
+  && row_is_connected board y && col_is_connected board x
 
-     (** [find_strings board] finds all the strings created by the unfinal tiles on the
-         board. These strings may not be English words *)
-     let find_strings board : square list list =
-       let rec board_iter x y words_acc =
-         match fst (get_square board (x, y)) with
-         | Unfinal tile ->
-           let to_add =
-             [(get_coladj_notNothing_sqrs board (x,y));(get_rowadj_notNothing_sqrs board (x,y))] in
-           if x < 14 then (board_iter (x+1) y) (to_add@words_acc)
-           else if y < 14 then (board_iter 0 (y+1)) (to_add@words_acc)
-           else (to_add@words_acc)
-         | _ ->
-           if x < 14 then board_iter (x+1) y words_acc
-           else if y < 14 then board_iter 0 (y+1) words_acc
-           else words_acc
-       in (board_iter 0 0 []) |> List.filter (fun x -> List.length x > 1) |> List.sort_uniq compare
+(** [find_strings board] finds all the strings created by the unfinal tiles on the
+    board. These strings may not be English words *)
+let find_strings board : square list list =
+  let rec board_iter x y words_acc =
+    match fst (get_square board (x, y)) with
+    | Unfinal tile ->
+      let to_add =
+        [(get_coladj_notNothing_sqrs board (x,y));(get_rowadj_notNothing_sqrs board (x,y))] in
+      if x < 14 then (board_iter (x+1) y) (to_add@words_acc)
+      else if y < 14 then (board_iter 0 (y+1)) (to_add@words_acc)
+      else (to_add@words_acc)
+    | _ ->
+      if x < 14 then board_iter (x+1) y words_acc
+      else if y < 14 then board_iter 0 (y+1) words_acc
+      else words_acc
+  in (board_iter 0 0 []) |> List.filter (fun x -> List.length x > 1) |> List.sort_uniq compare
 
-     (** Score? *)
-     let calc_score board : int =
-       let rec words_iter assoc score_acc =
-         match assoc with
-         | [] -> score_acc
-         | (word,score)::xs ->
-           if Words.validity word word_set then words_iter xs (score_acc + score)
-           else raise (InvalidWord word)
-       in
-       if valid_tile_positions board
-       then words_iter (List.map squares_to_word_and_points (find_strings board)) 0
-       else raise InvalidTilePlacement
+(** Score? *)
+let calc_score board : int =
+  let rec words_iter assoc score_acc =
+    match assoc with
+    | [] -> score_acc
+    | (word,score)::xs ->
+      if Words.validity word word_set then words_iter xs (score_acc + score)
+      else raise (InvalidWord word)
+  in
+  if valid_tile_positions board
+  then words_iter (List.map squares_to_word_and_points (find_strings board)) 0
+  else raise InvalidTilePlacement
 
-     (** [finalize_board board] turns all the Unfinal tiles into Final tiles *)
-     let finalize board =
-       let rec helper index acclist =
-         if index < 15 then begin
-           let rec helper2 col acclist2 =
-             match (col: square list) with
-             | (Unfinal a, multiplier):: t -> helper2 t ((Final a, multiplier)::acclist2)
-             | (b, multiplier)::t -> helper2 t ((b, multiplier)::acclist2)
-             | _ -> List.rev acclist2 in
-           let col_squares = helper2 (List.nth board index) [] in
-           helper (index + 1) (col_squares::acclist) end
-         else (List.rev acclist: board) in
-       helper 0 []
+(** [finalize_board board] turns all the Unfinal tiles into Final tiles *)
+let finalize board =
+  let rec helper index acclist =
+    if index < 15 then begin
+      let rec helper2 col acclist2 =
+        match (col: square list) with
+        | (Unfinal a, multiplier):: t -> helper2 t ((Final a, NaN)::acclist2)
+        | (b, multiplier)::t -> helper2 t ((b, multiplier)::acclist2)
+        | [] -> List.rev acclist2 in
+      let col_squares = helper2 (List.nth board index) [] in
+      helper (index + 1) (col_squares::acclist) end
+    else (List.rev acclist: board) in
+  helper 0 []
