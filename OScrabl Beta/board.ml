@@ -530,20 +530,30 @@ let unfinals_singly_oriented board (x,y) =
   xor (unfinals_are_horizontal board x > 1) (unfinals_are_vertical board y > 1)
   || (unfinals_are_horizontal board x = 1 && unfinals_are_vertical board y = 1)
 
-let is_firstmove (board:board) : bool =
-  let (flattened_board: square list) = List.flatten board in
-  let rec helper list =
-    match list with
+let is_firstmove (board:board) : bool = 
+  let (flattened_board: square list) = List.flatten board in 
+  let rec helper list = 
+    match list with 
     |(Final a, _)::t -> false
-    | h::t -> helper t
+    | h::t -> helper t 
     | _ -> true
   in helper flattened_board
 
-let valid_first_move (board:board): bool =
-  let center_tile = (get_square board (7,7)) in
-  match center_tile with
-  | (Unfinal a, _) -> true
-  | _ -> false
+let valid_first_move (board:board): bool = 
+  if is_firstmove board then 
+    let center_tile = (get_square board (7,7)) in 
+    match center_tile with
+    | (Unfinal a, _) -> true
+    | _ -> false
+  else true
+
+(** [valid_tile_positions board] is whether the tiles of [board] are placed in
+    a valid configuration by the rules of Scrabble® *)
+let valid_tile_positions board: bool =
+  let (x,y) = find_unfinal board in
+  check_uncrossed board (x,y)
+  && unfinals_singly_oriented board (x,y)
+  && row_is_connected board y && col_is_connected board x && (valid_first_move board)
 
 (** [find_strings board] finds all the strings created by the unfinal tiles on the
     board. These strings may not be English words *)
@@ -562,38 +572,17 @@ let find_strings board : square list list =
       else words_acc
   in (board_iter 0 0 []) |> List.filter (fun x -> List.length x > 1) |> List.sort_uniq compare
 
-let adj_final_tiles board: bool =
-  let rec iter = function
-    | [] -> false
-    | (tile,_)::xs -> match tile with
-      | Final _ -> true
-      | _ -> iter xs
-  in iter (List.flatten (find_strings board))
-
-(** [valid_tile_positions board] is whether the tiles of [board] are placed in
-    a valid configuration by the rules of Scrabble® *)
-let valid_tile_positions board: bool =
-  let (x,y) = find_unfinal board in
-  (if is_firstmove board then valid_first_move board else adj_final_tiles board)
-  && check_uncrossed board (x,y)
-  && unfinals_singly_oriented board (x,y)
-  && row_is_connected board y && col_is_connected board x
-
 (** Score? *)
-let calc_scoretuples board : (int * (string * int) list)=
-  let rec words_iter assoc score_acc tuple_acc =
+let calc_score board : int =
+  let rec words_iter assoc score_acc =
     match assoc with
-    | [] -> (score_acc, tuple_acc)
+    | [] -> score_acc
     | (word,score)::xs ->
-      if Words.validity word word_set then words_iter xs (score_acc + score) ((word,score)::tuple_acc)
+      if Words.validity word word_set then words_iter xs (score_acc + score)
       else raise (InvalidWord word)in
   if valid_tile_positions board
-  then words_iter (List.map squares_to_word_and_points (find_strings board)) 0 []
+  then words_iter (List.map squares_to_word_and_points (find_strings board)) 0
   else raise InvalidTilePlacement
-
-let calc_score board = fst (calc_scoretuples board)
-
-let valid_words_and_pts board : (string*int) list = snd (calc_scoretuples board)
 
 (** [finalize_board board] turns all the Unfinal tiles into Final tiles *)
 let finalize board =
