@@ -386,8 +386,8 @@ let get_rowadj_notNothing_sqrs board (x,y) =
                            | _ -> leftHelper (xPos-1) (tentSqr::accSqrList))
         else accSqrList in
       if (x<14 && x>0) then
-        let leftList = leftHelper (x+1) [sqr] in
-        let rightList = rightHelper (x-1) [] in leftList@rightList;
+        let leftList = leftHelper (x-1) [sqr] in
+        let rightList = rightHelper (x+1) [] in leftList@rightList;
       else if (x=14) then leftHelper (x-1) [sqr]
       else rightHelper (x+1) [sqr]
     end

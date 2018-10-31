@@ -196,7 +196,6 @@ let generate_initial_state player_list = {
   current_player =  List.hd player_list;
 }
 
-
 (** [generate_player] string -> player
     Creates a player given a string containing a name as input.*)
 let generate_player nm st =
@@ -208,7 +207,6 @@ let generate_player nm st =
     score = 0;
     words = [];
   }
-
 
 (** [letter_to_tile] is a function taking a string containing a single letter
     and a dock as input, then returns the tile containing the letter in the dock
@@ -369,7 +367,8 @@ let recall st =
     removes them from the dock, then refills the dock,
     effectively "exchanging" the tiles.*)
 let exchange state lst =
-  if check_tiles_are_valid state lst then
+  if (check_tiles_are_valid state lst) &&
+     (List.length state.current_player.dock = 7) then
     (*get the remaining letters in the dock after removing them. *)
     let rec exchange_helper (dock:Board.pretile list) (str_lst:string list) acc=
       let upper_str_lst = to_upper_case str_lst in
@@ -390,9 +389,7 @@ let exchange state lst =
         words = state.current_player.words;
       };
     }
-    in
-    let newnew_state = recall new_state in
-    refill_set_num newnew_state (List.length lst)
+    in refill_set_num new_state (List.length lst)
   else raise InvalidExchange
 
 (** [place_tile state (letter,(row,col))] is the new state after a tile
