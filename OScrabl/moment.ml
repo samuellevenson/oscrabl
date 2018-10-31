@@ -372,6 +372,8 @@ let exchange state lst =
   if (List.length state.current_player.dock <> 7) then raise InvalidExchange
   else if (check_tiles_are_valid state lst) then
     (*get the remaining letters in the dock after removing them. *)
+    let pretiles_being_exchanged : pretile list = 
+      (List.map (fun x -> letter_to_tile x state) lst) in 
     let rec exchange_helper (dock:Board.pretile list) (str_lst:string list) acc=
       let upper_str_lst = to_upper_case str_lst in
       match dock with
@@ -391,7 +393,22 @@ let exchange state lst =
         words = state.current_player.words;
       };
     }
-    in refill_set_num new_state (List.length lst)
+    in 
+    let refilled_state = refill_set_num new_state (List.length lst)
+    in 
+    let rec add_to_bag bag lst = match lst with 
+      | [] -> shuffle_bag (shuffle_bag (shuffle_bag bag)) 
+      | h::t ->  add_to_bag (h::bag) t 
+    in
+    let exchanged_state = {
+      board = refilled_state.board;
+      bag = add_to_bag new_state.bag pretiles_being_exchanged;
+      players = refilled_state.players;
+      current_player = refilled_state.current_player;
+    }
+    in 
+    exchanged_state
+
   else raise MissingTilesToExchange
 
 (** [place_tile state (letter,(row,col))] is the new state after a tile
