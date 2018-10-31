@@ -39,7 +39,8 @@ let rec gameplay st msg =
   | Can'tPickupTile -> gameplay st "Can't pick up that tile"
   | InvalidWord msg -> gameplay st (msg ^ " is not a word. Use 'recall' to recall tiles placed on the board!")
   | InvalidTilePlacement -> gameplay st "Tiles placed incorrectly! Use 'recall' to recall tiles placed on the board!"
-  | InvalidExchange -> gameplay st "You don't have the letters you are attempting to exchange!"
+  | InvalidExchange -> gameplay st "You can't exchange with tiles on the board"
+  | MissingTilesToExchange -> gameplay st "You don't have the letters you are attempting to exchange!"
 
 let initiate_game () =
   print_string [red] "OScrabl by Richard Yu, Samuel Levenson, and Max Chen \n";

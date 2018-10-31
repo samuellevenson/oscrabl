@@ -4,6 +4,7 @@ open Actions
 
 (** the exception raised when there is an attempt to draw from an empty bag *)
 exception EmptyBag
+exception MissingTilesToExchange
 exception InvalidExchange
 
 (** the type of the player *)
@@ -368,8 +369,8 @@ let recall st =
     removes them from the dock, then refills the dock,
     effectively "exchanging" the tiles.*)
 let exchange state lst =
-  if (check_tiles_are_valid state lst) &&
-     (List.length state.current_player.dock = 7) then
+  if (List.length state.current_player.dock <> 7) then raise InvalidExchange
+  else if (check_tiles_are_valid state lst) then
     (*get the remaining letters in the dock after removing them. *)
     let rec exchange_helper (dock:Board.pretile list) (str_lst:string list) acc=
       let upper_str_lst = to_upper_case str_lst in
@@ -391,7 +392,7 @@ let exchange state lst =
       };
     }
     in refill_set_num new_state (List.length lst)
-  else raise InvalidExchange
+  else raise MissingTilesToExchange
 
 (** [place_tile state (letter,(row,col))] is the new state after a tile
     corresponding to [letter] has been taken from the current player's dock and
