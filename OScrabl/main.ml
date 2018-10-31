@@ -65,6 +65,9 @@ let initiate_game () =
     | _ -> gameplay init_state "Possible Commands: place, recall, quit, exchange, refill."
   with
   | InvalidGameMode -> gameplay init_state "Can't play selected mode. Starting singleplayer."
+  | IncompleteGameMode -> 
+    gameplay init_state 
+      "SinglePlayer implementation currently incomplete; there is no AI."
 (* Temporary placeholder due to lack of singleplayer game mode*)
 
 
