@@ -573,16 +573,20 @@ let find_strings board : square list list =
   in (board_iter 0 0 []) |> List.filter (fun x -> List.length x > 1) |> List.sort_uniq compare
 
 (** Score? *)
-let calc_score board : int =
-  let rec words_iter assoc score_acc =
+let calc_scoretuples board : (int * (string * int) list)=
+  let rec words_iter assoc score_acc tuple_acc =
     match assoc with
-    | [] -> score_acc
+    | [] -> (score_acc, tuple_acc)
     | (word,score)::xs ->
-      if Words.validity word word_set then words_iter xs (score_acc + score)
+      if Words.validity word word_set then words_iter xs (score_acc + score) ((word,score)::tuple_acc)
       else raise (InvalidWord word)in
   if valid_tile_positions board
-  then words_iter (List.map squares_to_word_and_points (find_strings board)) 0
+  then words_iter (List.map squares_to_word_and_points (find_strings board)) 0 []
   else raise InvalidTilePlacement
+
+let calc_score board = fst (calc_scoretuples board)
+
+let valid_words_and_pts board : (string*int) list = snd (calc_scoretuples board)
 
 (** [finalize_board board] turns all the Unfinal tiles into Final tiles *)
 let finalize board =
