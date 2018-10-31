@@ -10,6 +10,12 @@ type action =
   | Recall
   | Quit
 
+type game_mode = 
+  | SinglePlayer
+  | MultiPlayer
+
+exception InvalidGameMode 
+
 exception Blank
 
 exception Broken
@@ -57,6 +63,14 @@ let single_to_int str =
 
 let to_upper_case lst = 
   List.map (fun x -> String.uppercase_ascii x) lst
+
+let rec parse_game_mode str = 
+  let str_lst = String.split_on_char ' ' str in 
+  let gm = rm_space str_lst in 
+  match gm with 
+  | [] -> raise Blank
+  | h::t -> if h = "multiplayer" then MultiPlayer
+    else raise InvalidGameMode
 
 let rec parse_cmd str = 
   (*Turnes a string into a list separated by spaces*)

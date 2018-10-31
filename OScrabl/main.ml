@@ -3,12 +3,15 @@ open Moment
 open Board
 open ANSITerminal
 
+
+
 let rec gameplay st msg =
   let _ = Sys.command "clear" in
   print_string [red]
     "             OScrabl by Richard Yu, Samuel Levenson, and Max Chen \n";
   print_game st;
   print_endline msg;
+  print_string [red] ("Current player: " ^ st.current_player.name);
   print_string [] "\n> ";
   try
     match parse_cmd (read_line ()) with
@@ -33,12 +36,39 @@ let rec gameplay st msg =
   | InvalidExchange -> gameplay st
                          "You don't have the letters you are attempting to exchange!"
 
+let initiate_game () = 
+  print_string [red] "OScrabl by Richard Yu, Samuel Levenson, and Max Chen \n";
+  print_string [red] "Choices: multiplayer or singleplayer. Note: AI currently unimplemented. ";
+  print_string [] "\n> ";
+  try 
+    match parse_game_mode (read_line ()) with 
+    | MultiPlayer -> 
+      print_string [red] "Enter Player 1's Name.";
+      print_string [] "\n> ";
+      let p1_name = read_line () in 
+      print_string [red] "Enter Player 2's Name.";
+      print_string [] "\n> ";
+      let p2_name = read_line () in 
+      let p1 = generate_player p1_name init_state in 
+      let temp_state = generate_initial_state [p1] in 
+
+      let p2 = generate_player p2_name temp_state in 
+      let initial_state = generate_initial_state [p1;p2] in
+      gameplay initial_state "Possible Commands: place, recall, quit, exchange, refill."
+
+    | _ -> gameplay init_state "Possible Commands: place, recall, quit, exchange, refill."
+  with 
+  | InvalidGameMode -> gameplay init_state "Can't play selected mode. Starting singleplayer."
+(* Temporary placeholder due to lack of singleplayer game mode*)
+
+
 (** [main ()] unit -> unit
     Prompts for the game to play, then starts it. *)
 let main () =
   resize 80 56;
   Words.add_hash_set Words.word_set Words.word_array Hashtbl.hash;
-  gameplay init_state "Possible Commands: place, recall, quit, exchange, refill."
+  (* gameplay init_state "Possible Commands: place, recall, quit, exchange, refill." *)
+  initiate_game ()  
 
 (* Execute the game engine. *)
 let () = main ()
