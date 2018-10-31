@@ -15,7 +15,7 @@ type game_mode =
   | SinglePlayer
   | MultiPlayer
 
-exception IncompleteGameMode 
+exception IncompleteGameMode
 
 exception InvalidGameMode
 
@@ -73,14 +73,10 @@ let rec parse_game_mode str =
   match gm with
   | [] -> raise Blank
   | h::t -> if h = "multiplayer" then MultiPlayer
-<<<<<<< HEAD
-    else if h = "singleplayer" then SinglePlayer else raise InvalidGameMode
-=======
-    else if h = "singleplayer" then raise IncompleteGameMode 
+    else if h = "singleplayer" then raise IncompleteGameMode
     else raise InvalidGameMode
->>>>>>> c546182c8e6224b629b58549acaee4e8e2592661
 
-let rec parse_cmd str = 
+let rec parse_cmd str =
   (*Turnes a string into a list separated by spaces*)
   let str_lst = String.split_on_char ' ' str in
   let action = rm_space str_lst in
