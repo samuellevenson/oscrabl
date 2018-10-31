@@ -362,9 +362,10 @@ let exchange state lst =
         score = state.current_player.score;
         words = state.current_player.words;
       };
-    }
+    } 
     in
-    refill_set_num new_state (List.length lst)
+    let newnew_state = recall new_state in 
+    refill_set_num newnew_state (List.length lst)
   else raise InvalidExchange
 
 (** [place_tile state (letter,(row,col))] is the new state after a tile
