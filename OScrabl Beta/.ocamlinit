@@ -1,9 +1,0 @@
-#require "oUnit";;
-#require "yojson";;
-#require "ANSITerminal";;
-#directory "_build";;
-#load_rec "main.cmo";;
-#load_rec "board.cmo";;
-#load_rec "actions.cmo";;
-#load_rec "words.cmo";;
-#load_rec "moment.cmo";;
