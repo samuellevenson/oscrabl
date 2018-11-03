@@ -15,6 +15,7 @@ type action =
 type game_mode =
   | SinglePlayer
   | MultiPlayer
+  | QuitGame
 
 exception IncompleteGameMode
 
@@ -74,6 +75,7 @@ let rec parse_game_mode str =
   match gm with
   | [] -> raise Blank
   | h::t -> if h = "multiplayer" then MultiPlayer
+    else if h = "quit" then QuitGame
     else if h = "singleplayer" then raise IncompleteGameMode
     else raise InvalidGameMode
 
