@@ -179,6 +179,17 @@ let horizontal_tile_placements b (x,y) size: (int * int) list =
     let leftward_sqrs = minimize1 (emptySqrs_left b (x,y)) in 
     let rightward_sqrs = minimize1 (emptySqrs_right b (x,y)) in 
     List.rev leftward_sqrs@rightward_sqrs else raise InvalidSize
+(* Returns a tile list tuple list containing all combinations of two valid tiles. *)
+let rec get_two_letter_permutations (st:Moment.t) (valid_tiles:pretile list) acc = 
+  let rec match_dock tile dock acc =
+    match dock with 
+    | [] -> acc
+    | h::t -> match_dock tile t ((tile, h)::acc)
+  in 
+  match valid_tiles with 
+  | []-> acc
+  | h::t  -> get_two_letter_permutations st t 
+               ((match_dock h st.current_player.dock [])::acc)
 
 let ai's_moves (cur_st:Moment.t): Actions.action list = 
   let cur_brain = {original_state = cur_st; 
