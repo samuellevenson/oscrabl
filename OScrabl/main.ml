@@ -21,6 +21,8 @@ let rec gameplay st msg =
       let (next_st, tile) = (pickup_tile st pos) in
       gameplay next_st ("Picked up " ^ tile)
     | Score -> gameplay st ("Your score is " ^ get_score st)
+    | Help -> gameplay st 
+                ("Your available actions are: place, score, recall, quit, exchange, pickup, help.")
     | End ->
       let (next_st, score) = (end_turn st) in
       gameplay next_st ("You scored " ^ score ^ " points. Next turn!")
@@ -60,9 +62,9 @@ let initiate_game () =
 
       let p2 = generate_player p2_name temp_state in
       let initial_state = generate_initial_state [p1;p2] in
-      gameplay initial_state "Possible Commands: place, recall, quit, exchange, refill."
+      gameplay initial_state ""
 
-    | _ -> gameplay init_state "Possible Commands: place, recall, quit, exchange, refill."
+    | _ -> gameplay init_state ""
   with
   | InvalidGameMode -> gameplay init_state "Can't play selected mode. Starting singleplayer."
   | IncompleteGameMode -> 
