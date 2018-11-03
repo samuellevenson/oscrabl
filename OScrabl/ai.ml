@@ -108,11 +108,12 @@ let minimize1 coordList =
 
 
 
-(** [vertical_tile_placements b c s] is the list of coordinates for vertical tile
-    placements anchored on coordinate [c] on [b] that one can make. The length 
-    of the list is limited to [2 * size]. Raises InvalidSize if [size] > 7 or 
-    [size] < 1 Arranged from bottom to top. Example: [(7,8), (7,6), (7,5)], 
-    anchored on a board with only a single Final tile placed on (7,7). *)
+(** [vertical_tile_placements b c s] is the list of coordinates for possible 
+    vertical tile placements anchored on coordinate [c] on [b] that one can 
+    make. The length of the list is limited to [2 * size]. Raises InvalidSize 
+    if [size] > 7 or [size] < 1. Arranged from bottom to top. 
+    Example: [(7,8), (7,6), (7,5)], anchored on a board with only a single Final
+    tile placed on (7,7). *)
 let vertical_tile_placements b (x,y) size: (int * int) list = 
   if (size > 7) then raise InvalidSize else 
   if (size = 7) then 
@@ -144,11 +145,12 @@ let vertical_tile_placements b (x,y) size: (int * int) list =
     let downward_sqrs = minimize1 (emptySqrs_down b (x,y)) in 
     List.rev downward_sqrs@upward_sqrs else raise InvalidSize
 
-(** [horizontal_tile_placements b c s] is the list of coordinates for horizontal
-    tile placements anchored on coordinate [c] on [b] that one can make. The length 
-    of the list is limited to [2 * size]. Raises InvalidSize if [size] > 7 or 
-    [size] < 1. Arranged from left to right. Example: [(6,7), (8,7), (9,7)], 
-    anchored on a board with only a single Final tile placed on (7,7).*)
+(** [horizontal_tile_placements b c s] is the list of coordinates for possible 
+    horizontal tile placements anchored on coordinate [c] on [b] that one can 
+    make. The length of the list is limited to [2 * size]. Raises InvalidSize 
+    if [size] > 7 or [size] < 1. Arranged from left to right. 
+    Example: [(6,7), (8,7), (9,7)], anchored on a board with only a single Final 
+    tile placed on (7,7).*)
 let horizontal_tile_placements b (x,y) size: (int * int) list = 
   if (size > 7) then raise InvalidSize else 
   if (size = 7) then 
