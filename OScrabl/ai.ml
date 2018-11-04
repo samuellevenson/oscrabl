@@ -335,7 +335,7 @@ let dock_letters dock =
    (List.nth dock 4).letter; (List.nth dock 5).letter;
    (List.nth dock 6).letter]
 
-let ai_moves (cur_st:Moment.t): Actions.action list = 
+let ai_actions (cur_st:Moment.t): Actions.action list = 
 
   (* setting up *)
   let cur_brain = {original_state = cur_st; 
@@ -367,6 +367,7 @@ let ai_moves (cur_st:Moment.t): Actions.action list =
 
                     let current_perm = List.nth perms permIndex in 
 
+                    (* (5) construct action list for permutation at hand *)
                     let rec helper5 pos2 perm_items list2 = 
                       match (pos2, perm_items) with 
                       | (c1::t1,c2::t2) -> helper5 t1 t2 ((Place ((c2.letter), c1))::list2)
