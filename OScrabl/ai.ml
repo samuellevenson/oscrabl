@@ -389,7 +389,7 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
   let valid_tile_placement = first_valid_tiles cur_brain.original_state all_possible_tile_placements in
   match valid_tile_placement with
   | [] -> [Exchange (dock_letters dock)]
-  | _ -> valid_tile_placement
+  | _ -> (List.rev (End::valid_tile_placement))
 
 
 
