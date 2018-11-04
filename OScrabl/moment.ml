@@ -152,7 +152,7 @@ let draw currentBag: (pretile * pretile list) =
     tiles *)
 let draw_n_times currentBag n: (pretile list * pretile list) =
   let rec helper bg n accTileList =
-    if (n>0) then match (draw bg) with
+    if (n > 0) then match (draw bg) with
       | (ti, ba) ->  helper ba (n-1) (ti::accTileList)
     else (accTileList, bg) in
   helper currentBag n []
@@ -165,53 +165,45 @@ let init_draw_num num_of_players = num_of_players * 7
     tiles drawn from a bag, and a bag with all tiles except for those 7 *)
 let init_state = {
   board = emptyBoard;
-  bag = (match (draw_n_times init_bag (init_draw_num 1)) with
-      | (tilelist, bg) -> bg);
-  players = [
-    {
-      name = "OScrabl Player";
-      dock =
-        (match (draw_n_times (shuffle_bag (shuffle_bag init_bag)) (init_draw_num 1)) with
-         | (tilelist, bg) -> tilelist);
-      score = 0;
-      words = [];
-    }
-  ];
-  current_player =  {
-    name = "OScrabl Player";
-    dock =
-      (match (draw_n_times init_bag (init_draw_num 1)) with
-       | (tilelist, bg) -> tilelist);
+  bag = init_bag;
+  players = [];
+  current_player = {
+    name = "undefined";
+    dock = [];
     score = 0;
     words = [];
   };
 }
 
-(** [generate_initial_state] player list -> t
-    creates an initial game state given the list of players.*)
-let generate_initial_state player_list = {
-  board = emptyBoard;
-  bag = (match (draw_n_times init_bag (init_draw_num 2)) with
-      | (tilelist, bg) -> bg);
-  players = player_list;
-  current_player =  List.hd player_list;
-}
-
-(** [generate_player] string -> player
-    Creates a player given a string containing a name as input.*)
-let generate_player nm st =
-  {
-    name = nm;
-    dock =
-      (match (draw_n_times st.bag 7) with
-       | (tilelist, bg) -> tilelist);
-    score = 0;
-    words = [];
-  }
+(** [add_players state players] creates a new state from the list of player
+    names *)
+let rec add_players state players =
+  match players with
+  | x::xs ->
+    let new_player = {
+      name = x;
+      dock = draw_n_times state.bag 7 |> fst;
+      score = 0;
+      words = []
+    } in
+    let next_state = {
+      board = state.board;
+      bag = draw_n_times state.bag 7 |> snd;
+      players = new_player::state.players;
+      current_player = state.current_player
+    } in
+    add_players next_state xs
+  | [] ->
+    {
+      board = state.board;
+      bag = state.bag;
+      players = state.players;
+      current_player = state.players |> List.hd
+    }
 
 (** [letter_to_tile] is a function taking a string containing a single letter
     and a dock as input, then returns the tile containing the letter in the dock
-    if it exists.**)
+    if it exists. *)
 let letter_to_tile letter state =
   let rec dock_iter = function
     | [] -> raise BadSelection
@@ -259,7 +251,7 @@ let update_player_in_list st player =
   }
 
 (** turn ending implemented for 1 player game *)
-let end_turn state : (t * string) =
+let play_word state : (t * string) =
   let draw_num = 7 - List.length state.current_player.dock in
   let score = calc_score state.board in
   let curr_player = {
@@ -359,10 +351,12 @@ let return_to_dock st tiles : t =
 let recall st =
   let board_and_pretiles = pop_unfinals st.board in
   let new_dockstate = return_to_dock st (snd board_and_pretiles) in
-  {board = (fst board_and_pretiles); bag = new_dockstate.bag;
-   players = new_dockstate.players;
-   current_player = new_dockstate.current_player}
-
+  {
+    board = (fst board_and_pretiles);
+    bag = new_dockstate.bag;
+    players = new_dockstate.players;
+    current_player = new_dockstate.current_player
+  }
 
 (** [exchange] t -> string list -> t
     takes in the current game state and a string list from user input and
@@ -372,8 +366,8 @@ let exchange state lst =
   if (List.length state.current_player.dock <> 7) then raise InvalidExchange
   else if (check_tiles_are_valid state lst) then
     (*get the remaining letters in the dock after removing them. *)
-    let pretiles_being_exchanged : pretile list = 
-      (List.map (fun x -> letter_to_tile x state) lst) in 
+    let pretiles_being_exchanged : pretile list =
+      (List.map (fun x -> letter_to_tile x state) lst) in
     let rec exchange_helper (dock:Board.pretile list) (str_lst:string list) acc=
       let upper_str_lst = to_upper_case str_lst in
       match dock with
@@ -393,12 +387,12 @@ let exchange state lst =
         words = state.current_player.words;
       };
     }
-    in 
+    in
     let refilled_state = refill_set_num new_state (List.length lst)
-    in 
-    let rec add_to_bag bag lst = match lst with 
-      | [] -> shuffle_bag (shuffle_bag (shuffle_bag bag)) 
-      | h::t ->  add_to_bag (h::bag) t 
+    in
+    let rec add_to_bag bag lst = match lst with
+      | [] -> shuffle_bag (shuffle_bag (shuffle_bag bag))
+      | h::t ->  add_to_bag (h::bag) t
     in
     let exchanged_state = {
       board = refilled_state.board;
@@ -406,7 +400,7 @@ let exchange state lst =
       players = refilled_state.players;
       current_player = refilled_state.current_player;
     }
-    in 
+    in
     exchanged_state
 
   else raise MissingTilesToExchange

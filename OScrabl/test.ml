@@ -1,17 +1,17 @@
 open OUnit2
 open Actions
 
-let make_parse_tests 
+let make_parse_tests
     (name: string)
-    (str : string) 
-    (exp_cmd : Actions.action) = 
-  name >:: (fun _ -> 
-      assert_equal exp_cmd (Actions.parse_cmd str); 
+    (str : string)
+    (exp_cmd : Actions.action) =
+  name >:: (fun _ ->
+      assert_equal exp_cmd (Actions.parse_cmd str);
     )
-let make_parse_failures 
+let make_parse_failures
     (name: string)
-    (str : string) 
-    (error : exn) = 
+    (str : string)
+    (error : exn) =
   name >:: (fun _ -> assert_raises error (fun () -> Actions.parse_cmd str)
            )
 
@@ -28,11 +28,11 @@ let action_tests =
   ]
 
 
-let test_empty_set_1 : (int Words.StringHashTbl.t) = 
+let test_empty_set_1 : (int Words.StringHashTbl.t) =
   Words.StringHashTbl.create (3)
-let test_empty_set_2 : (int Words.StringHashTbl.t) = 
+let test_empty_set_2 : (int Words.StringHashTbl.t) =
   Words.StringHashTbl.create (3)
-let test_empty_set_3 : (int Words.StringHashTbl.t) = 
+let test_empty_set_3 : (int Words.StringHashTbl.t) =
   Words.StringHashTbl.create (3)
 
 let make_add_set_tests
@@ -40,8 +40,8 @@ let make_add_set_tests
     (arr: string array)
     (set: int Words.StringHashTbl.t)
     (exp: int Words.StringHashTbl.t) =
-  name >:: (fun _ -> 
-      (Words.add_hash_set set arr Hashtbl.hash); 
+  name >:: (fun _ ->
+      (Words.add_hash_set set arr Hashtbl.hash);
       Words.StringHashTbl.add test_empty_set_2 "1" (Hashtbl.hash "1");
       Words.StringHashTbl.add test_empty_set_2 "2" (Hashtbl.hash "2");
       Words.StringHashTbl.add test_empty_set_2 "3" (Hashtbl.hash "3");
@@ -53,9 +53,9 @@ let make_validity_tests
     (str: string)
     (set: int Words.StringHashTbl.t)
     (exp: bool) =
-  name >:: (fun _ -> 
+  name >:: (fun _ ->
       Words.add_hash_set test_empty_set_3 [|"4"; "5"; "6"|] Hashtbl.hash;
-      assert_equal exp (Words.validity str set); 
+      assert_equal exp (Words.validity str set);
     )
 
 let word_tests =
@@ -68,12 +68,12 @@ let word_tests =
     make_validity_tests "valid 5" "6" test_empty_set_3 true;
   ]
 
-let make_refill_tests 
+let make_refill_tests
     (name: string)
     (state: Moment.t)
     (exp: int) =
-  name >:: (fun _ -> 
-      assert_equal (List.length state.current_player.dock) 
+  name >:: (fun _ ->
+      assert_equal (List.length state.current_player.dock)
         exp;
     )
 
@@ -153,13 +153,13 @@ let state_7_elements : Moment.t = {
     words = [];
   };
 }
-let moment_tests = 
+let moment_tests =
   [
-    make_refill_tests "Between 0 and 7 tiles" 
+    make_refill_tests "Between 0 and 7 tiles"
       (Moment.refill state_3_elements;) 7;
-    make_refill_tests "empty dock to start" 
+    make_refill_tests "empty dock to start"
       (Moment.refill state_0_elements;) 7;
-    make_refill_tests "full dock to start" 
+    make_refill_tests "full dock to start"
       (Moment.refill state_7_elements;) 7;
   ]
 

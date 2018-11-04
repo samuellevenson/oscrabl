@@ -17,8 +17,6 @@ type game_mode =
   | MultiPlayer
   | QuitGame
 
-exception IncompleteGameMode
-
 exception InvalidGameMode
 
 exception Blank
@@ -74,9 +72,10 @@ let rec parse_game_mode str =
   let gm = rm_space str_lst in
   match gm with
   | [] -> raise Blank
-  | h::t -> if h = "multiplayer" then MultiPlayer
+  | h::t ->
+    if h = "multiplayer" then MultiPlayer
     else if h = "quit" then QuitGame
-    else if h = "singleplayer" then raise IncompleteGameMode
+    else if h = "singleplayer" then SinglePlayer
     else raise InvalidGameMode
 
 let rec parse_cmd str =
