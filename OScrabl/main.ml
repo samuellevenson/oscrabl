@@ -22,7 +22,8 @@ let rec gameplay st msg =
       gameplay next_st ("Picked up " ^ tile)
     | Score -> gameplay st ("Your score is " ^ get_score st)
     | Help -> gameplay st 
-                ("Your available actions are: place, score, recall, quit, exchange, pickup, help.")
+                ("Your available actions are: place, score,
+                 recall, quit, exchange, pickup, help.")
     | End ->
       let (next_st, score) = (end_turn st) in
       gameplay next_st ("You scored " ^ score ^ " points. Next turn!")
@@ -46,6 +47,15 @@ let rec gameplay st msg =
 
 let initiate_game () =
   print_string [red] "OScrabl by Richard Yu, Samuel Levenson, and Max Chen \n";
+  print_string [] "
+ ██████╗ ███████╗ ██████╗██████╗  █████╗ ██████╗ ██╗     
+██╔═══██╗██╔════╝██╔════╝██╔══██╗██╔══██╗██╔══██╗██║     
+██║   ██║███████╗██║     ██████╔╝███████║██████╔╝██║     
+██║   ██║╚════██║██║     ██╔══██╗██╔══██║██╔══██╗██║     
+╚██████╔╝███████║╚██████╗██║  ██║██║  ██║██████╔╝███████╗
+ ╚═════╝ ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝
+
+";
   print_string [red] "Choices: multiplayer or singleplayer. Note: AI currently unimplemented. ";
   print_string [] "\n> ";
   try
@@ -63,6 +73,7 @@ let initiate_game () =
       let p2 = generate_player p2_name temp_state in
       let initial_state = generate_initial_state [p1;p2] in
       gameplay initial_state ""
+    | QuitGame -> print_endline "Thanks for playing OScrabl!"; exit 0
 
     | _ -> gameplay init_state ""
   with
