@@ -6,6 +6,7 @@ type action =
   | Score
   | End
   | Draw
+  | Help
   | Exchange of string list
   | Refill
   | Recall
@@ -89,6 +90,7 @@ let rec parse_cmd str =
   | h::t ->
     if h = "score" && t = [] then Score
     else if h = "refill" && t = [] then Refill
+    else if h = "help" && t = [] then Help
     else if h = "exchange" && (List.length t > 0) then Exchange (to_upper_case t)
     else if h = "end" && t = [] then End
     else if h = "draw" && t = [] then Draw
