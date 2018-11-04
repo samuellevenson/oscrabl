@@ -356,7 +356,7 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
           if (windowSize >= 1) then 
             let perms = permutate dock (windowSize) in
 
-            (* (3) begin iterating through all possible permutations for window size at hand *)
+            (* (3) begin iterating through all possible lists of positions for window size at hand *)
             let rec helper3 positions accCmd = 
               match positions with 
               | pos1::t -> 
