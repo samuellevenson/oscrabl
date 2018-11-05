@@ -4,7 +4,7 @@ MLS=$(MODULES:=.ml)
 TEST=test.byte
 MAIN=main.byte
 OCAMLBUILD=ocamlbuild -use-ocamlfind
-
+PKGS=oUnit,ANSITerminal,Yojson
 
 build:
 	$(OCAMLBUILD) $(OBJECTS)
@@ -19,9 +19,13 @@ play:
 check:
 	bash checkenv.sh && bash checktypes.sh
 
-docs:
-	mkdir -p doc
-	ocamldoc -d doc -html main.ml
+docs:	docs-private
+
+docs-private: build
+	mkdir -p doc.private
+	ocamlfind ocamldoc -I _build -package $(PKGS) \
+		-html -stars -d doc.private \
+		$(MLS)
 
 clean:
 	ocamlbuild -clean

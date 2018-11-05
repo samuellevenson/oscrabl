@@ -1,0 +1,244 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Words.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Board" rel="Chapter" href="Board.html">
+<link title="Actions" rel="Chapter" href="Actions.html">
+<link title="Moment" rel="Chapter" href="Moment.html">
+<link title="Main" rel="Chapter" href="Main.html">
+<link title="Words" rel="Chapter" href="Words.html">
+<link title="Ai" rel="Chapter" href="Ai.html"><title>Ai</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Words.html" title="Words">Previous</a>
+&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;</div>
+<h1>Module <a href="type_Ai.html">Ai</a></h1>
+
+<pre><span id="MODULEAi"><span class="keyword">module</span> Ai</span>: <code class="code">sig</code> <a href="Ai.html">..</a> <code class="code">end</code></pre><hr width="100%">
+
+<pre><span id="EXCEPTIONInvalidSize"><span class="keyword">exception</span> InvalidSize</span></pre>
+
+<pre><span id="EXCEPTIONTest"><span class="keyword">exception</span> Test</span></pre>
+
+<pre><code><span id="TYPEbrain"><span class="keyword">type</span> <code class="type"></code>brain</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTbrain.original_state">original_state</span>&nbsp;: <code class="type"><a href="Moment.html#TYPEt">Moment.t</a></code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTbrain.hypothetical_state">hypothetical_state</span>&nbsp;: <code class="type"><a href="Moment.html#TYPEt">Moment.t</a></code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTbrain.actions">actions</span>&nbsp;: <code class="type"><a href="Actions.html#TYPEaction">Actions.action</a> list</code>;</code></td>
+
+</tr></table>
+}
+
+<div class="info ">
+<div class="info-desc">
+<p>the type for ai a</p>
+</div>
+</div>
+
+
+<pre><span id="VALemptySqrs_right"><span class="keyword">val</span> emptySqrs_right</span> : <code class="type"><a href="Board.html#TYPEboard">Board.board</a> -> int * int -> (int * int) list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">emptySqrs_down b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile 
+    squares that are vertically below <code class="code">c</code> on <code class="code">b</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALemptySqrs_left"><span class="keyword">val</span> emptySqrs_left</span> : <code class="type"><a href="Board.html#TYPEboard">Board.board</a> -> int * int -> (int * int) list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">emptySqrs_up b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile 
+    squares that are vertically above <code class="code">c</code> on <code class="code">b</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALemptySqrs_up"><span class="keyword">val</span> emptySqrs_up</span> : <code class="type"><a href="Board.html#TYPEboard">Board.board</a> -> int * int -> (int * int) list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">emptySqrs_left b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile 
+    squares that are horizontally left from <code class="code">c</code> on <code class="code">b</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALemptySqrs_down"><span class="keyword">val</span> emptySqrs_down</span> : <code class="type"><a href="Board.html#TYPEboard">Board.board</a> -> int * int -> (int * int) list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">emptySqrs_right b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile 
+    squares that are horizontally right from <code class="code">c</code> on <code class="code">b</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALminimize7"><span class="keyword">val</span> minimize7</span> : <code class="type">'a list -> 'a list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">minimize7 cL</code> is <code class="code">cL</code> without any of its elements after index 6, if there
+    are any.</p>
+</div>
+</div>
+
+<pre><span id="VALminimize6"><span class="keyword">val</span> minimize6</span> : <code class="type">'a list -> 'a list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">minimize6 cL</code> is <code class="code">cL</code> without any of its elements after index 5, if there
+    are any.</p>
+</div>
+</div>
+
+<pre><span id="VALminimize5"><span class="keyword">val</span> minimize5</span> : <code class="type">'a list -> 'a list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">minimize5 cL</code> is <code class="code">cL</code> without any of its elements after index 4, if there
+    are any.</p>
+</div>
+</div>
+
+<pre><span id="VALminimize4"><span class="keyword">val</span> minimize4</span> : <code class="type">'a list -> 'a list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">minimize4 cL</code> is <code class="code">cL</code> without any of its elements after index 3, if there
+    are any.</p>
+</div>
+</div>
+
+<pre><span id="VALminimize3"><span class="keyword">val</span> minimize3</span> : <code class="type">'a list -> 'a list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">minimize3 cL</code> is <code class="code">cL</code> without any of its elements after index 2, if there
+    are any.</p>
+</div>
+</div>
+
+<pre><span id="VALminimize2"><span class="keyword">val</span> minimize2</span> : <code class="type">'a list -> 'a list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">minimize2 cL</code> is <code class="code">cL</code> without any of its elements after index 1, if there
+    are any.</p>
+</div>
+</div>
+
+<pre><span id="VALminimize1"><span class="keyword">val</span> minimize1</span> : <code class="type">'a list -> 'a list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">minimize1 cL</code> is <code class="code">cL</code> without any of its elements after index 0, if there
+    are any.</p>
+</div>
+</div>
+
+<pre><span id="VALvertical_tile_placements"><span class="keyword">val</span> vertical_tile_placements</span> : <code class="type"><a href="Board.html#TYPEboard">Board.board</a> -> int * int -> int -> (int * int) list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">vertical_tile_placements b c s</code> is the list of coordinates for possible 
+    vertical tile placements anchored on coordinate <code class="code">c</code> on <code class="code">b</code> that one can 
+    make. The length of the list is limited to <code class="code">2 * size</code>. Raises InvalidSize 
+    if <code class="code">size</code> &gt; 7 or <code class="code">size</code> &lt; 1. Arranged from bottom to top. 
+    Example: <code class="code">(7,8), (7,6), (7,5)</code>, anchored on a board with only a single Final
+    tile placed on (7,7).</p>
+</div>
+</div>
+
+<pre><span id="VALhorizontal_tile_placements"><span class="keyword">val</span> horizontal_tile_placements</span> : <code class="type"><a href="Board.html#TYPEboard">Board.board</a> -> int * int -> int -> (int * int) list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">horizontal_tile_placements b c s</code> is the list of coordinates for possible 
+    horizontal tile placements anchored on coordinate <code class="code">c</code> on <code class="code">b</code> that one can 
+    make. The length of the list is limited to <code class="code">2 * size</code>. Raises InvalidSize 
+    if <code class="code">size</code> &gt; 7 or <code class="code">size</code> &lt; 1. Arranged from left to right. 
+    Example: <code class="code">(6,7), (8,7), (9,7)</code>, anchored on a board with only a single Final 
+    tile placed on (7,7).</p>
+</div>
+</div>
+
+<pre><span id="VALinsert_all_positions"><span class="keyword">val</span> insert_all_positions</span> : <code class="type">'a -> 'a list -> 'a list list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">insert_all_positions x l</code> is the list of all possible arrangements for 
+    inserting <code class="code">x</code> in <code class="code">l</code>, which is a list of permutations.</p>
+</div>
+</div>
+
+<pre><span id="VALpermutations"><span class="keyword">val</span> permutations</span> : <code class="type">'a list -> 'a list list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">permutations l</code> is the list of all possible permutations of elements in <code class="code">l</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALcombinations"><span class="keyword">val</span> combinations</span> : <code class="type">'a list -> int -> 'a list list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">combiniations l k</code> is the size <code class="code">k</code> list of all potential combinations of elements in <code class="code">l</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALtotalcombinations"><span class="keyword">val</span> totalcombinations</span> : <code class="type">'a list -> int -> 'a list list -> 'a list list</code></pre>
+<pre><span id="VALwindow_startSizes"><span class="keyword">val</span> window_startSizes</span> : <code class="type"><a href="Board.html#TYPEboard">Board.board</a> -> int * int -> int * int</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">window_startSizes b c</code> is the int*int tuple representing start window 
+    sizes for probing potential tile placements around coordinate <code class="code">c</code> on <code class="code">b</code>, with 
+    the first int representing the horizontal window size, and the second int 
+    representing the vertical window size. The window sizes are capped at 7.</p>
+</div>
+</div>
+
+<pre><span id="VALfinal_tile_coords"><span class="keyword">val</span> final_tile_coords</span> : <code class="type"><a href="Board.html#TYPEsquare">Board.square</a> list list -> (int * int) list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">final_tile_coords board</code> is the list of all coordinates of final tiles on
+    <code class="code">board</code>. No particular ordering.</p>
+</div>
+</div>
+
+<pre><span id="VALfinalTiles_windowSizes"><span class="keyword">val</span> finalTiles_windowSizes</span> : <code class="type"><a href="Board.html#TYPEboard">Board.board</a> -> (int * int) list -> ((int * int) * (int * int)) list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">finalTiles_windowSizes b tl</code> is the associative list of int tuples. It
+    associates the elements of <code class="code">tl</code>, which are coordinates of final tiles on <code class="code">b</code>, 
+    with their window start sizes.</p>
+</div>
+</div>
+
+<pre><span id="VALpermutate"><span class="keyword">val</span> permutate</span> : <code class="type">'a list -> int -> 'a list list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">permutate l n</code> is the list of all <code class="code">n</code>-size permutations of <code class="code">l</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALremove_first_element"><span class="keyword">val</span> remove_first_element</span> : <code class="type">'a list -> 'a list</code></pre>
+<pre><span id="VALsegment"><span class="keyword">val</span> segment</span> : <code class="type">'a list -> int -> 'a list list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">segment l n</code> is the in-order list of <code class="code">n</code>-size partitions of <code class="code">l</code>. 
+    Example: <code class="code">segment [1;2;3;4] 3</code> is <code class="code">[1;2;3];[2;3;4]</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALfirst_valid_tiles"><span class="keyword">val</span> first_valid_tiles</span> : <code class="type"><a href="Moment.html#TYPEt">Moment.t</a> -> <a href="Actions.html#TYPEaction">Actions.action</a> list list -> <a href="Actions.html#TYPEaction">Actions.action</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">first_valid_tiles s l</code> is the FIRST valid list of Actions, from <code class="code">l</code>. That is,
+    the list of Actions generates a state from <code class="code">s</code> with all tile placements being valid
+    and all strings formed being valid words. Returns an empty list if there isn't
+    a valid list of Actions.</p>
+</div>
+</div>
+
+<pre><span id="VALvalid_tiles"><span class="keyword">val</span> valid_tiles</span> : <code class="type"><a href="Moment.html#TYPEt">Moment.t</a> -> <a href="Actions.html#TYPEaction">Actions.action</a> list -> <a href="Actions.html#TYPEaction">Actions.action</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">valid_tiles s list</code> determines if <code class="code">list</code> produces valid tile placements 
+    and valid words, given current state <code class="code">s</code>. Returns an empty list if there
+    isn't a valid list of Actions.</p>
+</div>
+</div>
+
+<pre><span id="VALdock_letters"><span class="keyword">val</span> dock_letters</span> : <code class="type"><a href="Board.html#TYPEpretile">Board.pretile</a> list -> string list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">dock_letters d</code> is the string list of all letters on a given <code class="code">d</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALai_actions"><span class="keyword">val</span> ai_actions</span> : <code class="type"><a href="Moment.html#TYPEt">Moment.t</a> -> <a href="Actions.html#TYPEaction">Actions.action</a> list</code></pre></body></html>
