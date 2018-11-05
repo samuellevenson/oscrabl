@@ -1,5 +1,7 @@
 open OUnit2
 open Actions
+open Moment
+open Board
 
 let make_parse_tests
     (name: string)
@@ -15,6 +17,33 @@ let make_parse_failures
   name >:: (fun _ -> assert_raises error (fun () -> Actions.parse_cmd str)
            )
 
+let make_placement_tests 
+    (name: string)
+    (state: Moment.t)
+    (error: exn) = 
+  name >:: (fun _ -> assert_raises error (fun () -> Board.calc_score (Moment.get_board state)))
+
+let rule_tests = 
+  [
+    make_placement_tests "First tile is not h7" 
+      (place_tile init_state("A",(single_to_int "H", single_to_int "8")))
+      InvalidTilePlacement; 
+    make_placement_tests "Invalid Word" 
+      (place_tile (place_tile init_state ("A",(single_to_int "H", single_to_int "7")))
+         ("Z",(single_to_int "H", single_to_int "8")))
+      (InvalidWord "AZ"); 
+    make_placement_tests "Non-connected placement" 
+      (place_tile (place_tile init_state ("A",(single_to_int "H", single_to_int "7")))
+         ("T",(single_to_int "M", single_to_int "0")))
+      (InvalidWord "AZ"); 
+    make_placement_tests "Triangular Placement" 
+      (place_tile (place_tile (place_tile init_state 
+                                 ("A",(single_to_int "H", single_to_int "7")))
+                     ("T",(single_to_int "H", single_to_int "8")))
+         ("B", (single_to_int "G", single_to_int "7")))
+      (InvalidTilePlacement); 
+
+  ]
 let action_tests =
   [
     make_parse_failures "1" "aasd asdsa" Broken;
@@ -77,10 +106,10 @@ let make_refill_tests
         exp;
     )
 
-let state_3_elements : Moment.t = {
-  board = Board.emptyBoard;
-  bag = Moment.init_bag;
-  players = [
+(* let state_3_elements : Moment.t = {
+   board = Board.emptyBoard;
+   bag = Moment.init_bag;
+   players = [
     {
       name = "OScrabl Player";
       dock =
@@ -90,8 +119,8 @@ let state_3_elements : Moment.t = {
       score = 0;
       words = [];
     }
-  ];
-  current_player = {
+   ];
+   current_player = {
     name = "OScrabl Player";
     dock =
       [{letter = "A"; value = 1};
@@ -99,12 +128,12 @@ let state_3_elements : Moment.t = {
        {letter = "A"; value = 1};];
     score = 0;
     words = [];
-  };
-}
-let state_0_elements : Moment.t = {
-  board = Board.emptyBoard;
-  bag = Moment.init_bag;
-  players = [
+   };
+   }
+   let state_0_elements : Moment.t = {
+   board = Board.emptyBoard;
+   bag = Moment.init_bag;
+   players = [
     {
       name = "OScrabl Player";
       dock =
@@ -112,19 +141,19 @@ let state_0_elements : Moment.t = {
       score = 0;
       words = [];
     }
-  ];
-  current_player = {
+   ];
+   current_player = {
     name = "OScrabl Player";
     dock =
       [];
     score = 0;
     words = [];
-  };
-}
-let state_7_elements : Moment.t = {
-  board = Board.emptyBoard;
-  bag = Moment.init_bag;
-  players = [
+   };
+   }
+   let state_7_elements : Moment.t = {
+   board = Board.emptyBoard;
+   bag = Moment.init_bag;
+   players = [
     {
       name = "OScrabl Player";
       dock =
@@ -138,8 +167,8 @@ let state_7_elements : Moment.t = {
       score = 0;
       words = [];
     }
-  ];
-  current_player = {
+   ];
+   current_player = {
     name = "OScrabl Player";
     dock =
       [{letter = "A"; value = 1};
@@ -151,16 +180,16 @@ let state_7_elements : Moment.t = {
        {letter = "A"; value = 1};];
     score = 0;
     words = [];
-  };
-}
+   };
+   } *)
 let moment_tests =
   [
-    make_refill_tests "Between 0 and 7 tiles"
+    (*make_refill_tests "Between 0 and 7 tiles"
       (Moment.refill state_3_elements;) 7;
-    make_refill_tests "empty dock to start"
+      make_refill_tests "empty dock to start"
       (Moment.refill state_0_elements;) 7;
-    make_refill_tests "full dock to start"
-      (Moment.refill state_7_elements;) 7;
+      make_refill_tests "full dock to start"
+      (Moment.refill state_7_elements;) 7;*)
   ]
 
 let suite =
