@@ -368,8 +368,228 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
     | [] -> [Exchange (dock_letters dock)]
     | _ -> (List.rev (End::valid_tile_placement))
   else
+
+
     (* (1) begin iterating through each final tile **)
-    let rec vert_possible_placements (ft_ws: ((int*int) * (int*int)) list) (cmd0: action list) = 
+    let rec vert_possible_placements_small (ft_ws: ((int*int) * (int*int)) list) (cmd0: action list) = 
+      if cmd0 != [] then cmd0 else 
+        match ft_ws with 
+        | ((y,x),(vert,hor))::t -> begin 
+
+            (* (2) begin iterating through all window sizes for tile at hand *)
+            let rec helper2 windowSize cmd1 = 
+              if cmd1 != [] then cmd1 else
+
+                (* Change the 2nd "windowSize guard statement" to limit number 
+                   of possible tiles AI can place in a move.*) 
+
+              if (windowSize <= vert) && (windowSize <= 2) then 
+                let perms = permutate dock (windowSize) in
+
+                (* (3) begin iterating through all possible lists of positions for window size at hand *)
+                let rec helper3 positions cmd2 = 
+                  if cmd2 != [] then cmd2 else 
+                    match positions with 
+                    | pos1::t -> 
+
+                      (* (4) begin iterating through all possible permutations for list of positions at hand *)
+                      let rec helper4 pos1 permIndex : Actions.action list = 
+                        if (permIndex < (List.length perms)) then
+
+                          let current_perm = List.nth perms permIndex in 
+
+                          (* (5) construct action list for permutation at hand *)
+                          let rec helper5 pos2 perm_items list2 = 
+
+                            match (pos2, perm_items) with 
+                            | (c1::t1,c2::t2) -> helper5 t1 t2 ((Place ((c2.letter), c1))::list2)
+                            | _ -> let possible_actions = List.rev list2 in 
+                              match valid_tiles cur_brain.original_state possible_actions with 
+                              | [] -> (false,[]) 
+                              | _ -> (true, possible_actions) in 
+
+                          let potential_move = helper5 pos1 current_perm [] in 
+                          if (fst potential_move) then (snd potential_move) else
+                            helper4 pos1 (permIndex + 1) 
+                        else [] in 
+
+                      helper3 t ((helper4 pos1 1))
+                    | _ -> cmd2 in 
+
+                let actions_for_window = ((helper3 (segment(vertical_tile_placements orig_board (y,x) windowSize) windowSize) [])) in 
+                helper2 (windowSize + 1) actions_for_window 
+              else cmd1 in  
+
+            let actions_for_all_windows = helper2 1 [] in 
+            vert_possible_placements_small t (actions_for_all_windows)
+          end
+        | _ -> cmd0 in 
+
+    let rec hor_possible_placements_small (ft_ws: ((int*int) * (int*int)) list) (cmd0: action list) = 
+      if cmd0 != [] then cmd0 else 
+        match ft_ws with 
+        | ((y,x),(vert,hor))::t -> begin 
+
+            (* (2) begin iterating through all window sizes for tile at hand *)
+            let rec helper2 windowSize cmd1 = 
+              if cmd1 != [] then cmd1 else
+
+                (* Change the 2nd "windowSize guard statement" to limit number 
+                   of possible tiles AI can place in a move.*) 
+
+              if (windowSize <= hor) && (windowSize <= 2) then 
+                let perms = permutate dock (windowSize) in
+
+                (* (3) begin iterating through all possible lists of positions for window size at hand *)
+                let rec helper3 positions cmd2 = 
+                  if cmd2 != [] then cmd2 else 
+                    match positions with 
+                    | pos1::t -> 
+
+                      (* (4) begin iterating through all possible permutations for list of positions at hand *)
+                      let rec helper4 pos1 permIndex : Actions.action list = 
+                        if (permIndex < (List.length perms)) then
+
+                          let current_perm = List.nth perms permIndex in 
+
+                          (* (5) construct action list for permutation at hand *)
+                          let rec helper5 pos2 perm_items list2 = 
+
+                            match (pos2, perm_items) with 
+                            | (c1::t1,c2::t2) -> helper5 t1 t2 ((Place ((c2.letter), c1))::list2)
+                            | _ -> let possible_actions = List.rev list2 in 
+                              match valid_tiles cur_brain.original_state possible_actions with 
+                              | [] -> (false,[]) 
+                              | _ -> (true, possible_actions) in 
+
+                          let potential_move = helper5 pos1 current_perm [] in 
+                          if (fst potential_move) then (snd potential_move) else
+                            helper4 pos1 (permIndex + 1) 
+                        else [] in 
+
+                      helper3 t ((helper4 pos1 1))
+                    | _ -> cmd2 in 
+
+                let actions_for_window = ((helper3 (segment(horizontal_tile_placements orig_board (y,x) windowSize) windowSize) [])) in 
+                helper2 (windowSize + 1) actions_for_window 
+              else cmd1 in  
+
+            let actions_for_all_windows = helper2 1 [] in 
+            hor_possible_placements_small t (actions_for_all_windows)
+          end
+        | _ -> cmd0 in 
+
+    (* (1) begin iterating through each final tile **)
+    let rec vert_possible_placements_med (ft_ws: ((int*int) * (int*int)) list) (cmd0: action list) = 
+      if cmd0 != [] then cmd0 else 
+        match ft_ws with 
+        | ((y,x),(vert,hor))::t -> begin 
+
+            (* (2) begin iterating through all window sizes for tile at hand *)
+            let rec helper2 windowSize cmd1 = 
+              if cmd1 != [] then cmd1 else
+
+                (* Change the 2nd "windowSize guard statement" to limit number 
+                   of possible tiles AI can place in a move.*) 
+
+              if (windowSize <= vert) && (windowSize <= 4) then 
+                let perms = permutate dock (windowSize) in
+
+                (* (3) begin iterating through all possible lists of positions for window size at hand *)
+                let rec helper3 positions cmd2 = 
+                  if cmd2 != [] then cmd2 else 
+                    match positions with 
+                    | pos1::t -> 
+
+                      (* (4) begin iterating through all possible permutations for list of positions at hand *)
+                      let rec helper4 pos1 permIndex : Actions.action list = 
+                        if (permIndex < (List.length perms)) then
+
+                          let current_perm = List.nth perms permIndex in 
+
+                          (* (5) construct action list for permutation at hand *)
+                          let rec helper5 pos2 perm_items list2 = 
+
+                            match (pos2, perm_items) with 
+                            | (c1::t1,c2::t2) -> helper5 t1 t2 ((Place ((c2.letter), c1))::list2)
+                            | _ -> let possible_actions = List.rev list2 in 
+                              match valid_tiles cur_brain.original_state possible_actions with 
+                              | [] -> (false,[]) 
+                              | _ -> (true, possible_actions) in 
+
+                          let potential_move = helper5 pos1 current_perm [] in 
+                          if (fst potential_move) then (snd potential_move) else
+                            helper4 pos1 (permIndex + 1) 
+                        else [] in 
+
+                      helper3 t ((helper4 pos1 1))
+                    | _ -> cmd2 in 
+
+                let actions_for_window = ((helper3 (segment(vertical_tile_placements orig_board (y,x) windowSize) windowSize) [])) in 
+                helper2 (windowSize + 1) actions_for_window 
+              else cmd1 in  
+
+            let actions_for_all_windows = helper2 3 [] in 
+            vert_possible_placements_med t (actions_for_all_windows)
+          end
+        | _ -> cmd0 in 
+
+    let rec hor_possible_placements_med (ft_ws: ((int*int) * (int*int)) list) (cmd0: action list) = 
+      if cmd0 != [] then cmd0 else 
+        match ft_ws with 
+        | ((y,x),(vert,hor))::t -> begin 
+
+            (* (2) begin iterating through all window sizes for tile at hand *)
+            let rec helper2 windowSize cmd1 = 
+              if cmd1 != [] then cmd1 else
+
+                (* Change the 2nd "windowSize guard statement" to limit number 
+                   of possible tiles AI can place in a move.*) 
+
+              if (windowSize <= hor) && (windowSize <= 4) then 
+                let perms = permutate dock (windowSize) in
+
+                (* (3) begin iterating through all possible lists of positions for window size at hand *)
+                let rec helper3 positions cmd2 = 
+                  if cmd2 != [] then cmd2 else 
+                    match positions with 
+                    | pos1::t -> 
+
+                      (* (4) begin iterating through all possible permutations for list of positions at hand *)
+                      let rec helper4 pos1 permIndex : Actions.action list = 
+                        if (permIndex < (List.length perms)) then
+
+                          let current_perm = List.nth perms permIndex in 
+
+                          (* (5) construct action list for permutation at hand *)
+                          let rec helper5 pos2 perm_items list2 = 
+
+                            match (pos2, perm_items) with 
+                            | (c1::t1,c2::t2) -> helper5 t1 t2 ((Place ((c2.letter), c1))::list2)
+                            | _ -> let possible_actions = List.rev list2 in 
+                              match valid_tiles cur_brain.original_state possible_actions with 
+                              | [] -> (false,[]) 
+                              | _ -> (true, possible_actions) in 
+
+                          let potential_move = helper5 pos1 current_perm [] in 
+                          if (fst potential_move) then (snd potential_move) else
+                            helper4 pos1 (permIndex + 1) 
+                        else [] in 
+
+                      helper3 t ((helper4 pos1 1))
+                    | _ -> cmd2 in 
+
+                let actions_for_window = ((helper3 (segment(horizontal_tile_placements orig_board (y,x) windowSize) windowSize) [])) in 
+                helper2 (windowSize + 1) actions_for_window 
+              else cmd1 in  
+
+            let actions_for_all_windows = helper2 3 [] in 
+            hor_possible_placements_med t (actions_for_all_windows)
+          end
+        | _ -> cmd0 in 
+
+    (* (1) begin iterating through each final tile **)
+    let rec vert_possible_placements_large (ft_ws: ((int*int) * (int*int)) list) (cmd0: action list) = 
       if cmd0 != [] then cmd0 else 
         match ft_ws with 
         | ((y,x),(vert,hor))::t -> begin 
@@ -418,12 +638,12 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
                 helper2 (windowSize + 1) actions_for_window 
               else cmd1 in  
 
-            let actions_for_all_windows = helper2 1 [] in 
-            vert_possible_placements t (actions_for_all_windows)
+            let actions_for_all_windows = helper2 5 [] in 
+            vert_possible_placements_large t (actions_for_all_windows)
           end
         | _ -> cmd0 in 
 
-    let rec hor_possible_placements (ft_ws: ((int*int) * (int*int)) list) (cmd0: action list) = 
+    let rec hor_possible_placements_large (ft_ws: ((int*int) * (int*int)) list) (cmd0: action list) = 
       if cmd0 != [] then cmd0 else 
         match ft_ws with 
         | ((y,x),(vert,hor))::t -> begin 
@@ -472,19 +692,45 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
                 helper2 (windowSize + 1) actions_for_window 
               else cmd1 in  
 
-            let actions_for_all_windows = helper2 1 [] in 
-            hor_possible_placements t (actions_for_all_windows)
+            let actions_for_all_windows = helper2 5 [] in 
+            hor_possible_placements_large t (actions_for_all_windows)
           end
-        | _ -> cmd0 in 
-    let possible_hor_tile_placements = hor_possible_placements fT_wS [] in 
-    match possible_hor_tile_placements with
+        | _ -> cmd0 in  
+
+    let small_hor_tile_placements = hor_possible_placements_small fT_wS [] in 
+    match small_hor_tile_placements with
     | [] -> begin 
-        let possible_vert_tile_placements = vert_possible_placements fT_wS [] in
-        match possible_vert_tile_placements with
-        | [] -> [Exchange (dock_letters dock)]
-        | _ -> (List.rev (End::possible_vert_tile_placements)) 
+        let small_vert_tile_placements = vert_possible_placements_small fT_wS [] in
+        match small_vert_tile_placements with
+        | [] -> begin 
+
+
+            let med_hor_tile_placements = hor_possible_placements_med fT_wS [] in 
+            match med_hor_tile_placements with 
+            | [] -> begin 
+                let med_vert_tile_placements = vert_possible_placements_med fT_wS [] in 
+                match med_vert_tile_placements with 
+                | [] -> begin 
+                    let large_hor_tile_placements = hor_possible_placements_large fT_wS [] in 
+                    match large_hor_tile_placements with 
+                    | [] -> begin 
+                        let large_vert_tile_placements = vert_possible_placements_large fT_wS [] in 
+                        match large_vert_tile_placements with 
+                        | [] -> [Exchange (dock_letters dock)]
+                        | _ ->  (List.rev (End::large_vert_tile_placements))
+                      end
+                    | _ ->  (List.rev (End::large_hor_tile_placements))
+                  end
+                | _ -> (List.rev (End::med_vert_tile_placements))
+
+
+              end
+            | _ -> (List.rev (End::med_hor_tile_placements))
+
+          end
+        | _ -> (List.rev (End::small_vert_tile_placements)) 
       end
-    | _ -> (List.rev (End::possible_hor_tile_placements))
+    | _ -> (List.rev (End::small_hor_tile_placements))
 
 
 
