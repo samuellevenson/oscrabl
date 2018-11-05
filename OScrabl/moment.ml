@@ -23,6 +23,10 @@ type t = {
   log: string list
 }
 
+(** [get_board] t -> Board.board
+    Returns the board of the current game state. *)
+let get_board st = st.board
+
 (** [rand_num] is a random integer of 30 bits *)
 let rand_num = (Random.self_init ()); Random.bits
 
