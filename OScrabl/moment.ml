@@ -136,27 +136,6 @@ let init_bag =
     {letter = "Z"; value = 10};
   ]
 
-(** [draw currentBag] draws one tile from the given bag and returns a tuple
-    containing the drawn tile and a bag with the remaining tiles *)
-let draw currentBag: (pretile * pretile list) =
-  if (List.length currentBag) = 0 then raise EmptyBag
-  else begin let rec helper bg acclist =
-               match bg with
-               | [] -> List.rev acclist
-               | h::t -> if (List.length bg = List.length currentBag) then helper t acclist
-                 else (helper t) (h::acclist)
-    in ((List.hd currentBag), helper currentBag []) end
-
-(** [draw_n_times currentBag n] draws [n] tiles from the given bag and returns a
-    tuple containing a list of the drawn tiles and a bag with the remaining
-    tiles *)
-let draw_n_times currentBag n: (pretile list * pretile list) =
-  let rec helper bg n accTileList =
-    if (n > 0) then match (draw bg) with
-      | (ti, ba) ->  helper ba (n-1) (ti::accTileList)
-    else (accTileList, bg) in
-  helper currentBag n []
-
 (** [draw_n start_bag start_n] is the previous two functions simplified and then
     squished into one function *)
 let draw_n start_bag start_n =
@@ -345,6 +324,11 @@ let pickup_tile state pos : (t * string) =
 let get_score state =
   state.current_player.score |> string_of_int
 
+(** [offset tile] is the spaces needed after the value of a tile in order to
+    account for differences in number of digits.*)
+let offset tile =
+  if tile.value >= 10 then "" else " "
+
 (** [print_topline line] prints the top half of [line], where [line] is one row
     of a board *)
 let rec print_topline line =
@@ -368,11 +352,6 @@ let rec print_topline line =
       print_string [] ("|");
       print_string tile_style (" " ^ tile.letter ^ "  ");
       print_topline xs
-
-(** [offset tile] is the spaces needed after the value of a tile in order to
-    account for differences in number of digits.*)
-let offset tile =
-  if tile.value >= 10 then "" else " "
 
 (** [print_topline line] prints the bottom half of [line], where [line] is one
     row of a board *)
@@ -424,11 +403,6 @@ let rec print_docktop dock =
   | x::xs ->
     print_string tile_style (" " ^ x.letter ^ "  ");
     print_string [] "  "; print_docktop xs
-
-(** [offset tile] is the spaces needed after the value of a tile in order to
-    account for differences in number of digits.*)
-let offset tile =
-  if tile.value >= 10 then "" else " "
 
 (** [print_dockbot dock] prints the bottom line a players dock of tiles *)
 let rec print_dockbot dock =
