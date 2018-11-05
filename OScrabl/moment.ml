@@ -27,6 +27,14 @@ type t = {
     Returns the board of the current game state. *)
 let get_board st = st.board
 
+(** [get_current_player] t -> player
+    Returns the currently active player in the game state. *)
+let get_current_player st = st.current_player
+
+(** [get_current_dock] t -> Board.pretile list
+    is the dock of the current player. *)
+let get_current_dock st = (get_current_player st).dock
+
 (** [rand_num] is a random integer of 30 bits *)
 let rand_num = (Random.self_init ()); Random.bits
 
