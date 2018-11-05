@@ -83,11 +83,11 @@ let rec initiate_game () =
       print_string [red] "Enter Player 2's Name.";
       print_string [] "\n> ";
       let p2 = read_line () in
-      gameplay (add_players init_state [p2;p1]) ("Starting MultiPlayer game with players " ^ p1 ^ " and " ^ p2)
-    | SinglePlayer -> gameplay (add_players init_state ["AI";"Oscrablr"]) "Starting SinglePlayer game"
+      gameplay (add_players init_state [p2;p1]) ("Starting multiplayer game with players " ^ p1 ^ " and " ^ p2)
+    | SinglePlayer -> gameplay (add_players init_state ["AI";"Oscrablr"]) "Starting singleplayer game"
     | QuitGame -> print_endline "Thanks for playing OScrabl!"; exit 0
   with
-  | InvalidGameMode -> initiate_game ()
+  | InvalidGameMode -> print_endline "???"; initiate_game ()
 
 (** [main ()] unit -> unit
     Prompts for the game to play, then starts it. *)
