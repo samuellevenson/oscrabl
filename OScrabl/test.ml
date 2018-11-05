@@ -68,24 +68,44 @@ let exchange_state_2 =
     current_player = new_player;
     log = []
   }
+
+let placement_state_1 = 
+  let new_player = {
+    name = "Test2";
+    dock = [{letter = "B"; value = 1};
+            {letter = "A"; value = 1};
+            {letter = "T"; value = 1};
+            {letter = "D"; value = 1};
+            {letter = "Z"; value = 1};
+            {letter = "F"; value = 1};
+            {letter = "G"; value = 1}];
+    score = 0;
+  } in
+  {
+    board = emptyBoard;
+    bag = init_bag;
+    players = [new_player];
+    current_player = new_player;
+    log = [];
+  }
 let rule_tests = 
   [
     make_placement_tests "First tile is not h7" 
-      (place_tile init_state("A",(single_to_int "H", single_to_int "8")))
+      (place_tile placement_state_1 ("A",(single_to_int "H", int_of_string "8")))
       InvalidTilePlacement; 
     make_placement_tests "Invalid Word" 
-      (place_tile (place_tile init_state ("A",(single_to_int "H", single_to_int "7")))
-         ("Z",(single_to_int "H", single_to_int "8")))
+      (place_tile (place_tile placement_state_1 ("A",(single_to_int "H", int_of_string "7")))
+         ("Z",(single_to_int "H", int_of_string "8")))
       (InvalidWord "AZ"); 
     make_placement_tests "Non-connected placement" 
-      (place_tile (place_tile init_state ("A",(single_to_int "H", single_to_int "7")))
-         ("T",(single_to_int "M", single_to_int "0")))
+      (place_tile (place_tile placement_state_1 ("A",(single_to_int "H", int_of_string "7")))
+         ("T",(single_to_int "M", int_of_string "0")))
       (InvalidWord "AZ"); 
     make_placement_tests "Triangular Placement" 
-      (place_tile (place_tile (place_tile init_state 
-                                 ("A",(single_to_int "H", single_to_int "7")))
-                     ("T",(single_to_int "H", single_to_int "8")))
-         ("B", (single_to_int "G", single_to_int "7")))
+      (place_tile (place_tile (place_tile placement_state_1 
+                                 ("A",(single_to_int "H", int_of_string "7")))
+                     ("T",(single_to_int "H", int_of_string "8")))
+         ("B", (single_to_int "G", int_of_string "7")))
       (InvalidTilePlacement); 
     make_exchange_failure_tests "Exchange with other than 7 tiles" 
       exchange_state_1 ["A"] InvalidExchange;
@@ -106,7 +126,7 @@ let action_tests =
     make_parse_failures "7" " " Blank;
     make_parse_failures "8" " place a o" Broken;
     make_parse_failures "9" "exchange" Broken;
-    make_parse_failures "10" "exchange 2" Broken;
+    make_parse_failures "10" "exchange 20" BadSelection;
   ]
 
 
