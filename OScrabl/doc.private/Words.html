@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="Start" href="index.html">
+<link rel="previous" href="Main.html">
+<link rel="next" href="Ai.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Board" rel="Chapter" href="Board.html">
+<link title="Actions" rel="Chapter" href="Actions.html">
+<link title="Moment" rel="Chapter" href="Moment.html">
+<link title="Main" rel="Chapter" href="Main.html">
+<link title="Words" rel="Chapter" href="Words.html">
+<link title="Ai" rel="Chapter" href="Ai.html"><title>Words</title>
+</head>
+<body>
+<div class="navbar"><a class="pre" href="Main.html" title="Main">Previous</a>
+&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;<a class="post" href="Ai.html" title="Ai">Next</a>
+</div>
+<h1>Module <a href="type_Words.html">Words</a></h1>
+
+<pre><span id="MODULEWords"><span class="keyword">module</span> Words</span>: <code class="code">sig</code> <a href="Words.html">..</a> <code class="code">end</code></pre><hr width="100%">
+
+<pre><span id="VALfile"><span class="keyword">val</span> file</span> : <code class="type">Yojson.Basic.json</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">file</code> is the Yojson file containing the valid OScrabl words.</p>
+</div>
+</div>
+
+<pre><span id="MODULEStringHash"><span class="keyword">module</span> <a href="Words.StringHash.html">StringHash</a></span>: <code class="code">sig</code> <a href="Words.StringHash.html">..</a> <code class="code">end</code></pre>
+<pre><span id="MODULEStringHashTbl"><span class="keyword">module</span> <a href="Words.StringHashTbl.html">StringHashTbl</a></span>: <code class="type">Hashtbl.Make</code><code class="code">(</code><code class="type"><a href="Words.StringHash.html">StringHash</a></code><code class="code">)</code></pre>
+<pre><span id="VALword_array"><span class="keyword">val</span> word_array</span> : <code class="type">string array</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">word_array</code> is the Array of strings inside of
+    the OScrabl dictionary json.</p>
+</div>
+</div>
+
+<pre><span id="VALword_set"><span class="keyword">val</span> word_set</span> : <code class="type">int StringHashTbl.t</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">word_set</code> is the Hash Table that will hold all of the hash values for each
+    valid word in the OScrabl dictionary. It is initialized to an empty table, but
+    is mutated using the <code class="code">add_hash_set</code> function.</p>
+</div>
+</div>
+
+<pre><span id="VALadd_hash_set"><span class="keyword">val</span> add_hash_set</span> : <code class="type">int StringHashTbl.t -><br>       StringHashTbl.key array -> (StringHashTbl.key -> int) -> unit</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">add_hash_set</code> ('_a, 'b) Hashtbl.t -&gt; '_a array -&gt; ('_a -&gt; 'b) -&gt; unit
+    Iterates through an array and hashes a given set</p>
+</div>
+</div>
+
+<pre><span id="VALvalidity"><span class="keyword">val</span> validity</span> : <code class="type">StringHashTbl.key -> 'a StringHashTbl.t -> bool</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">validity</code> 'a -&gt; ('_a, 'b) Hashtbl.t -&gt; bool
+    Checks whether a string exists in the OScrabl dictionary.</p>
+</div>
+</div>
+
+<pre><span id="VALdelete"><span class="keyword">val</span> delete</span> : <code class="type">StringHashTbl.key -> 'a StringHashTbl.t -> unit</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">delete</code> 'a -&gt; ('_a, 'b) Hashtbl.t -&gt; unit
+    Removes a string from the OScrabl dictionary.</p>
+</div>
+</div>
+
+<pre><span id="VALcheck_word_list"><span class="keyword">val</span> check_word_list</span> : <code class="type">string list -> int StringHashTbl.t -> bool</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">check_word_list</code> string list -&gt; int StringHashTbl.t -&gt; bool
+    is whether an entire list of string exists in a set.</p>
+</div>
+</div>
+<p>IMPERATIVE STUFF</p>
+</body></html>
