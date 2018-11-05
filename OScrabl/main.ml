@@ -3,26 +3,27 @@ open Moment
 open Board
 open ANSITerminal
 
-let ai_perform_actions initial_state : Moment.t =
+let ai_perform_actions initial_state : (Moment.t * string) =
   print_game initial_state;
   print_endline "The computer is thinking";
-  let rec repeat state (action_list: Actions.action list) =
+  let rec repeat state action_list msg =
     match action_list with
     | x::xs -> begin match x with
-        | Place (letter,pos) -> repeat (place_tile state (letter,pos)) xs
+        | Place (letter,pos) -> repeat (place_tile state (letter,pos)) xs ""
         | End ->
           let (next_st, score) = (play_word state) in
-          repeat next_st xs
-        | Exchange lst -> repeat (exchange state lst) xs
+          repeat next_st xs ("The computer scored " ^ score ^ " points")
+        | Exchange lst -> repeat (exchange state lst) xs "The computer exchanged its tiles"
         | _ -> failwith "ai should not issue any other command"
       end
-    | [] -> state
-  in repeat initial_state (Ai.ai_actions initial_state)
+    | [] -> (state, msg)
+  in repeat initial_state (Ai.ai_actions initial_state) ""
 
 
 let rec gameplay st msg =
   let _ = Sys.command "clear" in
-  if st.current_player.name = "AI" then gameplay (ai_perform_actions st) ""
+  if st.current_player.name = "AI" then
+    let (next_state, msg) =  ai_perform_actions st in gameplay next_state msg
   else begin
     print_game st;
     print_endline msg;
