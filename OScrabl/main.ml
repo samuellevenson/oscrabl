@@ -92,7 +92,7 @@ let rec initiate_game () =
 (** [main ()] unit -> unit
     Prompts for the game to play, then starts it. *)
 let main () =
-  resize 80 56;
+  resize 130 56;
   Words.add_hash_set Words.word_set Words.word_array Hashtbl.hash;
   initiate_game ()
 
