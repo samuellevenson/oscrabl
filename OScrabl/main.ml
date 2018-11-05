@@ -84,7 +84,7 @@ let rec initiate_game () =
       print_string [] "\n> ";
       let p2 = read_line () in
       gameplay (add_players init_state [p2;p1]) ("Starting MultiPlayer game with players " ^ p1 ^ " and " ^ p2)
-    | SinglePlayer -> gameplay (add_players init_state ["AI";"Oscrablr"]) "Starting SinglePlayer game"
+    | SinglePlayer -> gameplay (add_players init_state ["Oscrablr";"AI";]) "Starting SinglePlayer game"
     | QuitGame -> print_endline "Thanks for playing OScrabl!"; exit 0
   with
   | InvalidGameMode -> initiate_game ()

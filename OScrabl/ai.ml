@@ -13,7 +13,7 @@ type brain = {original_state: Moment.t;
 
 (** [emptySqrs_down b c] is the list of coordinates of connected [Nothing] tile 
     squares that are vertically below [c] on [b].*)
-let emptySqrs_down (b: board) ((x,y): (int * int)): (int * int) list = 
+let emptySqrs_right (b: board) ((x,y): (int * int)): (int * int) list = 
   let rec helper board (x,y) accList= 
     if ((y+1) = 15) then (List.rev accList) else 
       begin match Board.get_square board (x,y+1)  with 
@@ -23,7 +23,7 @@ let emptySqrs_down (b: board) ((x,y): (int * int)): (int * int) list =
 
 (** [emptySqrs_up b c] is the list of coordinates of connected [Nothing] tile 
     squares that are vertically above [c] on [b].*)
-let emptySqrs_up (b: board) ((x,y): (int * int)): (int * int) list =
+let emptySqrs_left (b: board) ((x,y): (int * int)): (int * int) list =
   let rec helper board (x,y) accList= 
     if ((y-1) = -1) then (List.rev accList) else 
       begin match Board.get_square board (x,y-1)  with 
@@ -33,7 +33,7 @@ let emptySqrs_up (b: board) ((x,y): (int * int)): (int * int) list =
 
 (** [emptySqrs_left b c] is the list of coordinates of connected [Nothing] tile 
     squares that are horizontally left from [c] on [b].*)
-let emptySqrs_left (b: board) ((x,y): (int * int)): (int * int) list =
+let emptySqrs_up (b: board) ((x,y): (int * int)): (int * int) list =
   let rec helper board (x,y) accList= 
     if ((x-1) = -1) then (List.rev accList) else 
       begin match Board.get_square board (x-1,y)  with 
@@ -43,7 +43,7 @@ let emptySqrs_left (b: board) ((x,y): (int * int)): (int * int) list =
 
 (** [emptySqrs_right b c] is the list of coordinates of connected [Nothing] tile 
     squares that are horizontally right from [c] on [b].*)
-let emptySqrs_right (b: board) ((x,y): (int * int)): (int * int) list =
+let emptySqrs_down (b: board) ((x,y): (int * int)): (int * int) list =
   let rec helper board (x,y) accList= 
     if ((x+1) = 15) then (List.rev accList) else 
       begin match Board.get_square board (x+1,y)  with 
@@ -115,35 +115,35 @@ let minimize1 coordList =
     if [size] > 7 or [size] < 1. Arranged from bottom to top. 
     Example: [(7,8), (7,6), (7,5)], anchored on a board with only a single Final
     tile placed on (7,7). *)
-let vertical_tile_placements b (x,y) size: (int * int) list = 
+let vertical_tile_placements b (y,x) size: (int * int) list = 
   if (size > 7) then raise InvalidSize else 
   if (size = 7) then 
-    let upward_sqrs = minimize7 (emptySqrs_up b (x,y)) in 
-    let downward_sqrs = minimize7 (emptySqrs_down b (x,y)) in 
+    let upward_sqrs = minimize7 (emptySqrs_up b (y,x)) in 
+    let downward_sqrs = minimize7 (emptySqrs_down b (y,x)) in 
     List.rev downward_sqrs@upward_sqrs else 
   if (size = 6) then 
-    let upward_sqrs = minimize6 (emptySqrs_up b (x,y)) in 
-    let downward_sqrs = minimize6 (emptySqrs_down b (x,y)) in 
+    let upward_sqrs = minimize6 (emptySqrs_up b (y,x)) in 
+    let downward_sqrs = minimize6 (emptySqrs_down b (y,x)) in 
     List.rev downward_sqrs@upward_sqrs else 
   if (size = 5) then 
-    let upward_sqrs = minimize5 (emptySqrs_up b (x,y)) in 
-    let downward_sqrs = minimize5 (emptySqrs_down b (x,y)) in 
+    let upward_sqrs = minimize5 (emptySqrs_up b (y,x)) in 
+    let downward_sqrs = minimize5 (emptySqrs_down b (y,x)) in 
     List.rev downward_sqrs@upward_sqrs else 
   if (size = 4) then 
-    let upward_sqrs = minimize4 (emptySqrs_up b (x,y)) in 
-    let downward_sqrs = minimize4 (emptySqrs_down b (x,y)) in 
+    let upward_sqrs = minimize4 (emptySqrs_up b (y,x)) in 
+    let downward_sqrs = minimize4 (emptySqrs_down b (y,x)) in 
     List.rev downward_sqrs@upward_sqrs else 
   if (size = 3) then 
-    let upward_sqrs = minimize3 (emptySqrs_up b (x,y)) in 
-    let downward_sqrs = minimize3 (emptySqrs_down b (x,y)) in 
+    let upward_sqrs = minimize3 (emptySqrs_up b (y,x)) in 
+    let downward_sqrs = minimize3 (emptySqrs_down b (y,x)) in 
     List.rev downward_sqrs@upward_sqrs else 
   if (size = 2) then 
-    let upward_sqrs = minimize2 (emptySqrs_up b (x,y)) in 
-    let downward_sqrs = minimize2 (emptySqrs_down b (x,y)) in 
+    let upward_sqrs = minimize2 (emptySqrs_up b (y,x)) in 
+    let downward_sqrs = minimize2 (emptySqrs_down b (y,x)) in 
     List.rev downward_sqrs@upward_sqrs else 
   if (size = 1) then 
-    let upward_sqrs = minimize1 (emptySqrs_up b (x,y)) in 
-    let downward_sqrs = minimize1 (emptySqrs_down b (x,y)) in 
+    let upward_sqrs = minimize1 (emptySqrs_up b (y,x)) in 
+    let downward_sqrs = minimize1 (emptySqrs_down b (y,x)) in 
     List.rev downward_sqrs@upward_sqrs else raise InvalidSize
 
 (** [horizontal_tile_placements b c s] is the list of coordinates for possible 
@@ -152,35 +152,35 @@ let vertical_tile_placements b (x,y) size: (int * int) list =
     if [size] > 7 or [size] < 1. Arranged from left to right. 
     Example: [(6,7), (8,7), (9,7)], anchored on a board with only a single Final 
     tile placed on (7,7).*)
-let horizontal_tile_placements b (x,y) size: (int * int) list = 
+let horizontal_tile_placements b (y,x) size: (int * int) list = 
   if (size > 7) then raise InvalidSize else 
   if (size = 7) then 
-    let leftward_sqrs = minimize7 (emptySqrs_left b (x,y)) in 
-    let rightward_sqrs = minimize7 (emptySqrs_right b (x,y)) in 
+    let leftward_sqrs = minimize7 (emptySqrs_left b (y,x)) in 
+    let rightward_sqrs = minimize7 (emptySqrs_right b (y,x)) in 
     List.rev leftward_sqrs@rightward_sqrs else 
   if (size = 6) then 
-    let leftward_sqrs = minimize6 (emptySqrs_left b (x,y)) in 
-    let rightward_sqrs = minimize6 (emptySqrs_right b (x,y)) in 
+    let leftward_sqrs = minimize6 (emptySqrs_left b (y,x)) in 
+    let rightward_sqrs = minimize6 (emptySqrs_right b (y,x)) in 
     List.rev leftward_sqrs@rightward_sqrs else 
   if (size = 5) then 
-    let leftward_sqrs = minimize5 (emptySqrs_left b (x,y)) in 
-    let rightward_sqrs = minimize5 (emptySqrs_right b (x,y)) in 
+    let leftward_sqrs = minimize5 (emptySqrs_left b (y,x)) in 
+    let rightward_sqrs = minimize5 (emptySqrs_right b (y,x)) in 
     List.rev leftward_sqrs@rightward_sqrs else 
   if (size = 4) then 
-    let leftward_sqrs = minimize4 (emptySqrs_left b (x,y)) in 
-    let rightward_sqrs = minimize4 (emptySqrs_right b (x,y)) in 
+    let leftward_sqrs = minimize4 (emptySqrs_left b (y,x)) in 
+    let rightward_sqrs = minimize4 (emptySqrs_right b (y,x)) in 
     List.rev leftward_sqrs@rightward_sqrs else 
   if (size = 3) then 
-    let leftward_sqrs = minimize3 (emptySqrs_left b (x,y)) in 
-    let rightward_sqrs = minimize3 (emptySqrs_right b (x,y)) in 
+    let leftward_sqrs = minimize3 (emptySqrs_left b (y,x)) in 
+    let rightward_sqrs = minimize3 (emptySqrs_right b (y,x)) in 
     List.rev leftward_sqrs@rightward_sqrs else 
   if (size = 2) then 
-    let leftward_sqrs = minimize2 (emptySqrs_left b (x,y)) in 
-    let rightward_sqrs = minimize2 (emptySqrs_right b (x,y)) in 
+    let leftward_sqrs = minimize2 (emptySqrs_left b (y,x)) in 
+    let rightward_sqrs = minimize2 (emptySqrs_right b (y,x)) in 
     List.rev leftward_sqrs@rightward_sqrs else 
   if (size = 1) then 
-    let leftward_sqrs = minimize1 (emptySqrs_left b (x,y)) in 
-    let rightward_sqrs = minimize1 (emptySqrs_right b (x,y)) in 
+    let leftward_sqrs = minimize1 (emptySqrs_left b (y,x)) in 
+    let rightward_sqrs = minimize1 (emptySqrs_right b (y,x)) in 
     List.rev leftward_sqrs@rightward_sqrs else raise InvalidSize
 
 
@@ -234,13 +234,13 @@ let rec totalcombinations list startSize acclist=
     sizes for probing potential tile placements around coordinate [c] on [b], with 
     the first int representing the horizontal window size, and the second int 
     representing the vertical window size. The window sizes are capped at 7. *)
-let window_startSizes board (x,y): (int * int) = 
-  let vertical = vertical_tile_placements board (x,y) 7 in 
-  let horizontal = horizontal_tile_placements board (x,y) 7 in 
+let window_startSizes board (y,x): (int * int) = 
+  let vertical = vertical_tile_placements board (y,x) 7 in 
+  let horizontal = horizontal_tile_placements board (y,x) 7 in 
   if ((List.length vertical) >= 7) && ((List.length horizontal) >= 7) then 
     (7,7) else if ((List.length vertical) < 7) && ((List.length horizontal) >= 7) then
-    (7, List.length vertical) else if ((List.length vertical) >= 7) && ((List.length horizontal) < 7) then
-    (List.length horizontal, 7) else (List.length horizontal, List.length vertical)
+    (List.length vertical, 7) else if ((List.length vertical) >= 7) && ((List.length horizontal) < 7) then
+    (7, List.length horizontal) else (List.length horizontal, List.length vertical)
 
 (** [final_tile_coords board] is the list of all coordinates of final tiles on
     [board]. No particular ordering.*)
@@ -275,20 +275,6 @@ let permutate (list: 'a list) n: 'a list list =
     | h::t -> helper t ((permutations h)@accList)
     | _ -> accList 
   in helper combos []
-
-let vertical_windows board (fTwS: (int * int) * (int * int)): ((int * int) list) list = 
-  match fTwS with | (x,y),(hor, vert) -> let coord = (x,y) in  
-    let rec helper index (accList: ((int * int)list)list) = 
-      if (index >= 1) then helper (index-1) ((vertical_tile_placements board coord index)::accList)
-      else List.rev accList
-    in helper vert []
-
-let horizontal_windows board (fTwS: (int * int) * (int * int)): ((int * int) list) list = 
-  match fTwS with | (x,y),(hor, vert) -> let coord = (x,y) in  
-    let rec helper index (accList: ((int * int)list)list) = 
-      if (index >= 1) then helper (index-1) ((horizontal_tile_placements board coord index)::accList)
-      else List.rev accList
-    in helper hor []
 
 let remove_first_element list = 
   match list with 
@@ -383,58 +369,122 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
     | _ -> (List.rev (End::valid_tile_placement))
   else
     (* (1) begin iterating through each final tile **)
-    let rec helper1 (ft_ws: ((int*int) * (int*int)) list) (accCMDs: action list) = 
-      match ft_ws with 
-      | ((x,y),(hor,vert))::t -> begin 
+    let rec vert_possible_placements (ft_ws: ((int*int) * (int*int)) list) (cmd0: action list) = 
+      if cmd0 != [] then cmd0 else 
+        match ft_ws with 
+        | ((y,x),(vert,hor))::t -> begin 
 
-          (* (2) begin iterating through all window sizes for tile at hand *)
-          let rec helper2 windowSize accCmds = 
-            if (windowSize >= 1) then 
-              let perms = permutate dock (windowSize) in
+            (* (2) begin iterating through all window sizes for tile at hand *)
+            let rec helper2 windowSize cmd1 = 
+              if cmd1 != [] then cmd1 else
 
-              (* (3) begin iterating through all possible lists of positions for window size at hand *)
-              let rec helper3 positions accCmd = 
-                match positions with 
-                | pos1::t -> 
+                (* Change the 2nd "windowSize guard statement" to limit number 
+                   of possible tiles AI can place in a move.*) 
 
-                  (* (4) begin iterating through all possible permutations for list of positions at hand *)
-                  let rec helper4 pos1 permIndex : Actions.action list = 
-                    if (permIndex < (List.length perms)) then
+              if (windowSize <= vert) && (windowSize <= 6) then 
+                let perms = permutate dock (windowSize) in
 
-                      let current_perm = List.nth perms permIndex in 
+                (* (3) begin iterating through all possible lists of positions for window size at hand *)
+                let rec helper3 positions cmd2 = 
+                  if cmd2 != [] then cmd2 else 
+                    match positions with 
+                    | pos1::t -> 
 
-                      (* (5) construct action list for permutation at hand *)
-                      let rec helper5 pos2 perm_items list2 = 
-                        match (pos2, perm_items) with 
-                        | (c1::t1,c2::t2) -> helper5 t1 t2 ((Place ((c2.letter), c1))::list2)
-                        | _ -> let possible_actions = List.rev list2 in 
-                          match valid_tiles cur_brain.original_state possible_actions with 
-                          | [] -> (false,[]) 
-                          | _ -> (true,possible_actions) in 
-                      let potential_move = helper5 pos1 current_perm [] in 
-                      if (fst potential_move) then snd potential_move else
-                        helper4 pos1 (permIndex + 1) 
-                    else [] in 
+                      (* (4) begin iterating through all possible permutations for list of positions at hand *)
+                      let rec helper4 pos1 permIndex : Actions.action list = 
+                        if (permIndex < (List.length perms)) then
 
-                  helper3 t ((helper4 pos1 1)@accCmd)
-                | _ -> accCmd in 
+                          let current_perm = List.nth perms permIndex in 
 
-              let actions_for_window = ((helper3 (segment(vertical_tile_placements orig_board (x,y) windowSize) windowSize) [])@accCmds) in 
-              helper2 (windowSize - 1) actions_for_window@accCmds 
-            else accCmds in  
+                          (* (5) construct action list for permutation at hand *)
+                          let rec helper5 pos2 perm_items list2 = 
 
-          (* Change the "vert guard statement" to limit number of possible tiles AI can place in a move.*)
-          if (vert > 5) then 
-            let actions_for_all_windows = helper2 (5) [] in 
-            helper1 t (actions_for_all_windows@accCMDs)
-          else let actions_for_all_windows = helper2 (vert) [] in 
-            helper1 t (actions_for_all_windows@accCMDs)
-        end
-      | _ -> accCMDs in 
-    let first_possible_tile_placements = helper1 fT_wS [] in 
-    match first_possible_tile_placements with
-    | [] -> [Exchange (dock_letters dock)]
-    | _ -> (List.rev (End::first_possible_tile_placements))
+                            match (pos2, perm_items) with 
+                            | (c1::t1,c2::t2) -> helper5 t1 t2 ((Place ((c2.letter), c1))::list2)
+                            | _ -> let possible_actions = List.rev list2 in 
+                              match valid_tiles cur_brain.original_state possible_actions with 
+                              | [] -> (false,[]) 
+                              | _ -> (true, possible_actions) in 
+
+                          let potential_move = helper5 pos1 current_perm [] in 
+                          if (fst potential_move) then (snd potential_move) else
+                            helper4 pos1 (permIndex + 1) 
+                        else [] in 
+
+                      helper3 t ((helper4 pos1 1))
+                    | _ -> cmd2 in 
+
+                let actions_for_window = ((helper3 (segment(vertical_tile_placements orig_board (y,x) windowSize) windowSize) [])) in 
+                helper2 (windowSize + 1) actions_for_window 
+              else cmd1 in  
+
+            let actions_for_all_windows = helper2 1 [] in 
+            vert_possible_placements t (actions_for_all_windows)
+          end
+        | _ -> cmd0 in 
+
+    let rec hor_possible_placements (ft_ws: ((int*int) * (int*int)) list) (cmd0: action list) = 
+      if cmd0 != [] then cmd0 else 
+        match ft_ws with 
+        | ((y,x),(vert,hor))::t -> begin 
+
+            (* (2) begin iterating through all window sizes for tile at hand *)
+            let rec helper2 windowSize cmd1 = 
+              if cmd1 != [] then cmd1 else
+
+                (* Change the 2nd "windowSize guard statement" to limit number 
+                   of possible tiles AI can place in a move.*) 
+
+              if (windowSize <= hor) && (windowSize <= 6) then 
+                let perms = permutate dock (windowSize) in
+
+                (* (3) begin iterating through all possible lists of positions for window size at hand *)
+                let rec helper3 positions cmd2 = 
+                  if cmd2 != [] then cmd2 else 
+                    match positions with 
+                    | pos1::t -> 
+
+                      (* (4) begin iterating through all possible permutations for list of positions at hand *)
+                      let rec helper4 pos1 permIndex : Actions.action list = 
+                        if (permIndex < (List.length perms)) then
+
+                          let current_perm = List.nth perms permIndex in 
+
+                          (* (5) construct action list for permutation at hand *)
+                          let rec helper5 pos2 perm_items list2 = 
+
+                            match (pos2, perm_items) with 
+                            | (c1::t1,c2::t2) -> helper5 t1 t2 ((Place ((c2.letter), c1))::list2)
+                            | _ -> let possible_actions = List.rev list2 in 
+                              match valid_tiles cur_brain.original_state possible_actions with 
+                              | [] -> (false,[]) 
+                              | _ -> (true, possible_actions) in 
+
+                          let potential_move = helper5 pos1 current_perm [] in 
+                          if (fst potential_move) then (snd potential_move) else
+                            helper4 pos1 (permIndex + 1) 
+                        else [] in 
+
+                      helper3 t ((helper4 pos1 1))
+                    | _ -> cmd2 in 
+
+                let actions_for_window = ((helper3 (segment(horizontal_tile_placements orig_board (y,x) windowSize) windowSize) [])) in 
+                helper2 (windowSize + 1) actions_for_window 
+              else cmd1 in  
+
+            let actions_for_all_windows = helper2 1 [] in 
+            hor_possible_placements t (actions_for_all_windows)
+          end
+        | _ -> cmd0 in 
+    let possible_hor_tile_placements = hor_possible_placements fT_wS [] in 
+    match possible_hor_tile_placements with
+    | [] -> begin 
+        let possible_vert_tile_placements = vert_possible_placements fT_wS [] in
+        match possible_vert_tile_placements with
+        | [] -> [Exchange (dock_letters dock)]
+        | _ -> (List.rev (End::possible_vert_tile_placements)) 
+      end
+    | _ -> (List.rev (End::possible_hor_tile_placements))
 
 
 
