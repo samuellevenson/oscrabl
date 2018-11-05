@@ -4,6 +4,7 @@ open Words
 open Board
 
 exception InvalidSize
+exception Test
 
 (** the type for ai a*)
 type brain = {original_state: Moment.t; 
@@ -261,7 +262,7 @@ let final_tile_coords board =
 let finalTiles_windowSizes board tileList = 
   let rec helper tiles (acclist: ((int*int) * (int*int)) list) = 
     match tiles with 
-    | h::t -> helper t (((window_startSizes board h) , h)::acclist)
+    | h::t -> helper t ((h,(window_startSizes board h))::acclist)
     | _ -> acclist in 
   helper tileList [] 
 
@@ -311,7 +312,8 @@ let segment list n =
 
 (** [first_valid_tiles s l] is the FIRST valid list of Actions, from [l]. That is,
     the list of Actions generates a state from [s] with all tile placements being valid
-    and all strings formed being valid words. *)
+    and all strings formed being valid words. Returns an empty list if there isn't
+    a valid list of Actions. *)
 let first_valid_tiles state (lists: Actions.action list list) = 
   let rec helper1 l acclist= 
     match (l,acclist) with 
@@ -328,6 +330,18 @@ let first_valid_tiles state (lists: Actions.action list list) =
     | _ -> []
   in helper1 lists []
 
+(** [valid_tiles s list] determines if [list] produces valid tile placements 
+    and valid words, given current state [s]. Returns an empty list if there
+    isn't a valid list of Actions. *)
+let valid_tiles state list = 
+  let rec helper st moves =
+    match moves with 
+    | Place (letter,pos)::xs -> let new_state = place_tile st (letter,pos) in 
+      helper new_state xs 
+    | _ -> try (match (calc_scoretuples st.board) with 
+        |(_,_) -> list) with 
+    |InvalidWord string -> [] in helper state list
+
 (** [dock_letters d] is the string list of all letters on a given [d].*)
 let dock_letters dock = 
   [(List.nth dock 0).letter; (List.nth dock 1).letter; 
@@ -336,7 +350,6 @@ let dock_letters dock =
    (List.nth dock 6).letter]
 
 let ai_actions (cur_st:Moment.t): Actions.action list = 
-
   (* setting up *)
   let cur_brain = {original_state = cur_st; 
                    hypothetical_state = cur_st; 
@@ -346,50 +359,78 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
   let fT_wS = finalTiles_windowSizes cur_brain.original_state.board 
       (final_tile_coords cur_brain.original_state.board) in
 
-  (* (1) begin iterating through each final tile **)
-  let rec helper1 (ft_ws: ((int*int) * (int*int)) list) (accCMDs: action list list) = 
-    match ft_ws with 
-    | ((x,y),(hor,vert))::t -> begin 
+  if (is_firstmove (cur_st.board)) then 
+    let all_perms = permutate dock 7 in 
+    (* (1) begin iterating through all permutations of the AI's tiles*)
+    let rec halper1 perms acclist =
+      match perms with 
+      |list::xs -> let rec halper2 perm index acclist = 
+                     match perm with 
+                     | h::t -> halper2 t (index+1) (Place (h.letter, (7 + index, 7))::acclist)
+                     | _ -> List.rev acclist in
 
-        (* (2) begin iterating through all window sizes for tile at hand *)
-        let rec helper2 windowSize accCmds = 
-          if (windowSize >= 1) then 
-            let perms = permutate dock (windowSize) in
 
-            (* (3) begin iterating through all possible lists of positions for window size at hand *)
-            let rec helper3 positions accCmd = 
-              match positions with 
-              | pos1::t -> 
 
-                (* (4) begin iterating through all possible permutations for list of positions at hand *)
-                let rec helper4 pos1 permIndex list1: Actions.action list list = 
-                  if (permIndex <= (List.length perms)) then
+        halper1 xs ((halper2 list 0 [])::acclist)
+      |_ -> acclist in 
+    let possibleActions = halper1 all_perms [] in 
+    let valid_tile_placement = first_valid_tiles cur_brain.original_state possibleActions in
+    match valid_tile_placement with
+    | [] -> [Exchange (dock_letters dock)]
+    | _ -> (List.rev (End::valid_tile_placement))
+  else
+    (* (1) begin iterating through each final tile **)
+    let rec helper1 (ft_ws: ((int*int) * (int*int)) list) (accCMDs: action list list) = 
+      match ft_ws with 
+      | ((x,y),(hor,vert))::t -> begin 
 
-                    let current_perm = List.nth perms permIndex in 
+          (* (2) begin iterating through all window sizes for tile at hand *)
+          let rec helper2 windowSize accCmds = 
+            if (windowSize >= 1) then 
+              let perms = permutate dock (windowSize) in
 
-                    (* (5) construct action list for permutation at hand *)
-                    let rec helper5 pos2 perm_items list2 = 
-                      match (pos2, perm_items) with 
-                      | (c1::t1,c2::t2) -> helper5 t1 t2 ((Place ((c2.letter), c1))::list2)
-                      | _ -> List.rev list2 in 
-                    helper4 pos1 (permIndex + 1) ((helper5 pos1 current_perm [])::list1)
-                  else list1 in 
+              (* (3) begin iterating through all possible lists of positions for window size at hand *)
+              let rec helper3 positions accCmd = 
+                match positions with 
+                | pos1::t -> 
 
-                helper3 t ((helper4 pos1 1 [])@accCmd)
-              | _ -> accCmd in 
+                  (* (4) begin iterating through all possible permutations for list of positions at hand *)
+                  let rec helper4 pos1 permIndex list1: Actions.action list list = 
+                    if (permIndex < (List.length perms)) then
 
-            let actions_for_window = ((helper3 (segment(vertical_tile_placements orig_board (x,y) windowSize) windowSize) [])@accCmds) in 
-            helper2 (windowSize - 1) actions_for_window@accCmds 
-          else accCmds in 
-        let actions_for_all_windows = helper2 (vert) [] in 
-        helper1 t (actions_for_all_windows@accCMDs)
-      end
-    | _ -> accCMDs in 
-  let all_possible_tile_placements = helper1 fT_wS [] in 
-  let valid_tile_placement = first_valid_tiles cur_brain.original_state all_possible_tile_placements in
-  match valid_tile_placement with
-  | [] -> [Exchange (dock_letters dock)]
-  | _ -> (List.rev (End::valid_tile_placement))
+                      let current_perm = List.nth perms permIndex in 
+
+                      (* (5) construct action list for permutation at hand *)
+                      let rec helper5 pos2 perm_items list2 = 
+                        match (pos2, perm_items) with 
+                        | (c1::t1,c2::t2) -> helper5 t1 t2 ((Place ((c2.letter), c1))::list2)
+                        | _ -> List.rev list2 in 
+
+
+
+                      helper4 pos1 (permIndex + 1) ((helper5 pos1 current_perm [])::list1)
+                    else list1 in 
+
+                  helper3 t ((helper4 pos1 1 [])@accCmd)
+                | _ -> accCmd in 
+
+              let actions_for_window = ((helper3 (segment(vertical_tile_placements orig_board (x,y) windowSize) windowSize) [])@accCmds) in 
+              helper2 (windowSize - 1) actions_for_window@accCmds 
+            else accCmds in  
+
+          (* Change the "vert guard statement" to limit number of possible tiles AI can place in a move.*)
+          if (vert > 5) then 
+            let actions_for_all_windows = helper2 (5) [] in 
+            helper1 t (actions_for_all_windows@accCMDs)
+          else let actions_for_all_windows = helper2 (vert) [] in 
+            helper1 t (actions_for_all_windows@accCMDs)
+        end
+      | _ -> accCMDs in 
+    let all_possible_tile_placements = helper1 fT_wS [] in 
+    let valid_tile_placement = first_valid_tiles cur_brain.original_state all_possible_tile_placements in
+    match valid_tile_placement with
+    | [] -> [Exchange (dock_letters dock)]
+    | _ -> (List.rev (End::valid_tile_placement))
 
 
 
