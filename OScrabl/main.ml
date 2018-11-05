@@ -42,7 +42,6 @@ let rec gameplay st msg =
       | End ->
         let (next_st, score) = (play_word st) in
         gameplay next_st ("You scored " ^ score ^ " points. Next turn!")
-      | Refill -> gameplay (refill st) "Refilled!"
       | Exchange lst -> gameplay (exchange st lst) "Letters exchanged! Next turn!"
       | Quit -> print_endline "Thanks for playing OScrabl!"; exit 0
       | Recall -> gameplay (recall st) "Tiles recalled!";
