@@ -53,3 +53,8 @@ val parse_game_mode : string -> game_mode
     Blank of user input is empty, 
     Broken if an invalid pattern for an action is given. *)
 val parse_cmd : string -> action
+
+(** [single_to_int] 
+    Takes a string of length one and codes it to an integer representing a board
+    position (0-14). *)
+val single_to_int : string -> int

@@ -5,6 +5,14 @@ exception InvalidExchange
 type player
 type t
 
+(** [create_player] is a function that creates a player object; intended to help
+    code reuse. *)
+val create_player : string -> Board.pretile list -> int -> player
+
+(** [create_moment] is a function that creates a moment object; intended to help
+    code reuse. *)
+val create_moment : Board.board ->
+  Board.pretile list -> player list -> player -> string list -> t
 (** [get_board] is the board in the current game moment.*)
 val get_board : t -> Board.board
 
@@ -30,6 +38,9 @@ val get_current_dock : t -> Board.pretile list
 (** [init_state] is an initial state. *)
 val init_state : t 
 
+(** [init_bag] is an initial bag. *)
+
+val init_bag : Board.pretile list
 (** [shuffle_bag] takes a bag as input and returns it, but shuffled. *)
 val shuffle_bag : Board.pretile list -> Board.pretile list
 
@@ -60,7 +71,8 @@ val place_tile : t -> (string * (int * int)) -> t
     removed, as a pair. *)
 val pickup_tile : t -> (int * int) -> (t * string)
 
-(** [get_score] is the score of the current player. *)
+(** [get_score] is the string representation of the score of the 
+    current player. *)
 val get_score : t -> string
 
 (** [print_dock] is the function that prints the dock of the current player. *)
@@ -68,3 +80,6 @@ val print_dock : player -> string -> unit
 
 (** [print_game] is the function that prints the game. *)
 val print_game : t -> string -> unit
+
+(** [get_player_score] is the score of a given player. *)
+val get_player_score : player -> int

@@ -23,6 +23,19 @@ type t = {
   log: string list
 }
 
+let create_player pname pdock pscore = 
+  { name = pname; 
+    dock = pdock; 
+    score = pscore;}
+
+let create_moment board bag players current_player log = 
+  {
+    board = board;
+    bag = bag;
+    players = players;
+    current_player = current_player;
+    log = log;
+  }
 (** [get_board] t -> Board.board
     Returns the board of the current game state. *)
 let get_board st = st.board
@@ -30,6 +43,10 @@ let get_board st = st.board
 (** [get_name] player -> string
     Returns the name of the given player. *)
 let get_name player = player.name 
+
+(* [get_player_score] player -> int
+   Returns the score of the given player.*)
+let get_player_score player = player.score 
 
 (** [get_current_player] t -> player
     Returns the currently active player in the game state. *)
