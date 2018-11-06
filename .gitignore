@@ -1,3 +1,4 @@
+# Ocaml stuff
 *.annot
 *.cmo
 *.cma
@@ -22,5 +23,7 @@ setup.log
 # temp stuff
 .DS_Store
 
-# zip
+# assignment
 src.zip
+doc.public
+doc.private
