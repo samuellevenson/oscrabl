@@ -71,7 +71,7 @@ let exchange_state_2 =
 
 let placement_state_1 = 
   let new_player = {
-    name = "Test2";
+    name = "Test1";
     dock = [{letter = "B"; value = 1};
             {letter = "A"; value = 1};
             {letter = "T"; value = 1};
@@ -88,6 +88,64 @@ let placement_state_1 =
     current_player = new_player;
     log = [];
   }
+
+let placement_state_2 = 
+  let new_player = {
+    name = "Test2";
+    dock = [{letter = "H"; value = 1};
+            {letter = "W"; value = 1};
+            {letter = "A"; value = 1};
+            {letter = "D"; value = 1};
+            {letter = "O"; value = 1};
+            {letter = "R"; value = 1};
+            {letter = "N"; value = 1}];
+    score = 0;
+  } in
+  {
+    board = emptyBoard;
+    bag = init_bag;
+    players = [new_player];
+    current_player = new_player;
+    log = [];
+  }
+
+
+let pipeline_place tuple state = place_tile state tuple
+
+let place_tuple letter row col = (letter, (single_to_int row, int_of_string col)) 
+
+
+let end_turn_1 = 
+  let new_player = {
+    name = "Test1";
+    dock = [
+      {letter = "W"; value = 1};
+      {letter = "A"; value = 1};
+      {letter = "D"; value = 1};
+      {letter = "H"; value = 1};
+      {letter = "O"; value = 1};
+      {letter = "W"; value = 1};
+      {letter = "N"; value = 1};
+    ];
+    score = 0;
+  } in
+  {
+    board = emptyBoard;
+    bag = init_bag;
+    players = [new_player];
+    current_player = new_player;
+    log = [];
+  }
+
+let make_score_tests
+    (name: string)
+    (state : Moment.t)
+    (exp_score : int) =
+  name >:: (fun _ ->
+      Words.add_hash_set Words.word_set Words.word_array Hashtbl.hash;
+      assert_equal exp_score (get_current_player state).score; )
+
+
 let rule_tests = 
   [
     make_placement_tests "First tile is not h7" 
@@ -113,6 +171,23 @@ let rule_tests =
       exchange_state_2 ["H";"I"] MissingTilesToExchange;
     make_exchange_failure_tests "Invalid Character String" 
       exchange_state_2 ["HI"] MissingTilesToExchange;
+    make_placement_tests "Valid One Direction, Invalid One Direction"
+      ((placement_state_2) |> pipeline_place (place_tuple "W" "H" "7") 
+       |> pipeline_place (place_tuple "A" "H" "8") 
+       |> pipeline_place (place_tuple "D" "H" "9") 
+       |> pipeline_place (place_tuple "H" "H" "6")
+       |> pipeline_place (place_tuple "O" "I" "6")
+       |> pipeline_place (place_tuple "R" "J" "6")
+       |> pipeline_place (place_tuple "N" "K" "6"))
+      (InvalidTilePlacement); (* InvalidWord "HWAD"*)
+
+    (* make_score_tests "Score" 
+       (fst (play_word (end_turn_1 
+                       |> pipeline_place (place_tuple "H" "H" "7") 
+                       |> pipeline_place (place_tuple "O" "I" "7") 
+                       |> pipeline_place (place_tuple "W" "J" "7")))) 
+       6; *)
+
 
 
   ]
@@ -181,10 +256,10 @@ let make_refill_tests
         exp;
     )
 
-(* let state_3_elements : Moment.t = {
-   board = Board.emptyBoard;
-   bag = Moment.init_bag;
-   players = [
+let state_3_elements : Moment.t = {
+  board = Board.emptyBoard;
+  bag = Moment.init_bag;
+  players = [
     {
       name = "OScrabl Player";
       dock =
@@ -192,43 +267,41 @@ let make_refill_tests
          {letter = "A"; value = 1};
          {letter = "A"; value = 1};];
       score = 0;
-      words = [];
     }
-   ];
-   current_player = {
+  ];
+  current_player = {
     name = "OScrabl Player";
     dock =
       [{letter = "A"; value = 1};
        {letter = "A"; value = 1};
        {letter = "A"; value = 1};];
     score = 0;
-    words = [];
-   };
-   }
-   let state_0_elements : Moment.t = {
-   board = Board.emptyBoard;
-   bag = Moment.init_bag;
-   players = [
+  };
+  log = [];
+}
+let state_0_elements : Moment.t = {
+  board = Board.emptyBoard;
+  bag = Moment.init_bag;
+  players = [
     {
       name = "OScrabl Player";
       dock =
         [];
       score = 0;
-      words = [];
     }
-   ];
-   current_player = {
+  ];
+  current_player = {
     name = "OScrabl Player";
     dock =
       [];
     score = 0;
-    words = [];
-   };
-   }
-   let state_7_elements : Moment.t = {
-   board = Board.emptyBoard;
-   bag = Moment.init_bag;
-   players = [
+  };
+  log = [];
+}
+let state_7_elements : Moment.t = {
+  board = Board.emptyBoard;
+  bag = Moment.init_bag;
+  players = [
     {
       name = "OScrabl Player";
       dock =
@@ -240,10 +313,9 @@ let make_refill_tests
          {letter = "A"; value = 1};
          {letter = "A"; value = 1};];
       score = 0;
-      words = [];
     }
-   ];
-   current_player = {
+  ];
+  current_player = {
     name = "OScrabl Player";
     dock =
       [{letter = "A"; value = 1};
@@ -254,17 +326,17 @@ let make_refill_tests
        {letter = "A"; value = 1};
        {letter = "A"; value = 1};];
     score = 0;
-    words = [];
-   };
-   } *)
+  };
+  log = [];
+}
 let moment_tests =
   [
-    (*make_refill_tests "Between 0 and 7 tiles"
-      (Moment.refill state_3_elements;) 7;
-      make_refill_tests "empty dock to start"
-      (Moment.refill state_0_elements;) 7;
-      make_refill_tests "full dock to start"
-      (Moment.refill state_7_elements;) 7;*)
+    (* make_refill_tests "Between 0 and 7 tiles"
+       (Moment.refill state_3_elements;) 7;
+       make_refill_tests "empty dock to start"
+       (Moment.refill state_0_elements;) 7;
+       make_refill_tests "full dock to start"
+       (Moment.refill state_7_elements;) 7; *)
   ]
 
 let suite =
