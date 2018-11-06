@@ -145,9 +145,103 @@ let make_score_tests
       Words.add_hash_set Words.word_set Words.word_array Hashtbl.hash;
       assert_equal exp_score (get_current_player state).score; )
 
+let make_exchange_tests 
+    (name: string)
+    (state: Moment.t)
+    (letters_to_exchange : string list)
+    (exp_dock: pretile list) =
+  name >:: (fun _ -> 
+      assert_equal exp_dock 
+        (get_dock (get_other_player (exchange state letters_to_exchange))))
+let dummy_player = {
+  name = "Dummy";
+  dock = [];
+  score = 0;
+}
+
+let test_exchange_1 = {
+  board = emptyBoard;
+  bag = [{letter = "H"; value = 1};
+         {letter = "W"; value = 1}];
+  players = [{
+      name = "Test";
+      dock = [{letter = "A"; value = 1};
+              {letter = "B"; value = 1};
+              {letter = "C"; value = 1};
+              {letter = "D"; value = 1};
+              {letter = "E"; value = 1};
+              {letter = "F"; value = 1};
+              {letter = "G"; value = 1};];
+      score = 0;
+    }; dummy_player];
+  current_player = {
+    name = "Test";
+    dock = [{letter = "A"; value = 1};
+            {letter = "B"; value = 1};
+            {letter = "C"; value = 1};
+            {letter = "D"; value = 1};
+            {letter = "E"; value = 1};
+            {letter = "F"; value = 1};
+            {letter = "G"; value = 1};];
+    score = 0;
+  };
+  log = ["Started Game"]
+}
+
+let test_exchange_2 = {
+  board = emptyBoard;
+  bag = [{letter = "H"; value = 1};
+         {letter = "W"; value = 1}];
+  players = [{
+      name = "Test";
+      dock = [
+        {letter = "W"; value = 1};
+        {letter = "X"; value = 1};
+        {letter = "Y"; value = 1};
+        {letter = "Z"; value = 1};
+      ];
+      score = 0;
+    }; dummy_player];
+  current_player = {
+    name = "Test";
+    dock = [{letter = "T"; value = 1};
+            {letter = "X"; value = 1};
+            {letter = "Y"; value = 1};
+            {letter = "Z"; value = 1};];
+    score = 0;
+  };
+  log = ["Started Game"]
+}
+
+let make_exchange_failures
+    (name: string)
+    (state : Moment.t)
+    (letters_to_exchange: string list)
+    (error : exn) =
+  name >:: (fun _ -> assert_raises error 
+               (fun () -> exchange state letters_to_exchange)
+           )
 
 let rule_tests = 
-  [
+  [ 
+    make_exchange_tests "Swapping letters" 
+      test_exchange_1
+      ["A";"B";] 
+      [ 
+        {letter = "C"; value = 1};
+        {letter = "D"; value = 1};
+        {letter = "E"; value = 1};
+        {letter = "F"; value = 1};
+        {letter = "G"; value = 1};
+        {letter = "W"; value = 1};
+        {letter = "H"; value = 1};
+      ];
+    make_exchange_failures "Invalid Exchange Selection" 
+      test_exchange_1 ["H";"W"] MissingTilesToExchange;
+    make_exchange_failures "Valid Exchange Selection, but don't have 7 tiles." 
+      test_exchange_2 ["T";"Y"] InvalidExchange;
+    make_exchange_failures "Invalid Exchange Selection, but don't have 7 tiles." 
+      test_exchange_2 ["H";"W"] InvalidExchange;
     make_placement_tests "First tile is not h7" 
       (place_tile placement_state_1 ("A",(single_to_int "H", int_of_string "8")))
       InvalidTilePlacement; 
@@ -329,6 +423,15 @@ let state_7_elements : Moment.t = {
   };
   log = [];
 }
+
+let make_shuffle_tests
+    (name: string)
+    (bag: pretile list)
+    (exp: pretile list) =
+  name >:: (fun _ ->
+      assert (bag <> exp);
+    )
+
 let moment_tests =
   [
     (* make_refill_tests "Between 0 and 7 tiles"
@@ -337,6 +440,9 @@ let moment_tests =
        (Moment.refill state_0_elements;) 7;
        make_refill_tests "full dock to start"
        (Moment.refill state_7_elements;) 7; *)
+    make_shuffle_tests "Shuffle bag once" (shuffle_bag init_bag) init_bag;
+    make_shuffle_tests "Shuffle bag twice" 
+      (init_bag |> shuffle_bag |> shuffle_bag) init_bag;
   ]
 
 let suite =
