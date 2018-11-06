@@ -19,7 +19,8 @@ let ai_perform_actions initial_state : (Moment.t * string) =
   in repeat initial_state (Ai.ai_actions initial_state) ""
 
 
-let rec gameplay st msg =
+let rec gameplay st msg = 
+
   let _ = Sys.command "clear" in
   if st.current_player.name = "AI" then
     let (next_state, msg) =  ai_perform_actions st in gameplay next_state msg
@@ -36,7 +37,7 @@ let rec gameplay st msg =
       | Help -> gameplay st
                   ("Your available actions are: place, score,
                  recall, quit, exchange, pickup, help.")
-      | End ->
+      | End -> 
         let (next_st, score) = (play_word st) in
         gameplay next_st ("You scored " ^ score ^ " points. Next turn!")
       | Exchange lst -> gameplay (exchange st lst) "Letters exchanged! Next turn!"
@@ -80,7 +81,7 @@ let rec initiate_game () =
       print_string [] "\n> ";
       let p2 = read_line () in
       gameplay (add_players init_state [p2;p1]) ("Starting multiplayer game with players " ^ p1 ^ " and " ^ p2)
-    | SinglePlayer -> gameplay (add_players init_state ["AI";"OScrablr"]) "Starting singleplayer game"
+    | SinglePlayer -> gameplay (add_players init_state ["AI";"AI"]) "Starting singleplayer game"
     | QuitGame -> print_endline "Thanks for playing OScrabl!"; exit 0
   with
   | InvalidGameMode -> print_endline "???"; initiate_game ()
