@@ -38,9 +38,9 @@ let rec rm_space lst =
     if h = "" then rm_space t
     else h::rm_space t
 
-(*[single_to_int] string -> int
-  Takes a string of length one and codes it to an integer representing a board
-  position (0-14). *)
+(** [single_to_int] string -> int
+    Takes a string of length one and codes it to an integer representing a board
+    position (0-14). *)
 let single_to_int str =
   let rowindex = (Char.code (Char.uppercase_ascii (String.get str 0))) - 65 in
   if rowindex > 14 then raise BadRow else rowindex

@@ -231,77 +231,6 @@ let remove_tile board (x,y) =
     (columnIter 0 [], tile)
   | _ -> raise Can'tPickupTile
 
-(** [print_topline line] prints the top half of [line], where [line] is one row
-    of a board *)
-let rec print_topline line =
-  match line with
-  | [] -> print_endline "|"
-  | x::xs -> match x with
-    | Nothing, NaN -> print_string [] "|    "; print_topline xs
-    | Nothing, DoubleLetter ->
-      print_string [] ("|");
-      print_string [on_cyan] (" 2  "); print_topline xs
-    | Nothing, TripleLetter ->
-      print_string [] ("|");
-      print_string [on_blue] (" 3  "); print_topline xs
-    | Nothing, DoubleWord ->
-      print_string [] ("|");
-      print_string [on_magenta] (" 2  "); print_topline xs
-    | Nothing, TripleWord ->
-      print_string [] ("|");
-      print_string [on_red] (" 3  "); print_topline xs
-    | Final tile, _ | Unfinal tile, _ ->
-      print_string [] ("|");
-      print_string tile_style (" " ^ tile.letter ^ "  ");
-      print_topline xs
-
-(** [offset tile] is the spaces needed after the value of a tile in order to
-    account for differences in number of digits.*)
-let offset tile =
-  if tile.value >= 10 then "" else " "
-
-(** [print_topline line] prints the bottom half of [line], where [line] is one
-    row of a board *)
-let rec print_botline line =
-  match line with
-  | [] -> print_endline "|"
-  | x::xs -> match x with
-    | Nothing, NaN -> print_string [] "|    "; print_botline xs
-    | Nothing, DoubleLetter ->
-      print_string [] ("|");
-      print_string [on_cyan] ("  L "); print_botline xs
-    | Nothing, TripleLetter ->
-      print_string [] ("|");
-      print_string [on_blue] ("  L "); print_botline xs
-    | Nothing, DoubleWord ->
-      print_string [] ("|");
-      print_string [on_magenta] ("  W "); print_botline xs
-    | Nothing, TripleWord ->
-      print_string [] ("|");
-      print_string [on_red] ("  W "); print_botline xs
-    | Final tile, _ | Unfinal tile, _ ->
-      print_string [] ("|");
-      print_string tile_style ("  " ^ string_of_int tile.value ^ offset tile);
-      print_botline xs
-
-(** [print_linenum i] prints the character corresponding to the row number with
-    A for row 1, B for row 2, and so on *)
-let print_linenum i =
-  print_string [] ((i + 65) |> Char.chr |> Char.escaped)
-
-(** [print_board board] prints a graphical representation of [board] into the
-    terminal window *)
-let rec print_board board i =
-  let rec print_iter board i =
-    print_endline " +————+————+————+————+————+————+————+————+————+————+————+————+————+————+————+";
-    match board with
-    | [] -> ()
-    | x::xs ->
-      print_linenum i; print_topline x; print_string [] " ";
-      print_botline x; print_iter xs (i + 1)
-  in print_endline "   0    1    2    3    4    5    6    7    8    9    10   11   12   13   14";
-  print_iter board i
-
 (** [tileSqrs_to_preTileSqrs sqrList] returns [sqrList] with all [Final(a)] and
     [Unfinal(a)] tiles converted to [a] pretiles. [Nothing] tiles are removed. *)
 let tileSqrs_to_preTileSqrs squareList =
@@ -580,20 +509,16 @@ let valid_tile_positions board: bool =
   && row_is_connected board y && col_is_connected board x
 
 (** Score? *)
-let calc_scoretuples board : (int * (string * int) list)=
-  let rec words_iter assoc score_acc tuple_acc =
+let calc_score board : (int * string list)=
+  let rec words_iter assoc score_acc words_acc =
     match assoc with
-    | [] -> (score_acc, tuple_acc)
+    | [] -> (score_acc, words_acc)
     | (word,score)::xs ->
-      if Words.validity word word_set then words_iter xs (score_acc + score) ((word,score)::tuple_acc)
+      if Words.validity word word_set then words_iter xs (score_acc + score) (word::words_acc)
       else raise (InvalidWord word)in
   if valid_tile_positions board
   then words_iter (List.map squares_to_word_and_points (find_strings board)) 0 []
   else raise InvalidTilePlacement
-
-let calc_score board = fst (calc_scoretuples board)
-
-let valid_words_and_pts board : (string*int) list = snd (calc_scoretuples board)
 
 (** [finalize_board board] turns all the Unfinal tiles into Final tiles *)
 let finalize board =

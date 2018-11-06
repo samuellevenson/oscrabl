@@ -1,0 +1,436 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+<meta content="text/html; charset=iso-8859-1" http-equiv="Content-Type">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="Start" href="index.html">
+<link rel="next" href="Actions.html">
+<link rel="Up" href="index.html">
+<link title="Index of types" rel=Appendix href="index_types.html">
+<link title="Index of exceptions" rel=Appendix href="index_exceptions.html">
+<link title="Index of values" rel=Appendix href="index_values.html">
+<link title="Index of modules" rel=Appendix href="index_modules.html">
+<link title="Board" rel="Chapter" href="Board.html">
+<link title="Actions" rel="Chapter" href="Actions.html">
+<link title="Moment" rel="Chapter" href="Moment.html">
+<link title="Main" rel="Chapter" href="Main.html">
+<link title="Words" rel="Chapter" href="Words.html">
+<link title="Ai" rel="Chapter" href="Ai.html"><title>Board</title>
+</head>
+<body>
+<div class="navbar">&nbsp;<a class="up" href="index.html" title="Index">Up</a>
+&nbsp;<a class="post" href="Actions.html" title="Actions">Next</a>
+</div>
+<h1>Module <a href="type_Board.html">Board</a></h1>
+
+<pre><span id="MODULEBoard"><span class="keyword">module</span> Board</span>: <code class="code">sig</code> <a href="Board.html">..</a> <code class="code">end</code></pre><hr width="100%">
+
+<pre><span id="EXCEPTIONCan'tPlaceTile"><span class="keyword">exception</span> Can'tPlaceTile</span></pre>
+
+<pre><span id="EXCEPTIONCan'tPickupTile"><span class="keyword">exception</span> Can'tPickupTile</span></pre>
+
+<pre><span id="EXCEPTIONInvalidSquare"><span class="keyword">exception</span> InvalidSquare</span></pre>
+
+<pre><span id="EXCEPTIONInvalidRow"><span class="keyword">exception</span> InvalidRow</span></pre>
+
+<pre><span id="EXCEPTIONInvalidColumn"><span class="keyword">exception</span> InvalidColumn</span></pre>
+
+<pre><span id="EXCEPTIONNothingSquare"><span class="keyword">exception</span> NothingSquare</span></pre>
+
+<pre><span id="EXCEPTIONInvalidWord"><span class="keyword">exception</span> InvalidWord</span> <span class="keyword">of</span> <code class="type">string</code></pre>
+
+<pre><span id="EXCEPTIONInvalidTilePlacement"><span class="keyword">exception</span> InvalidTilePlacement</span></pre>
+
+<pre><code><span id="TYPEpretile"><span class="keyword">type</span> <code class="type"></code>pretile</span> = {</code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTpretile.letter">letter</span>&nbsp;: <code class="type">string</code>;</code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTpretile.value">value</span>&nbsp;: <code class="type">int</code>;</code></td>
+
+</tr></table>
+}
+
+<div class="info ">
+<div class="info-desc">
+<p>The type of tiles</p>
+</div>
+</div>
+
+
+<pre><code><span id="TYPEtile"><span class="keyword">type</span> <code class="type"></code>tile</span> = </code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTtile.Final"><span class="constructor">Final</span></span> <span class="keyword">of</span> <code class="type"><a href="Board.html#TYPEpretile">pretile</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTtile.Unfinal"><span class="constructor">Unfinal</span></span> <span class="keyword">of</span> <code class="type"><a href="Board.html#TYPEpretile">pretile</a></code></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTtile.Nothing"><span class="constructor">Nothing</span></span></code></td>
+
+</tr></table>
+
+
+
+<pre><span id="VALtile_style"><span class="keyword">val</span> tile_style</span> : <code class="type">ANSITerminal.style list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">tile_style</code> is the ANSITerminal style list for letter tiles</p>
+</div>
+</div>
+
+<pre><code><span id="TYPEmultiplier"><span class="keyword">type</span> <code class="type"></code>multiplier</span> = </code></pre><table class="typetable">
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTmultiplier.DoubleLetter"><span class="constructor">DoubleLetter</span></span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTmultiplier.TripleLetter"><span class="constructor">TripleLetter</span></span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTmultiplier.DoubleWord"><span class="constructor">DoubleWord</span></span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTmultiplier.TripleWord"><span class="constructor">TripleWord</span></span></code></td>
+
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code><span class="keyword">|</span></code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTmultiplier.NaN"><span class="constructor">NaN</span></span></code></td>
+
+</tr></table>
+
+<div class="info ">
+<div class="info-desc">
+<p>The type of score multipliers</p>
+</div>
+</div>
+
+
+<pre><span id="TYPEsquare"><span class="keyword">type</span> <code class="type"></code>square</span> = <code class="type"><a href="Board.html#TYPEtile">tile</a> * <a href="Board.html#TYPEmultiplier">multiplier</a></code> </pre>
+<div class="info ">
+<div class="info-desc">
+<p>The type of squares</p>
+</div>
+</div>
+
+
+<pre><span id="TYPEboard"><span class="keyword">type</span> <code class="type"></code>board</span> = <code class="type"><a href="Board.html#TYPEsquare">square</a> list list</code> </pre>
+<div class="info ">
+<div class="info-desc">
+<p>The type of the scrabble® board</p>
+</div>
+</div>
+
+
+<pre><span id="VALto_lower_case"><span class="keyword">val</span> to_lower_case</span> : <code class="type">string list -> string list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">to_lower_case lst</code> is the all lower_case ascii characters version of <code class="code">lst</code></p>
+</div>
+</div>
+
+<pre><span id="VALdef_col_zero"><span class="keyword">val</span> def_col_zero</span> : <code class="type"><a href="Board.html#TYPEsquare">square</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p>The square list that represents the 0th column of a scrabble board at the
+    start of a game</p>
+</div>
+</div>
+
+<pre><span id="VALdef_col_one"><span class="keyword">val</span> def_col_one</span> : <code class="type">(<a href="Board.html#TYPEtile">tile</a> * <a href="Board.html#TYPEmultiplier">multiplier</a>) list</code></pre><div class="info ">
+<div class="info-desc">
+<p>The square list that represents the 1st column of a scrabble board at the
+    start of a game</p>
+</div>
+</div>
+
+<pre><span id="VALdef_col_two"><span class="keyword">val</span> def_col_two</span> : <code class="type">(<a href="Board.html#TYPEtile">tile</a> * <a href="Board.html#TYPEmultiplier">multiplier</a>) list</code></pre><div class="info ">
+<div class="info-desc">
+<p>The square list that represents the 2nd column of a scrabble board at the
+    start of a game</p>
+</div>
+</div>
+
+<pre><span id="VALdef_col_three"><span class="keyword">val</span> def_col_three</span> : <code class="type">(<a href="Board.html#TYPEtile">tile</a> * <a href="Board.html#TYPEmultiplier">multiplier</a>) list</code></pre><div class="info ">
+<div class="info-desc">
+<p>The square list that represents the 3rd column of a scrabble board at the
+    start of a game</p>
+</div>
+</div>
+
+<pre><span id="VALdef_col_four"><span class="keyword">val</span> def_col_four</span> : <code class="type">(<a href="Board.html#TYPEtile">tile</a> * <a href="Board.html#TYPEmultiplier">multiplier</a>) list</code></pre><div class="info ">
+<div class="info-desc">
+<p>The square list that represents the 4th column of a scrabble board at the
+    start of a game</p>
+</div>
+</div>
+
+<pre><span id="VALdef_col_five"><span class="keyword">val</span> def_col_five</span> : <code class="type">(<a href="Board.html#TYPEtile">tile</a> * <a href="Board.html#TYPEmultiplier">multiplier</a>) list</code></pre><div class="info ">
+<div class="info-desc">
+<p>The square list that represents the 5th column of a scrabble board at the
+    start of a game</p>
+</div>
+</div>
+
+<pre><span id="VALdef_col_six"><span class="keyword">val</span> def_col_six</span> : <code class="type">(<a href="Board.html#TYPEtile">tile</a> * <a href="Board.html#TYPEmultiplier">multiplier</a>) list</code></pre><div class="info ">
+<div class="info-desc">
+<p>The square list that represents the 6th column of a scrabble board at the
+    start of a game</p>
+</div>
+</div>
+
+<pre><span id="VALdef_col_seven"><span class="keyword">val</span> def_col_seven</span> : <code class="type">(<a href="Board.html#TYPEtile">tile</a> * <a href="Board.html#TYPEmultiplier">multiplier</a>) list</code></pre><div class="info ">
+<div class="info-desc">
+<p>The square list that represents the 7th column of a scrabble board at the
+    start of a game</p>
+</div>
+</div>
+
+<pre><span id="VALemptyBoard"><span class="keyword">val</span> emptyBoard</span> : <code class="type"><a href="Board.html#TYPEsquare">square</a> list list</code></pre><div class="info ">
+<div class="info-desc">
+<p>The square list list that represents the scrabble board at the start of a
+    game</p>
+</div>
+</div>
+
+<pre><span id="VALget_square"><span class="keyword">val</span> get_square</span> : <code class="type">'a list list -> int * int -> 'a</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_square brd (x,y)</code> returns the square at coordinate position <code class="code">(x,y)</code> on
+   <code class="code">brd</code>. Raises <code class="code">Invalid_Square</code> if the square does not exist.</p>
+</div>
+</div>
+
+<pre><span id="VALinsertTile"><span class="keyword">val</span> insertTile</span> : <code class="type">(<a href="Board.html#TYPEtile">tile</a> * 'a) list list -><br>       <a href="Board.html#TYPEtile">tile</a> -> int * int -> (<a href="Board.html#TYPEtile">tile</a> * 'a) list list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">insertTile b t (x,y)</code> is the scrabble board <code class="code">b</code> with a tile <code class="code">t</code> square
+    at the <code class="code">x</code>th row and <code class="code">y</code>th column of the board</p>
+</div>
+</div>
+
+<pre><span id="VALremove_tile"><span class="keyword">val</span> remove_tile</span> : <code class="type">(<a href="Board.html#TYPEtile">tile</a> * 'a) list list -><br>       int * int -> (<a href="Board.html#TYPEtile">tile</a> * 'a) list list * <a href="Board.html#TYPEpretile">pretile</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">remove_tile board (x,y)</code> removes the tile at (x,y) if it is Unfinal and
+    returns the new board and the tile that was on that position. If the tile
+    in that position is not Unfinal raises Can'tPickupTile</p>
+</div>
+</div>
+
+<pre><span id="VALprint_topline"><span class="keyword">val</span> print_topline</span> : <code class="type">(<a href="Board.html#TYPEtile">tile</a> * <a href="Board.html#TYPEmultiplier">multiplier</a>) list -> unit</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">print_topline line</code> prints the top half of <code class="code">line</code>, where <code class="code">line</code> is one row
+    of a board</p>
+</div>
+</div>
+
+<pre><span id="VALoffset"><span class="keyword">val</span> offset</span> : <code class="type"><a href="Board.html#TYPEpretile">pretile</a> -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">offset tile</code> is the spaces needed after the value of a tile in order to
+    account for differences in number of digits.</p>
+</div>
+</div>
+
+<pre><span id="VALprint_botline"><span class="keyword">val</span> print_botline</span> : <code class="type">(<a href="Board.html#TYPEtile">tile</a> * <a href="Board.html#TYPEmultiplier">multiplier</a>) list -> unit</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">print_topline line</code> prints the bottom half of <code class="code">line</code>, where <code class="code">line</code> is one
+    row of a board</p>
+</div>
+</div>
+
+<pre><span id="VALprint_linenum"><span class="keyword">val</span> print_linenum</span> : <code class="type">int -> unit</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">print_linenum i</code> prints the character corresponding to the row number with
+    A for row 1, B for row 2, and so on</p>
+</div>
+</div>
+
+<pre><span id="VALprint_board"><span class="keyword">val</span> print_board</span> : <code class="type">(<a href="Board.html#TYPEtile">tile</a> * <a href="Board.html#TYPEmultiplier">multiplier</a>) list list -> int -> unit</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">print_board board</code> prints a graphical representation of <code class="code">board</code> into the
+    terminal window</p>
+</div>
+</div>
+
+<pre><span id="VALtileSqrs_to_preTileSqrs"><span class="keyword">val</span> tileSqrs_to_preTileSqrs</span> : <code class="type"><a href="Board.html#TYPEsquare">square</a> list -> (<a href="Board.html#TYPEpretile">pretile</a> * <a href="Board.html#TYPEmultiplier">multiplier</a>) list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">tileSqrs_to_preTileSqrs sqrList</code> returns <code class="code">sqrList</code> with all <code class="code">Final(a)</code> and
+    <code class="code">Unfinal(a)</code> tiles converted to <code class="code">a</code> pretiles. <code class="code">Nothing</code> tiles are removed.</p>
+</div>
+</div>
+
+<pre><span id="VALsquares_to_word_and_points"><span class="keyword">val</span> squares_to_word_and_points</span> : <code class="type"><a href="Board.html#TYPEsquare">square</a> list -> string * int</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">squares_to_wordpoints sqL</code> returns the string that is formed by the list of
+   tiles from <code class="code">sqL</code>, and the point value for the string after factoring in
+   multiplers *</p>
+</div>
+</div>
+
+<pre><span id="VALis_word"><span class="keyword">val</span> is_word</span> : <code class="type">Words.StringHashTbl.key -> bool</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">is_word s</code> returns <code class="code">true</code> if <code class="code">s</code> is a string in dictionary.json,
+   otherwise <code class="code">false</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALall_are_words"><span class="keyword">val</span> all_are_words</span> : <code class="type">Words.StringHashTbl.key list -> bool</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">all_are_words strList</code> returns <code class="code">true</code> if all strings in <code class="code">strList</code> are in the
+   dictionary.json, otherwise <code class="code">false</code></p>
+</div>
+</div>
+
+<pre><span id="VALget_row_sqrs"><span class="keyword">val</span> get_row_sqrs</span> : <code class="type"><a href="Board.html#TYPEboard">board</a> -> int -> <a href="Board.html#TYPEsquare">square</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_row_sqrs board y</code> returns the list of squares of row <code class="code">y</code> on <code class="code">board</code>.
+   Raises <code class="code">Invalid_Row</code> if the row does not exist.</p>
+</div>
+</div>
+
+<pre><span id="VALget_col_sqrs"><span class="keyword">val</span> get_col_sqrs</span> : <code class="type"><a href="Board.html#TYPEboard">board</a> -> int -> <a href="Board.html#TYPEsquare">square</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_col_sqrs board x</code> returns the list of squares of column <code class="code">x</code> on <code class="code">board</code>.
+   Raises <code class="code">Invalid_Column</code> if the column does not exist.</p>
+</div>
+</div>
+
+<pre><span id="VALget_rowadj_notNothing_sqrs"><span class="keyword">val</span> get_rowadj_notNothing_sqrs</span> : <code class="type"><a href="Board.html#TYPEsquare">square</a> list list -> int * int -> <a href="Board.html#TYPEsquare">square</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_rowadj_notNothing_sqrs board (x,y)</code> returns the list of horizontally
+   connected squares that don't contain any Nothing tiles. The list includes the
+   square at position <code class="code">(x,y)</code> on <code class="code">board</code>. If the square at position <code class="code">(x,y)</code>
+   contains a Nothing tile, raises <code class="code">NothingSquare</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALget_coladj_notNothing_sqrs"><span class="keyword">val</span> get_coladj_notNothing_sqrs</span> : <code class="type"><a href="Board.html#TYPEsquare">square</a> list list -> int * int -> <a href="Board.html#TYPEsquare">square</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_coladj_notNothing_sqrs board (x,y)</code> returns the list of vertically
+   connected squares that don't contain any Nothing tiles. The list includes the
+   square at position <code class="code">(x,y)</code> on <code class="code">board</code>. If the square at position <code class="code">(x,y)</code>
+   contains a Nothing tile, raises <code class="code">NothingSquare</code>.</p>
+</div>
+</div>
+
+<pre><span id="VALrow_is_connected"><span class="keyword">val</span> row_is_connected</span> : <code class="type"><a href="Board.html#TYPEboard">board</a> -> int -> bool</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">row_is_connected board y</code> is true when the row does not contain any squares
+    of type Nothing in between the Unfinal squares</p>
+</div>
+</div>
+
+<pre><span id="VALcol_is_connected"><span class="keyword">val</span> col_is_connected</span> : <code class="type"><a href="Board.html#TYPEboard">board</a> -> int -> bool</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">col_is_connected board y</code> is true when the col does not contain any squares
+    of type Nothing in between the Unfinal squares</p>
+</div>
+</div>
+
+<pre><span id="VALfind_unfinal"><span class="keyword">val</span> find_unfinal</span> : <code class="type">(<a href="Board.html#TYPEtile">tile</a> * 'a) list list -> int * int</code></pre><div class="info ">
+<div class="info-desc">
+<p>finds the position of some unfinal tile on the board, returns it as (x,y)</p>
+</div>
+</div>
+
+<pre><span id="VALpop_unfinals"><span class="keyword">val</span> pop_unfinals</span> : <code class="type"><a href="Board.html#TYPEsquare">square</a> list list -> <a href="Board.html#TYPEboard">board</a> * <a href="Board.html#TYPEpretile">pretile</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">pop_unfinals brd</code> returns a tuple, with the first element being <code class="code">brd</code> with
+    all unfinal tiles converted to nothing tiles, and the second element being
+    the unfinal tile list.</p>
+</div>
+</div>
+
+<pre><span id="VALcheck_uncrossed"><span class="keyword">val</span> check_uncrossed</span> : <code class="type">(<a href="Board.html#TYPEtile">tile</a> * 'a) list list -> int * int -> bool</code></pre><div class="info ">
+<div class="info-desc">
+<p>returns true if all squares outside of the cross centered on (x,y) do not
+    contain unfinal tiles</p>
+</div>
+</div>
+
+<pre><span id="VALxor"><span class="keyword">val</span> xor</span> : <code class="type">bool -> bool -> bool</code></pre><div class="info ">
+<div class="info-desc">
+<p>prefix exclusive or operator</p>
+</div>
+</div>
+
+<pre><span id="VALunfinals_are_horizontal"><span class="keyword">val</span> unfinals_are_horizontal</span> : <code class="type"><a href="Board.html#TYPEboard">board</a> -> int -> int</code></pre><div class="info ">
+<div class="info-desc">
+<p>TODO: docs</p>
+</div>
+</div>
+
+<pre><span id="VALunfinals_are_vertical"><span class="keyword">val</span> unfinals_are_vertical</span> : <code class="type"><a href="Board.html#TYPEboard">board</a> -> int -> int</code></pre><div class="info ">
+<div class="info-desc">
+<p>TODO: docs</p>
+</div>
+</div>
+
+<pre><span id="VALunfinals_singly_oriented"><span class="keyword">val</span> unfinals_singly_oriented</span> : <code class="type"><a href="Board.html#TYPEboard">board</a> -> int * int -> bool</code></pre><div class="info ">
+<div class="info-desc">
+<p>TODO: docs</p>
+</div>
+</div>
+
+<pre><span id="VALis_firstmove"><span class="keyword">val</span> is_firstmove</span> : <code class="type"><a href="Board.html#TYPEboard">board</a> -> bool</code></pre>
+<pre><span id="VALvalid_first_move"><span class="keyword">val</span> valid_first_move</span> : <code class="type"><a href="Board.html#TYPEboard">board</a> -> bool</code></pre>
+<pre><span id="VALfind_strings"><span class="keyword">val</span> find_strings</span> : <code class="type"><a href="Board.html#TYPEsquare">square</a> list list -> <a href="Board.html#TYPEsquare">square</a> list list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">find_strings board</code> finds all the strings created by the unfinal tiles on the
+    board. These strings may not be English words</p>
+</div>
+</div>
+
+<pre><span id="VALadj_final_tiles"><span class="keyword">val</span> adj_final_tiles</span> : <code class="type"><a href="Board.html#TYPEsquare">square</a> list list -> bool</code></pre>
+<pre><span id="VALvalid_tile_positions"><span class="keyword">val</span> valid_tile_positions</span> : <code class="type"><a href="Board.html#TYPEboard">board</a> -> bool</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">valid_tile_positions board</code> is whether the tiles of <code class="code">board</code> are placed in
+    a valid configuration by the rules of Scrabble®</p>
+</div>
+</div>
+
+<pre><span id="VALcalc_scoretuples"><span class="keyword">val</span> calc_scoretuples</span> : <code class="type"><a href="Board.html#TYPEboard">board</a> -> int * (string * int) list</code></pre><div class="info ">
+<div class="info-desc">
+<p>Score?</p>
+</div>
+</div>
+
+<pre><span id="VALcalc_score"><span class="keyword">val</span> calc_score</span> : <code class="type"><a href="Board.html#TYPEboard">board</a> -> int</code></pre>
+<pre><span id="VALvalid_words_and_pts"><span class="keyword">val</span> valid_words_and_pts</span> : <code class="type"><a href="Board.html#TYPEboard">board</a> -> (string * int) list</code></pre>
+<pre><span id="VALfinalize"><span class="keyword">val</span> finalize</span> : <code class="type"><a href="Board.html#TYPEsquare">square</a> list list -> <a href="Board.html#TYPEboard">board</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">finalize_board board</code> turns all the Unfinal tiles into Final tiles</p>
+</div>
+</div>
+</body></html>

@@ -12,7 +12,6 @@ type player = {
   name: string;
   dock: pretile list;
   score: int;
-  words: string list
 }
 
 (** the type of the moment (state) *)
@@ -21,7 +20,12 @@ type t = {
   bag: pretile list;
   players: player list;
   current_player: player;
+  log: string list
 }
+
+(** [get_board] t -> Board.board
+    Returns the board of the current game state. *)
+let get_board st = st.board
 
 (** [rand_num] is a random integer of 30 bits *)
 let rand_num = (Random.self_init ()); Random.bits
@@ -136,27 +140,6 @@ let init_bag =
     {letter = "Z"; value = 10};
   ]
 
-(** [draw currentBag] draws one tile from the given bag and returns a tuple
-    containing the drawn tile and a bag with the remaining tiles *)
-let draw currentBag: (pretile * pretile list) =
-  if (List.length currentBag) = 0 then raise EmptyBag
-  else begin let rec helper bg acclist =
-               match bg with
-               | [] -> List.rev acclist
-               | h::t -> if (List.length bg = List.length currentBag) then helper t acclist
-                 else (helper t) (h::acclist)
-    in ((List.hd currentBag), helper currentBag []) end
-
-(** [draw_n_times currentBag n] draws [n] tiles from the given bag and returns a
-    tuple containing a list of the drawn tiles and a bag with the remaining
-    tiles *)
-let draw_n_times currentBag n: (pretile list * pretile list) =
-  let rec helper bg n accTileList =
-    if (n > 0) then match (draw bg) with
-      | (ti, ba) ->  helper ba (n-1) (ti::accTileList)
-    else (accTileList, bg) in
-  helper currentBag n []
-
 (** [draw_n start_bag start_n] is the previous two functions simplified and then
     squished into one function *)
 let draw_n start_bag start_n =
@@ -183,8 +166,8 @@ let init_state = {
     name = "undefined";
     dock = [];
     score = 0;
-    words = [];
   };
+  log = []
 }
 
 (** [add_players state players] creates a new state from the list of player
@@ -196,13 +179,13 @@ let rec add_players state players =
       name = x;
       dock = draw_n state.bag 7 |> fst;
       score = 0;
-      words = []
     } in
     let next_state = {
       board = state.board;
       bag = draw_n state.bag 7 |> snd;
       players = new_player::state.players;
-      current_player = state.current_player
+      current_player = state.current_player;
+      log = state.log;
     } in
     add_players next_state xs
   | [] ->
@@ -210,7 +193,8 @@ let rec add_players state players =
       board = state.board;
       bag = state.bag;
       players = state.players;
-      current_player = state.players |> List.hd
+      current_player = state.players |> List.hd;
+      log = state.log;
     }
 
 (** [letter_to_tile] is a function taking a string containing a single letter
@@ -239,25 +223,28 @@ let remove_tile_from_dock player tile: player =
   {
     name = player.name;
     score = player.score;
-    words = player.words;
     dock = dock_iter tile player.dock []
   }
 
 (** turn ending implemented for 1 player game *)
 let play_word state : (t * string) =
   let draw_num = 7 - List.length state.current_player.dock in
-  let score = calc_score state.board in
+  let (drawn_tiles, new_bag) = draw_n state.bag draw_num in
+  let (score, words) = calc_score state.board in
+  let to_log = state.current_player.name ^ " played " ^
+               (String.concat ", " words) ^ " for "  ^
+               (string_of_int score) ^ " points" in
   let curr_player = {
     name = state.current_player.name;
-    dock = state.current_player.dock @ fst (draw_n state.bag draw_num);
+    dock = state.current_player.dock @ drawn_tiles;
     score = state.current_player.score + score;
-    words = state.current_player.words
   } in
   ({
     board = finalize state.board;
-    bag = snd (draw_n state.bag draw_num);
+    bag = new_bag;
     players = List.rev (curr_player::(List.tl (state.players))) ;
-    current_player = List.hd (List.tl state.players)
+    current_player = List.hd (List.tl state.players);
+    log = to_log::state.log
   }, string_of_int score)
 
 (** [exchange] t -> string list -> t
@@ -267,26 +254,27 @@ let play_word state : (t * string) =
 let exchange state start_letters =
   if (List.length state.current_player.dock <> 7) then raise InvalidExchange
   else try begin
-  let rec letter_iter player letters tile_acc =
-    match letters with
-    | x::xs ->
-      let tile = letter_to_tile x player in
-      letter_iter (remove_tile_from_dock player tile) xs (tile::tile_acc)
-    | [] -> (player, tile_acc) in
-  let (p, tiles_exchanged) = letter_iter state.current_player start_letters [] in
-  let (tiles_drawn, new_bag) = draw_n state.bag (List.length start_letters) in
-  let new_player = {
-    name = p.name;
-    dock = p.dock @ tiles_drawn;
-    words = p.words;
-    score = p.score
-  } in
-  {
-    board = state.board;
-    bag = tiles_exchanged@state.bag |> shuffle_bag;
-    players = new_player::(List.tl state.players) |> List.rev;
-    current_player = List.hd (List.tl state.players)
-  } end
+    let rec letter_iter player letters tile_acc =
+      match letters with
+      | x::xs ->
+        let tile = letter_to_tile x player in
+        letter_iter (remove_tile_from_dock player tile) xs (tile::tile_acc)
+      | [] -> (player, tile_acc) in
+    let (p, tiles_exchanged) = letter_iter state.current_player start_letters [] in
+    let (tiles_drawn, new_bag) = draw_n state.bag (List.length start_letters) in
+    let to_log = state.current_player.name ^ " exchanged " ^ (String.concat ", " start_letters)  in
+    let new_player = {
+      name = p.name;
+      dock = p.dock @ tiles_drawn;
+      score = p.score
+    } in
+    {
+      board = state.board;
+      bag = tiles_exchanged@new_bag |> shuffle_bag;
+      players = new_player::(List.tl state.players) |> List.rev;
+      current_player = List.hd (List.tl state.players);
+      log = to_log::state.log
+    } end
     with
     | BadSelection -> raise MissingTilesToExchange
 
@@ -301,8 +289,8 @@ let recall st =
       name = st.current_player.name;
       dock = st.current_player.dock@(snd board_and_pretiles);
       score = st.current_player.score;
-      words = st.current_player.words
-    }
+    };
+    log = st.log
   }
 
 (** [place_tile state (letter,(row,col))] is the new state after a tile
@@ -316,6 +304,7 @@ let place_tile state (letter,pos) =
     bag = state.bag;
     players = state.players;
     current_player = remove_tile_from_dock state.current_player tile;
+    log = state.log
   }
 
 (** TODO: docs *)
@@ -325,11 +314,12 @@ let pickup_tile state pos : (t * string) =
     board = new_board;
     bag = state.bag;
     players = state.players;
-    current_player = let p = state.current_player in
+    log = state.log;
+    current_player =
+      let p = state.current_player in
       {
         name = p.name;
         score = p.score;
-        words = p.words;
         dock = tile::p.dock;
       }
   }, tile.letter)
@@ -338,6 +328,78 @@ let pickup_tile state pos : (t * string) =
 let get_score state =
   state.current_player.score |> string_of_int
 
+(** [offset tile] is the spaces needed after the value of a tile in order to
+    account for differences in number of digits.*)
+let offset tile =
+  if tile.value >= 10 then "" else " "
+
+(** [print_topline line] prints the top half of [line], where [line] is one row
+    of a board *)
+let rec print_topline line =
+  match line with
+  | [] -> print_endline "|"
+  | x::xs -> match x with
+    | Nothing, NaN -> print_string [] "|    "; print_topline xs
+    | Nothing, DoubleLetter ->
+      print_string [] ("|");
+      print_string [on_cyan] (" 2  "); print_topline xs
+    | Nothing, TripleLetter ->
+      print_string [] ("|");
+      print_string [on_blue] (" 3  "); print_topline xs
+    | Nothing, DoubleWord ->
+      print_string [] ("|");
+      print_string [on_magenta] (" 2  "); print_topline xs
+    | Nothing, TripleWord ->
+      print_string [] ("|");
+      print_string [on_red] (" 3  "); print_topline xs
+    | Final tile, _ | Unfinal tile, _ ->
+      print_string [] ("|");
+      print_string tile_style (" " ^ tile.letter ^ "  ");
+      print_topline xs
+
+(** [print_topline line] prints the bottom half of [line], where [line] is one
+    row of a board *)
+let rec print_botline line =
+  match line with
+  | [] -> print_endline "|"
+  | x::xs -> match x with
+    | Nothing, NaN -> print_string [] "|    "; print_botline xs
+    | Nothing, DoubleLetter ->
+      print_string [] ("|");
+      print_string [on_cyan] ("  L "); print_botline xs
+    | Nothing, TripleLetter ->
+      print_string [] ("|");
+      print_string [on_blue] ("  L "); print_botline xs
+    | Nothing, DoubleWord ->
+      print_string [] ("|");
+      print_string [on_magenta] ("  W "); print_botline xs
+    | Nothing, TripleWord ->
+      print_string [] ("|");
+      print_string [on_red] ("  W "); print_botline xs
+    | Final tile, _ | Unfinal tile, _ ->
+      print_string [] ("|");
+      print_string tile_style ("  " ^ string_of_int tile.value ^ offset tile);
+      print_botline xs
+
+(** [print_linenum i] prints the character corresponding to the row number with
+    A for row 1, B for row 2, and so on *)
+let print_linenum i =
+  print_string [] ((i + 65) |> Char.chr |> Char.escaped)
+
+(** [print_board board] prints a graphical representation of [board] into the
+    terminal window *)
+let rec print_board board i =
+  let rec print_iter board i =
+    print_endline " +————+————+————+————+————+————+————+————+————+————+————+————+————+————+————+";
+    match board with
+    | [] -> ()
+    | x::xs ->
+      print_linenum i; print_topline x; print_string [] "?";
+      print_botline x; print_iter xs (i + 1)
+  in
+  print_endline "   0    1    2    3    4    5    6    7    8    9    10   11   12   13   14";
+  print_iter board i
+
 (** [print_docktop dock] prints the top line of a players dock of tiles *)
 let rec print_docktop dock =
   match dock with
@@ -345,11 +407,6 @@ let rec print_docktop dock =
   | x::xs ->
     print_string tile_style (" " ^ x.letter ^ "  ");
     print_string [] "  "; print_docktop xs
-
-(** [offset tile] is the spaces needed after the value of a tile in order to
-    account for differences in number of digits.*)
-let offset tile =
-  if tile.value >= 10 then "" else " "
 
 (** [print_dockbot dock] prints the bottom line a players dock of tiles *)
 let rec print_dockbot dock =
