@@ -28,9 +28,22 @@ type t = {
     Returns the board of the current game state. *)
 let get_board st = st.board
 
+(** [get_name] player -> string
+    Returns the name of the given player. *)
+let get_name player = player.name 
+
 (** [get_current_player] t -> player
     Returns the currently active player in the game state. *)
 let get_current_player st = st.current_player
+
+(** [get_other_player] t -> player 
+    Is the non-active player.*)
+let get_other_player st = 
+  List.hd (List.tl st.players) 
+
+(** [get_dock] player -> Board.pretile list 
+    is the dock of a selected player*)
+let get_dock player = player.dock
 
 (** [get_current_dock] t -> Board.pretile list
     is the dock of the current player. *)
@@ -533,6 +546,6 @@ let rec print_dock player msg =
 (** [print_game st] prints the board and dock of the state [st] *)
 let print_game st msg =
   print_endline "\n";
-  print_board (st.board) st 0;
+  print_board (get_board st) st 0;
   print_endline "";
-  print_dock (st.current_player) msg;
+  print_dock (get_current_player st) msg;

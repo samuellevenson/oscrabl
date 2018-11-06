@@ -310,7 +310,7 @@ let first_valid_tiles state (lists: Actions.action list list) =
         match moves with
         | Place (letter,pos)::xs -> let new_state = place_tile st (letter,pos) in
           helper2 new_state xs
-        | _ -> try (match (calc_score st.board) with
+        | _ -> try (match (calc_score (get_board st)) with
             |(_,_) -> h) with
         |InvalidWord string -> [] in
       helper1 t ((helper2 state h)@acclist)
@@ -325,7 +325,7 @@ let valid_tiles state list =
     match moves with
     | Place (letter,pos)::xs -> let new_state = place_tile st (letter,pos) in
       helper new_state xs
-    | _ -> begin try (match (calc_score st.board) with
+    | _ -> begin try (match (calc_score (get_board st)) with
         |(_,_) -> list) with 
       |InvalidWord s -> [] 
       |InvalidTilePlacement -> [] end in helper state list 
@@ -342,12 +342,12 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
   let cur_brain = {original_state = cur_st;
                    hypothetical_state = cur_st;
                    actions = []} in
-  let orig_board = cur_brain.original_state.board in
-  let dock = cur_brain.original_state.current_player.dock in
-  let fT_wS = finalTiles_windowSizes cur_brain.original_state.board
-      (final_tile_coords cur_brain.original_state.board) in
+  let orig_board = get_board (cur_brain.original_state) in
+  let dock = get_current_dock (cur_brain.original_state) in
+  let fT_wS = finalTiles_windowSizes (get_board (cur_brain.original_state))
+      (final_tile_coords (get_board (cur_brain.original_state))) in
 
-  if (is_firstmove (cur_st.board)) then
+  if (is_firstmove (get_board (cur_st))) then
     let all_perms = totalcombinations dock 3 [] in
     (* (1) begin iterating through all permutations of the AI's tiles*)
     let rec halper1 perms =
