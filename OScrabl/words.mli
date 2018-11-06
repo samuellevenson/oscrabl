@@ -1,14 +1,16 @@
+(** Check words against Scrabble® dictionary *)
+
 open Yojson.Basic.Util
 
 val file : Yojson.Basic.json
 
-module StringHash : sig 
-  type t = string 
-  val equal : 'a -> 'a -> bool 
-  val hash : 'a -> int 
+module StringHash : sig
+  type t = string
+  val equal : 'a -> 'a -> bool
+  val hash : 'a -> int
 end
 
-module StringHashTbl : sig 
+module StringHashTbl : sig
   type key = StringHash.t
   type 'a t = 'a Hashtbl.Make(StringHash).t
   val create : int -> 'a t
@@ -33,9 +35,9 @@ end
 val word_array : string array
 (** [word_set is the HashTable that will contain the OScrabl dictionary.] *)
 val word_set : int StringHashTbl.t
-(** [add_hash_set] is the function that actually adds the OScrabl dictionary to 
+(** [add_hash_set] is the function that actually adds the OScrabl dictionary to
     the HashTable. *)
-val add_hash_set : int StringHashTbl.t -> 
+val add_hash_set : int StringHashTbl.t ->
   StringHashTbl.key array -> (StringHashTbl.key -> int) -> unit
 
 (** [validity] is whether a string exists in the OScrabl dictionary. *)

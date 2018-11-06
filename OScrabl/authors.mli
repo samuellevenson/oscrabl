@@ -1,3 +1,5 @@
+(** Author information *)
+
 (**
    @author Max Chen (mlc294), Samuel Levenson (shl96), Richard Yu (ry275)
 *)

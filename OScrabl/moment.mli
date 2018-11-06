@@ -1,3 +1,5 @@
+(** Representation of the gamestate at a particular moment *)
+
 exception EmptyBag
 exception MissingTilesToExchange
 exception InvalidExchange
@@ -11,8 +13,7 @@ val create_player : string -> Board.pretile list -> int -> player
 
 (** [create_moment] is a function that creates a moment object; intended to help
     code reuse. *)
-val create_moment : Board.board ->
-  Board.pretile list -> player list -> player -> string list -> t
+val create_moment : Board.board -> Board.pretile list -> player list -> player -> string list -> t
 (** [get_board] is the board in the current game moment.*)
 val get_board : t -> Board.board
 
@@ -22,7 +23,7 @@ val get_current_player : t -> player
 (** [get_name] is the name of the given player. *)
 val get_name : player -> string
 
-(** [get_other_player] is the player that is 
+(** [get_other_player] is the player that is
     not currently active in the game moment. *)
 val get_other_player : t -> player
 
@@ -36,7 +37,7 @@ val get_dock : player -> Board.pretile list
 val get_current_dock : t -> Board.pretile list
 
 (** [init_state] is an initial state. *)
-val init_state : t 
+val init_state : t
 
 (** [init_bag] is an initial bag. *)
 
@@ -51,27 +52,27 @@ val shuffle_bag : Board.pretile list -> Board.pretile list
 (** [play_word] is called in order to end the current player's turn. *)
 val play_word : t -> (t * string)
 
-(** [exchange] is the game state with the current player's choice of tiles 
-    exchanged. 
-    Raises: 
+(** [exchange] is the game state with the current player's choice of tiles
+    exchanged.
+    Raises:
     InvalidExchange if the player does not have 7 tiles,
-    MissingTilesToExchange if the player does not have the 
+    MissingTilesToExchange if the player does not have the
     tiles they want to exchange.*)
 val exchange : t -> string list -> t
 
-(** [recall] is the current game state with all tiles that have been placed in 
+(** [recall] is the current game state with all tiles that have been placed in
     the turn recalled. *)
 val recall : t -> t
 
-(** [place_tile] is the current game state with a given tile from the user's 
+(** [place_tile] is the current game state with a given tile from the user's
     dock placed. *)
 val place_tile : t -> (string * (int * int)) -> t
 
-(** [pickup_tile] is tuple game state with a tile removed, and the tile that is 
+(** [pickup_tile] is tuple game state with a tile removed, and the tile that is
     removed, as a pair. *)
 val pickup_tile : t -> (int * int) -> (t * string)
 
-(** [get_score] is the string representation of the score of the 
+(** [get_score] is the string representation of the score of the
     current player. *)
 val get_score : t -> string
 
