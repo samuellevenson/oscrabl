@@ -31,6 +31,15 @@ let get_board st = st.board
     Returns the currently active player in the game state. *)
 let get_current_player st = st.current_player
 
+(** [get_other_player] t -> player 
+    Is the non-active player.*)
+let get_other_player st = 
+  List.hd (List.tl st.players) 
+
+(** [get_dock] player -> Board.pretile list 
+    is the dock of a selected player*)
+let get_dock player = player.dock
+
 (** [get_current_dock] t -> Board.pretile list
     is the dock of the current player. *)
 let get_current_dock st = (get_current_player st).dock
