@@ -26,19 +26,9 @@
 </div>
 <h1>Module <a href="type_Actions.html">Actions</a></h1>
 
-<pre><span id="MODULEActions"><span class="keyword">module</span> Actions</span>: <code class="code">sig</code> <a href="Actions.html">..</a> <code class="code">end</code></pre><div class="info module top">
-<div class="info-desc">
-<p>position is a type representing a coordinate.</p>
-</div>
-</div>
-<hr width="100%">
+<pre><span id="MODULEActions"><span class="keyword">module</span> Actions</span>: <code class="code">sig</code> <a href="Actions.html">..</a> <code class="code">end</code></pre><hr width="100%">
 
 <pre><span id="TYPEposition"><span class="keyword">type</span> <code class="type"></code>position</span> = <code class="type">int * int</code> </pre>
-<div class="info ">
-<div class="info-desc">
-<p>action is a type representing an action given by the user.</p>
-</div>
-</div>
 
 
 <pre><code><span id="TYPEaction"><span class="keyword">type</span> <code class="type"></code>action</span> = </code></pre><table class="typetable">
@@ -138,12 +128,6 @@
 
 </tr></table>
 
-<div class="info ">
-<div class="info-desc">
-<p>game_mode is a type representing the game mode selected by the
-    user.</p>
-</div>
-</div>
 
 
 <pre><span id="EXCEPTIONInvalidGameMode"><span class="keyword">exception</span> InvalidGameMode</span></pre>
@@ -170,10 +154,6 @@
 <p><code class="code">single_to_int</code> string -&gt; int
     Takes a string of length one and codes it to an integer representing a board
     position (0-14).</p>
-
-<p><code class="code">single_to_int</code> 
-    Takes a string of length one and codes it to an integer representing a board
-    position (0-14).</p>
 </div>
 </div>
 
@@ -181,8 +161,6 @@
 <div class="info-desc">
 <p><code class="code">check_int</code> string -&gt; boolean
     returns true if a string is an int.</p>
-
-<p><code class="code">check_int</code> is whether or not a string has an integer in it.</p>
 </div>
 </div>
 
@@ -191,10 +169,6 @@
 <p><code class="code">to_upper_case</code> string list -&gt; string list
     is a character string list with every string capitalized.
     If a string contains an integer, BadSelectino is raised.</p>
-
-<p><code class="code">to_upper_case</code> is the given string list with every string capitalized.
-    Raises:
-    BadSelection if the given string contains an integer.</p>
 </div>
 </div>
 
@@ -203,11 +177,6 @@
 <p><code class="code">parse_game_mode</code> string -&gt; game_mode
     is the user's input parsed into a game mode.
     Raises:
-    InvalidGameMode if something other than multiplayer, singleplayer,
-    or quit is given.</p>
-
-<p><code class="code">parse_game_mode</code> is the selected game mode from the given user input.
-    Raises: 
     InvalidGameMode if something other than multiplayer, singleplayer,
     or quit is given.</p>
 </div>
@@ -219,11 +188,6 @@
     is the user's input parsed into an action.
     Raises:
     Blank of user input is empty,
-    Broken if an invalid pattern for an action is given.</p>
-
-<p><code class="code">parse_cmd</code> is the selected action given by user input.
-    Raises: 
-    Blank of user input is empty, 
     Broken if an invalid pattern for an action is given.</p>
 </div>
 </div>

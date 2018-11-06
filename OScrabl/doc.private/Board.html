@@ -62,8 +62,6 @@
 <div class="info ">
 <div class="info-desc">
 <p>The type of tiles</p>
-
-<p>The type of tiles</p>
 </div>
 </div>
 
@@ -95,8 +93,6 @@
 
 <pre><span id="VALtile_style"><span class="keyword">val</span> tile_style</span> : <code class="type">ANSITerminal.style list</code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">tile_style</code> is the ANSITerminal style list for letter tiles</p>
-
 <p><code class="code">tile_style</code> is the ANSITerminal style list for letter tiles</p>
 </div>
 </div>
@@ -141,8 +137,6 @@
 <div class="info ">
 <div class="info-desc">
 <p>The type of score multipliers</p>
-
-<p>The type of score multipliers</p>
 </div>
 </div>
 
@@ -151,8 +145,6 @@
 <div class="info ">
 <div class="info-desc">
 <p>The type of squares</p>
-
-<p>The type of squares</p>
 </div>
 </div>
 
@@ -160,8 +152,6 @@
 <pre><span id="TYPEboard"><span class="keyword">type</span> <code class="type"></code>board</span> = <code class="type"><a href="Board.html#TYPEsquare">square</a> list list</code> </pre>
 <div class="info ">
 <div class="info-desc">
-<p>The type of the scrabble® board</p>
-
 <p>The type of the scrabble® board</p>
 </div>
 </div>
@@ -233,8 +223,6 @@
 <div class="info-desc">
 <p>The square list list that represents the scrabble board at the start of a
     game</p>
-
-<p><code class="code">emptyBoard</code> is an empty game board used at the start of the game.</p>
 </div>
 </div>
 
@@ -242,8 +230,6 @@
 <div class="info-desc">
 <p><code class="code">get_square brd (x,y)</code> returns the square at coordinate position <code class="code">(x,y)</code> on
    <code class="code">brd</code>. Raises <code class="code">Invalid_Square</code> if the square does not exist.</p>
-
-<p><code class="code">get_square</code> is the square at a given coordinate.</p>
 </div>
 </div>
 
@@ -251,8 +237,6 @@
 <div class="info-desc">
 <p><code class="code">insertTile b t (x,y)</code> is the scrabble board <code class="code">b</code> with a tile <code class="code">t</code> square
     at the <code class="code">x</code>th row and <code class="code">y</code>th column of the board</p>
-
-<p><code class="code">insertTile</code> is the OScrabl board with a tile inserted into it.</p>
 </div>
 </div>
 
@@ -261,8 +245,6 @@
 <p><code class="code">remove_tile board (x,y)</code> removes the tile at (x,y) if it is Unfinal and
     returns the new board and the tile that was on that position. If the tile
     in that position is not Unfinal raises Can'tPickupTile</p>
-
-<p><code class="code">remove_tile</code> is the OScrabl board with a tile removed from it.</p>
 </div>
 </div>
 
@@ -389,8 +371,6 @@
 <pre><span id="VALis_firstmove"><span class="keyword">val</span> is_firstmove</span> : <code class="type"><a href="Board.html#TYPEboard">board</a> -> bool</code></pre><div class="info ">
 <div class="info-desc">
 <p>TODO: docs</p>
-
-<p><code class="code">is_firstmove</code> is whether it is currently the first move.</p>
 </div>
 </div>
 
@@ -423,15 +403,11 @@
 <pre><span id="VALcalc_score"><span class="keyword">val</span> calc_score</span> : <code class="type"><a href="Board.html#TYPEboard">board</a> -> int * string list</code></pre><div class="info ">
 <div class="info-desc">
 <p>Score?</p>
-
-<p><code class="code">calc_score</code> is the score of the current player.</p>
 </div>
 </div>
 
 <pre><span id="VALfinalize"><span class="keyword">val</span> finalize</span> : <code class="type"><a href="Board.html#TYPEsquare">square</a> list list -> <a href="Board.html#TYPEboard">board</a></code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">finalize_board board</code> turns all the Unfinal tiles into Final tiles</p>
-
 <p><code class="code">finalize_board board</code> turns all the Unfinal tiles into Final tiles</p>
 </div>
 </div>
