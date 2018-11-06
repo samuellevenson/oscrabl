@@ -21,7 +21,7 @@ let ai_perform_actions initial_state : (Moment.t * string) =
 
 let rec gameplay st msg =
   let _ = Sys.command "clear" in
-  if st.current_player.name = "Computer" then
+  if (get_name (get_current_player st)) = "Computer" then
     let (next_state, msg) =  ai_perform_actions st in gameplay next_state msg
   else begin
     print_game st msg;
