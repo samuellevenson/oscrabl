@@ -1,3 +1,5 @@
+(** Functions and types for the board *)
+
 open ANSITerminal
 open Words
 
@@ -39,7 +41,7 @@ val is_firstmove : board -> bool
 val get_square : 'a list list -> int * int -> 'a
 
 (** [insertTile] is the OScrabl board with a tile inserted into it. *)
-val insertTile: (tile * 'a) list list -> 
+val insertTile: (tile * 'a) list list ->
   tile -> int * int -> (tile * 'a) list list
 
 (* [pop_unfinals] is a (board, unfinal tile list) tuple, where
@@ -47,11 +49,11 @@ val insertTile: (tile * 'a) list list ->
 val pop_unfinals : square list list -> board * pretile list
 
 (** [remove_tile] is the OScrabl board with a tile removed from it. *)
-val remove_tile: (tile * 'a) list list -> int * int -> 
+val remove_tile: (tile * 'a) list list -> int * int ->
   (tile * 'a) list list * pretile
 
 (** [calc_score] is the score of the current player. *)
-val calc_score : board -> (int * string list) 
+val calc_score : board -> (int * string list)
 
 (** [finalize_board board] turns all the Unfinal tiles into Final tiles *)
 val finalize : square list list -> board
