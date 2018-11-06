@@ -27,6 +27,14 @@ type t = {
     Returns the board of the current game state. *)
 let get_board st = st.board
 
+(** [get_current_player] t -> player
+    Returns the currently active player in the game state. *)
+let get_current_player st = st.current_player
+
+(** [get_current_dock] t -> Board.pretile list
+    is the dock of the current player. *)
+let get_current_dock st = (get_current_player st).dock
+
 (** [rand_num] is a random integer of 30 bits *)
 let rand_num = (Random.self_init ()); Random.bits
 
@@ -152,6 +160,9 @@ let draw_n start_bag start_n =
     | _ -> failwith "start_n < 0"
   in repeat_draw start_bag start_n []
 
+(** shift log if length greater than 36 *)
+let shift log = if List.length log > 36 then List.tl log else log
+
 (** [init_draw_num] is the number of tiles to draw from the bag at the start of
     the game *)
 let init_draw_num num_of_players = num_of_players * 7
@@ -167,7 +178,7 @@ let init_state = {
     dock = [];
     score = 0;
   };
-  log = []
+  log = ["Started Game"]
 }
 
 (** [add_players state players] creates a new state from the list of player
@@ -244,7 +255,7 @@ let play_word state : (t * string) =
     bag = new_bag;
     players = List.rev (curr_player::(List.tl (state.players))) ;
     current_player = List.hd (List.tl state.players);
-    log = to_log::state.log
+    log = (state.log@[to_log]) |> shift
   }, string_of_int score)
 
 (** [exchange] t -> string list -> t
@@ -262,7 +273,8 @@ let exchange state start_letters =
       | [] -> (player, tile_acc) in
     let (p, tiles_exchanged) = letter_iter state.current_player start_letters [] in
     let (tiles_drawn, new_bag) = draw_n state.bag (List.length start_letters) in
-    let to_log = state.current_player.name ^ " exchanged " ^ (String.concat ", " start_letters)  in
+    let to_log = state.current_player.name ^ " exchanged " ^
+                 (start_letters |> List.length |> string_of_int) ^ " letters" in
     let new_player = {
       name = p.name;
       dock = p.dock @ tiles_drawn;
@@ -273,7 +285,7 @@ let exchange state start_letters =
       bag = tiles_exchanged@new_bag |> shuffle_bag;
       players = new_player::(List.tl state.players) |> List.rev;
       current_player = List.hd (List.tl state.players);
-      log = to_log::state.log
+      log = (state.log@[to_log]) |> shift
     } end
     with
     | BadSelection -> raise MissingTilesToExchange
@@ -337,7 +349,7 @@ let offset tile =
     of a board *)
 let rec print_topline line =
   match line with
-  | [] -> print_endline "|"
+  | [] -> print_string [] "|"
   | x::xs -> match x with
     | Nothing, NaN -> print_string [] "|    "; print_topline xs
     | Nothing, DoubleLetter ->
@@ -361,7 +373,7 @@ let rec print_topline line =
     row of a board *)
 let rec print_botline line =
   match line with
-  | [] -> print_endline "|"
+  | [] -> print_string [] "|"
   | x::xs -> match x with
     | Nothing, NaN -> print_string [] "|    "; print_botline xs
     | Nothing, DoubleLetter ->
@@ -386,24 +398,197 @@ let rec print_botline line =
 let print_linenum i =
   print_string [] ((i + 65) |> Char.chr |> Char.escaped)
 
+let print_lineright state i =
+  match i with
+  | 3 -> begin match (List.nth_opt state.log 0) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 4 -> begin match (List.nth_opt state.log 3) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 5 -> begin match (List.nth_opt state.log 6) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 6 -> begin match (List.nth_opt state.log 9) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 7 -> begin match (List.nth_opt state.log 12) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 8 -> begin match (List.nth_opt state.log 15) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 9 -> begin match (List.nth_opt state.log 18) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 10 -> begin match (List.nth_opt state.log 21) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 11 -> begin match (List.nth_opt state.log 24) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 12 -> begin match (List.nth_opt state.log 27) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 13 -> begin match (List.nth_opt state.log 30) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 14 -> begin match (List.nth_opt state.log 33) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | _ -> print_string [] ""
+
+(** print the score *)
+let print_topright state i =
+  match i with
+  | 0 -> let p = (List.nth state.players 0) in
+    print_string [] ("     " ^ p.name ^ "'s score: " ^ (p.score |> string_of_int))
+  | 1 -> print_string [] ("     " ^ (state.bag |> List.length |> string_of_int) ^ " tiles remaining")
+  | 2 -> print_string [] "     Game Log:"
+  | 3 -> begin match (List.nth_opt state.log 1) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 4 -> begin match (List.nth_opt state.log 4) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 5 -> begin match (List.nth_opt state.log 7) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 6 -> begin match (List.nth_opt state.log 10) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 7 -> begin match (List.nth_opt state.log 13) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 8 -> begin match (List.nth_opt state.log 16) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 9 -> begin match (List.nth_opt state.log 19) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 10 -> begin match (List.nth_opt state.log 22) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 11 -> begin match (List.nth_opt state.log 25) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 12 -> begin match (List.nth_opt state.log 28) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 13 -> begin match (List.nth_opt state.log 31) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 14 -> begin match (List.nth_opt state.log 34) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | _ -> print_string [] ""
+
+let print_botright state i =
+  match i with
+  | 0 -> let p = (List.nth state.players 1) in
+    print_string [] ("     " ^ p.name ^ "'s score: " ^ (p.score |> string_of_int))
+  | 1 -> print_string [] ("     Current Player is " ^ state.current_player.name)
+  | 3 -> begin match (List.nth_opt state.log 2) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 4 -> begin match (List.nth_opt state.log 5) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 5 -> begin match (List.nth_opt state.log 8) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 6 -> begin match (List.nth_opt state.log 11) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 7 -> begin match (List.nth_opt state.log 14) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 8 -> begin match (List.nth_opt state.log 17) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 9 -> begin match (List.nth_opt state.log 20) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 10 -> begin match (List.nth_opt state.log 23) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 11 -> begin match (List.nth_opt state.log 26) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 12 -> begin match (List.nth_opt state.log 29) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 13 -> begin match (List.nth_opt state.log 32) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | 14 -> begin match (List.nth_opt state.log 35) with
+      | Some msg -> print_string [] ("     " ^ msg)
+      | None -> print_string [] ""
+    end
+  | _ ->  print_string [] ""
+
 (** [print_board board] prints a graphical representation of [board] into the
     terminal window *)
-let rec print_board board i =
-  let rec print_iter board i =
-    print_endline " +————+————+————+————+————+————+————+————+————+————+————+————+————+————+————+";
+let print_board board state i =
+  let rec print_iter board state i =
+    print_string [] " +————+————+————+————+————+————+————+————+————+————+————+————+————+————+————+";
+    print_lineright state i;
+    print_endline "";
     match board with
     | [] -> ()
     | x::xs ->
-      print_linenum i; print_topline x; print_string [] "?";
-      print_botline x; print_iter xs (i + 1)
+      print_linenum i;
+      print_topline x;
+      print_topright state i;
+      print_endline "";
+      print_string [] " ";
+      print_botline x;
+      print_botright state i;
+      print_endline "";
+      print_iter xs state (i + 1)
   in
   print_endline "   0    1    2    3    4    5    6    7    8    9    10   11   12   13   14";
-  print_iter board i
+  print_iter board state i
 
 (** [print_docktop dock] prints the top line of a players dock of tiles *)
 let rec print_docktop dock =
   match dock with
-  | [] -> print_endline ""
+  | [] -> print_string [] ""
   | x::xs ->
     print_string tile_style (" " ^ x.letter ^ "  ");
     print_string [] "  "; print_docktop xs
@@ -411,20 +596,27 @@ let rec print_docktop dock =
 (** [print_dockbot dock] prints the bottom line a players dock of tiles *)
 let rec print_dockbot dock =
   match dock with
-  | [] -> print_endline ""
+  | [] -> print_string [] ""
   | x::xs ->
     print_string tile_style ("  " ^ string_of_int x.value ^ offset x);
     print_string [] "  "; print_dockbot xs
 
+let dock_offset dock : string =
+  let rec extra n acc = if n = 0 then acc else extra (n-1) ("      " ^ acc)
+  in "                    " ^ extra (7 - (List.length dock)) ""
+
 (** [print_dock player] prints all of the tiles in a players docks *)
-let rec print_dock player =
+let rec print_dock player msg =
   let dock = player.dock in
   print_string [] "                  "; print_docktop dock;
-  print_string [] "                  "; print_dockbot dock
+  print_string [red] ((dock_offset dock) ^ msg ^ "\n");
+  print_string [] "                  "; print_dockbot dock;
+  print_string [] ((dock_offset dock) ^ "> ")
+
 
 (** [print_game st] prints the board and dock of the state [st] *)
-let print_game st =
-  print_board (st.board) 0;
+let print_game st msg =
+  print_endline "\n";
+  print_board (st.board) st 0;
   print_endline "";
-  print_dock (st.current_player);
-  print_endline "";
+  print_dock (st.current_player) msg;

@@ -325,9 +325,10 @@ let valid_tiles state list =
     match moves with
     | Place (letter,pos)::xs -> let new_state = place_tile st (letter,pos) in
       helper new_state xs
-    | _ -> try (match (calc_score st.board) with
-        |(_,_) -> list) with
-    |InvalidWord s -> [] in helper state list
+    | _ -> begin try (match (calc_score st.board) with
+        |(_,_) -> list) with 
+      |InvalidWord s -> [] 
+      |InvalidTilePlacement -> [] end in helper state list 
 
 (** [dock_letters d] is the string list of all letters on a given [d].*)
 let dock_letters dock =
@@ -479,22 +480,23 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
           end
         | _ -> cmd0 in
 
-    let small_hor_tile_placements = hor_possible_placements 1 2 fT_wS [] in 
+    let small_hor_tile_placements = hor_possible_placements 1 3 fT_wS [] in 
     match small_hor_tile_placements with
     | [] -> begin 
-        let small_vert_tile_placements = vert_possible_placements 1 2 fT_wS [] in
+        let small_vert_tile_placements = vert_possible_placements 1 3 fT_wS [] in
         match small_vert_tile_placements with
         | [] -> begin 
-            let med_hor_tile_placements = hor_possible_placements 3 4 fT_wS [] in 
+            let med_hor_tile_placements = hor_possible_placements 4 5 fT_wS [] in 
             match med_hor_tile_placements with 
             | [] -> begin 
-                let med_vert_tile_placements = vert_possible_placements 3 4 fT_wS [] in 
+                let med_vert_tile_placements = vert_possible_placements 4 5 fT_wS [] in 
                 match med_vert_tile_placements with 
-                | [] -> begin 
-                    let large_hor_tile_placements = hor_possible_placements 5 6 fT_wS [] in 
+                | [] -> 
+                  begin 
+                    let large_hor_tile_placements = hor_possible_placements 6 6 fT_wS [] in 
                     match large_hor_tile_placements with 
                     | [] -> begin 
-                        let large_vert_tile_placements = vert_possible_placements 5 6 fT_wS [] in 
+                        let large_vert_tile_placements = vert_possible_placements 6 6 fT_wS [] in 
                         match large_vert_tile_placements with 
                         | [] -> [Exchange (dock_letters dock)]
                         | _ ->  (List.rev (End::large_vert_tile_placements))
