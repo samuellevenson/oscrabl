@@ -1,5 +1,7 @@
 open OUnit2
 open Actions
+open Moment
+open Board
 
 let make_parse_tests
     (name: string)
@@ -15,6 +17,106 @@ let make_parse_failures
   name >:: (fun _ -> assert_raises error (fun () -> Actions.parse_cmd str)
            )
 
+let make_placement_tests 
+    (name: string)
+    (state: Moment.t)
+    (error: exn) = 
+  name >:: (fun _ -> assert_raises error (fun () -> Board.calc_score (Moment.get_board state)))
+
+let make_exchange_failure_tests 
+    (name: string)
+    (state: Moment.t) 
+    (strings: string list)
+    (error: exn)=
+  name >:: (fun _ -> assert_raises error (fun () -> exchange state strings))
+
+let exchange_state_1 = 
+  let new_player = {
+    name = "Test1";
+    dock = [{letter = "A"; value = 1};
+            {letter = "A"; value = 1};
+            {letter = "A"; value = 1};
+            {letter = "A"; value = 1};
+            {letter = "A"; value = 1};
+            {letter = "A"; value = 1}];
+    score = 0
+  } in
+  {
+    board = emptyBoard;
+    bag = [];
+    players = [new_player];
+    current_player = new_player;
+    log = []
+  }
+
+let exchange_state_2 = 
+  let new_player = {
+    name = "Test2";
+    dock = [{letter = "A"; value = 1};
+            {letter = "B"; value = 1};
+            {letter = "C"; value = 1};
+            {letter = "D"; value = 1};
+            {letter = "E"; value = 1};
+            {letter = "F"; value = 1};
+            {letter = "G"; value = 1}];
+    score = 0
+  } in
+  {
+    board = emptyBoard;
+    bag = [];
+    players = [new_player];
+    current_player = new_player;
+    log = []
+  }
+
+let placement_state_1 = 
+  let new_player = {
+    name = "Test2";
+    dock = [{letter = "B"; value = 1};
+            {letter = "A"; value = 1};
+            {letter = "T"; value = 1};
+            {letter = "D"; value = 1};
+            {letter = "Z"; value = 1};
+            {letter = "F"; value = 1};
+            {letter = "G"; value = 1}];
+    score = 0;
+  } in
+  {
+    board = emptyBoard;
+    bag = init_bag;
+    players = [new_player];
+    current_player = new_player;
+    log = [];
+  }
+let rule_tests = 
+  [
+    make_placement_tests "First tile is not h7" 
+      (place_tile placement_state_1 ("A",(single_to_int "H", int_of_string "8")))
+      InvalidTilePlacement; 
+    make_placement_tests "Invalid Word" 
+      (place_tile (place_tile placement_state_1 ("A",(single_to_int "H", int_of_string "7")))
+         ("Z",(single_to_int "H", int_of_string "8")))
+      (InvalidWord "AZ"); 
+    make_placement_tests "Non-connected placement" 
+      (place_tile (place_tile placement_state_1 ("A",(single_to_int "H", int_of_string "7")))
+         ("T",(single_to_int "M", int_of_string "0")))
+      (InvalidTilePlacement); 
+    make_placement_tests "Triangular Placement" 
+      (place_tile (place_tile (place_tile placement_state_1 
+                                 ("A",(single_to_int "H", int_of_string "7")))
+                     ("T",(single_to_int "H", int_of_string "8")))
+         ("B", (single_to_int "G", int_of_string "7")))
+      (InvalidTilePlacement); 
+    make_exchange_failure_tests "Exchange with other than 7 tiles" 
+      exchange_state_1 ["A"] InvalidExchange;
+    make_exchange_failure_tests "Exchange with nonexistant tile" 
+      exchange_state_2 ["H";"I"] MissingTilesToExchange;
+    make_exchange_failure_tests "Invalid Character String" 
+      exchange_state_2 ["HI"] MissingTilesToExchange;
+
+
+  ]
+
 let action_tests =
   [
     make_parse_failures "1" "aasd asdsa" Broken;
@@ -25,6 +127,8 @@ let action_tests =
     make_parse_failures "6" "placeasd" Broken;
     make_parse_failures "7" " " Blank;
     make_parse_failures "8" " place a o" Broken;
+    make_parse_failures "9" "exchange" Broken;
+    make_parse_failures "10" "exchange 20" BadSelection;
   ]
 
 
@@ -77,10 +181,10 @@ let make_refill_tests
         exp;
     )
 
-let state_3_elements : Moment.t = {
-  board = Board.emptyBoard;
-  bag = Moment.init_bag;
-  players = [
+(* let state_3_elements : Moment.t = {
+   board = Board.emptyBoard;
+   bag = Moment.init_bag;
+   players = [
     {
       name = "OScrabl Player";
       dock =
@@ -90,8 +194,8 @@ let state_3_elements : Moment.t = {
       score = 0;
       words = [];
     }
-  ];
-  current_player = {
+   ];
+   current_player = {
     name = "OScrabl Player";
     dock =
       [{letter = "A"; value = 1};
@@ -99,12 +203,12 @@ let state_3_elements : Moment.t = {
        {letter = "A"; value = 1};];
     score = 0;
     words = [];
-  };
-}
-let state_0_elements : Moment.t = {
-  board = Board.emptyBoard;
-  bag = Moment.init_bag;
-  players = [
+   };
+   }
+   let state_0_elements : Moment.t = {
+   board = Board.emptyBoard;
+   bag = Moment.init_bag;
+   players = [
     {
       name = "OScrabl Player";
       dock =
@@ -112,19 +216,19 @@ let state_0_elements : Moment.t = {
       score = 0;
       words = [];
     }
-  ];
-  current_player = {
+   ];
+   current_player = {
     name = "OScrabl Player";
     dock =
       [];
     score = 0;
     words = [];
-  };
-}
-let state_7_elements : Moment.t = {
-  board = Board.emptyBoard;
-  bag = Moment.init_bag;
-  players = [
+   };
+   }
+   let state_7_elements : Moment.t = {
+   board = Board.emptyBoard;
+   bag = Moment.init_bag;
+   players = [
     {
       name = "OScrabl Player";
       dock =
@@ -138,8 +242,8 @@ let state_7_elements : Moment.t = {
       score = 0;
       words = [];
     }
-  ];
-  current_player = {
+   ];
+   current_player = {
     name = "OScrabl Player";
     dock =
       [{letter = "A"; value = 1};
@@ -151,16 +255,16 @@ let state_7_elements : Moment.t = {
        {letter = "A"; value = 1};];
     score = 0;
     words = [];
-  };
-}
+   };
+   } *)
 let moment_tests =
   [
-    make_refill_tests "Between 0 and 7 tiles"
+    (*make_refill_tests "Between 0 and 7 tiles"
       (Moment.refill state_3_elements;) 7;
-    make_refill_tests "empty dock to start"
+      make_refill_tests "empty dock to start"
       (Moment.refill state_0_elements;) 7;
-    make_refill_tests "full dock to start"
-      (Moment.refill state_7_elements;) 7;
+      make_refill_tests "full dock to start"
+      (Moment.refill state_7_elements;) 7;*)
   ]
 
 let suite =
@@ -168,6 +272,7 @@ let suite =
     action_tests;
     word_tests;
     moment_tests;
+    rule_tests;
   ]
 
 let _ = run_test_tt_main suite

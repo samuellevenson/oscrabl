@@ -45,28 +45,23 @@ let single_to_int str =
   let rowindex = (Char.code (Char.uppercase_ascii (String.get str 0))) - 65 in
   if rowindex > 14 then raise BadRow else rowindex
 
-(*[valid_col] string -> int
-  Takes a numerical string of length one and codes it to an integer
-  representing a board position (0-14). *)
-(*let valid_col str =
-  if String.length str > 1 then
-    let colindex = (Char.code (String.get str 0) - 48) + (Char.code (String.get str 1) - 48) in
-    if colindex > 14 then raise BadCol else colindex
-  else
-    let colindex = (Char.code (String.get str 0) - 48) in
-    if colindex > 14 then raise BadCol else colindex*)
+(** [check_int] string -> boolean
+    returns true if a string is an int. *)
+let check_int s = 
+  try int_of_string s |> ignore; true
+  with Failure _ -> false
 
-(*[parse_cmd] string -> command
-  Takes a string and returns the appropriate command after parsing.
-  Raises:
-  Empty if str is empty
-    Ex: "" or " "
-  Malformed if misspelled verb or incorrect parameters to Command
-    Ex: "score p1" or "place v x2"*)
-
+(** [to_upper_case] string list -> string list
+    is a character string list with every string capitalized. 
+    If a string contains an integer, BadSelectino is raised. *)
 let to_upper_case lst =
-  List.map (fun x -> String.uppercase_ascii x) lst
+  List.map (fun x -> if check_int x then raise BadSelection else String.uppercase_ascii x) lst
 
+(** [parse_game_mode] string -> game_mode
+    is the user's input parsed into a game mode.
+    Raises: 
+    InvalidGameMode if something other than multiplayer, singleplayer,
+    or quit is given. *)
 let rec parse_game_mode str =
   let str_lst = String.split_on_char ' ' str in
   let gm = rm_space str_lst in
@@ -78,6 +73,12 @@ let rec parse_game_mode str =
     else if h = "singleplayer" then SinglePlayer
     else raise InvalidGameMode
 
+
+(** [parse_cmd] str -> action
+    is the user's input parsed into an action.
+    Raises: 
+    Blank of user input is empty, 
+    Broken if an invalid pattern for an action is given. *)
 let rec parse_cmd str =
   (*Turnes a string into a list separated by spaces*)
   let str_lst = String.split_on_char ' ' str in
