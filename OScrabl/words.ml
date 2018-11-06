@@ -47,5 +47,3 @@ let rec check_word_list (lst:string list) (set:int StringHashTbl.t) =
   match lst with 
   | [] -> true
   | h::t -> if (validity h set) then check_word_list t set else false
-
-(** IMPERATIVE STUFF *)
