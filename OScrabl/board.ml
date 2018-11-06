@@ -459,6 +459,7 @@ let unfinals_singly_oriented board (x,y) =
   xor (unfinals_are_horizontal board x > 1) (unfinals_are_vertical board y > 1)
   || (unfinals_are_horizontal board x = 1 && unfinals_are_vertical board y = 1)
 
+(** TODO: docs *)
 let is_firstmove (board:board) : bool =
   let (flattened_board: square list) = List.flatten board in
   let rec helper list =
@@ -468,6 +469,7 @@ let is_firstmove (board:board) : bool =
     | _ -> true
   in helper flattened_board
 
+(** TODO: docs *)
 let valid_first_move (board:board): bool =
   let center_tile = (get_square board (7,7)) in
   match center_tile with
@@ -491,6 +493,7 @@ let find_strings board : square list list =
       else words_acc
   in (board_iter 0 0 []) |> List.filter (fun x -> List.length x > 1) |> List.sort_uniq compare
 
+(** TODO: docs *)
 let adj_final_tiles board: bool =
   let rec iter = function
     | [] -> false

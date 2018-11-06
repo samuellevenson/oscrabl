@@ -30,18 +30,18 @@ let get_board st = st.board
 
 (** [get_name] player -> string
     Returns the name of the given player. *)
-let get_name player = player.name 
+let get_name player = player.name
 
 (** [get_current_player] t -> player
     Returns the currently active player in the game state. *)
 let get_current_player st = st.current_player
 
-(** [get_other_player] t -> player 
+(** [get_other_player] t -> player
     Is the non-active player.*)
-let get_other_player st = 
-  List.hd (List.tl st.players) 
+let get_other_player st =
+  List.hd (List.tl st.players)
 
-(** [get_dock] player -> Board.pretile list 
+(** [get_dock] player -> Board.pretile list
     is the dock of a selected player*)
 let get_dock player = player.dock
 
@@ -59,14 +59,15 @@ let shuffle_bag bag =
   |> List.sort compare
   |> List.map snd
 
-let make_tile tile : pretile = {
-  value = tile |> Util.member "value" |> Util.to_string |> int_of_string;
+(** [make_tile tile] creates the pretile record type from a json object [tile]*)
+let make_tile (tile:json) : pretile = {
   letter = tile |> Util.member "letter" |> Util.to_string;
+  value = tile |> Util.member "value" |> Util.to_int;
 }
 
 (** TODO: docs *)
 let tiles_from_json : pretile list =
-  Yojson.Basic.from_file "dictionary.json"|> Util.to_list |> List.map make_tile
+  Yojson.Basic.from_file "tiles.json"|> Util.to_list |> List.map make_tile
 
 (* creates a bag of tiles containing the distribution of 100 scrabble tiles in
    a random order *)
