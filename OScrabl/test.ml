@@ -100,7 +100,7 @@ let rule_tests =
     make_placement_tests "Non-connected placement" 
       (place_tile (place_tile placement_state_1 ("A",(single_to_int "H", int_of_string "7")))
          ("T",(single_to_int "M", int_of_string "0")))
-      (InvalidWord "AZ"); 
+      (InvalidTilePlacement); 
     make_placement_tests "Triangular Placement" 
       (place_tile (place_tile (place_tile placement_state_1 
                                  ("A",(single_to_int "H", int_of_string "7")))
@@ -110,7 +110,9 @@ let rule_tests =
     make_exchange_failure_tests "Exchange with other than 7 tiles" 
       exchange_state_1 ["A"] InvalidExchange;
     make_exchange_failure_tests "Exchange with nonexistant tile" 
-      exchange_state_2 ["H";"I"] BadSelection;
+      exchange_state_2 ["H";"I"] MissingTilesToExchange;
+    make_exchange_failure_tests "Invalid Character String" 
+      exchange_state_2 ["HI"] MissingTilesToExchange;
 
 
   ]
@@ -270,6 +272,7 @@ let suite =
     action_tests;
     word_tests;
     moment_tests;
+    rule_tests;
   ]
 
 let _ = run_test_tt_main suite
