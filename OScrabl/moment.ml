@@ -239,9 +239,10 @@ let remove_tile_from_dock player tile: player =
 
 (** turn ending implemented for 1 player game *)
 let play_word state : (t * string) =
-  let draw_num = 7 - List.length state.current_player.dock in
-  let (drawn_tiles, new_bag) = draw_n state.bag draw_num in
-  let (score, words) = calc_score state.board in
+  let num_tiles_played = 7 - List.length state.current_player.dock in
+  let (drawn_tiles, new_bag) = draw_n state.bag num_tiles_played in
+  let (prescore, words) = calc_score state.board in
+  let score = if num_tiles_played = 7 then prescore + 50 else prescore in 
   let to_log = state.current_player.name ^ " played " ^
                (String.concat ", " words) ^ " for "  ^
                (string_of_int score) ^ " points" in
