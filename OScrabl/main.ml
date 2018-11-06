@@ -3,6 +3,7 @@ open Moment
 open Board
 open ANSITerminal
 
+(** TODO: docs *)
 let ai_perform_actions initial_state : (Moment.t * string) =
   print_game initial_state "The computer is thinking";
   let rec repeat state action_list msg =
@@ -18,7 +19,7 @@ let ai_perform_actions initial_state : (Moment.t * string) =
     | [] -> (state, msg)
   in repeat initial_state (Ai.ai_actions initial_state) ""
 
-
+(** TODO: docs *)
 let rec gameplay st msg =
   let _ = Sys.command "clear" in
   if (get_name (get_current_player st)) = "Computer" then
@@ -57,6 +58,7 @@ let rec gameplay st msg =
     | MissingTilesToExchange -> gameplay st "You don't have those letters"
   end
 
+(** TODO: docs *)
 let rec initiate_game () =
   let _ = Sys.command "clear" in
   print_string [magenta] "
@@ -97,8 +99,8 @@ let rec initiate_game () =
       print_string [red] "Enter Player 2's Name.";
       print_string [] "\n> ";
       let p2 = read_line () in
-      gameplay (add_players init_state [p2;p1]) ("Starting multiplayer game with players " ^ p1 ^ " and " ^ p2)
-    | SinglePlayer -> gameplay (add_players init_state ["Computer";"Player"]) "Starting singleplayer game"
+      gameplay (add_players init_state [p2;p1]) ("Started multiplayer game")
+    | SinglePlayer -> gameplay (add_players init_state ["Computer";"Player"]) "Started singleplayer game"
     | QuitGame -> print_endline "Thanks for playing OScrabl!"; exit 0
   with
   | InvalidGameMode -> print_endline "???"; initiate_game ()

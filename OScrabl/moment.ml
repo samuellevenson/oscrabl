@@ -1,6 +1,7 @@
 open Board
 open ANSITerminal
 open Actions
+open Yojson.Basic
 
 (** the exception raised when there is an attempt to draw from an empty bag *)
 exception EmptyBag
@@ -42,7 +43,7 @@ let get_board st = st.board
 
 (** [get_name] player -> string
     Returns the name of the given player. *)
-let get_name player = player.name 
+let get_name player = player.name
 
 (* [get_player_score] player -> int
    Returns the score of the given player.*)
@@ -52,12 +53,12 @@ let get_player_score player = player.score
     Returns the currently active player in the game state. *)
 let get_current_player st = st.current_player
 
-(** [get_other_player] t -> player 
+(** [get_other_player] t -> player
     Is the non-active player.*)
-let get_other_player st = 
-  List.hd (List.tl st.players) 
+let get_other_player st =
+  List.hd (List.tl st.players)
 
-(** [get_dock] player -> Board.pretile list 
+(** [get_dock] player -> Board.pretile list
     is the dock of a selected player*)
 let get_dock player = player.dock
 
@@ -75,108 +76,20 @@ let shuffle_bag bag =
   |> List.sort compare
   |> List.map snd
 
+(** [make_tile tile] creates the pretile record type from a json object [tile]*)
+let make_tile (tile:json) : pretile = {
+  letter = tile |> Util.member "letter" |> Util.to_string;
+  value = tile |> Util.member "value" |> Util.to_int;
+}
+
+(** TODO: docs *)
+let tiles_from_json : pretile list =
+  Yojson.Basic.from_file "tiles.json"|> Util.to_list |> List.map make_tile
+
 (* creates a bag of tiles containing the distribution of 100 scrabble tiles in
    a random order *)
 let init_bag =
-  shuffle_bag [
-    {letter = "A"; value = 1};
-    {letter = "A"; value = 1};
-    {letter = "A"; value = 1};
-    {letter = "A"; value = 1};
-    {letter = "A"; value = 1};
-    {letter = "A"; value = 1};
-    {letter = "A"; value = 1};
-    {letter = "A"; value = 1};
-    {letter = "A"; value = 1};
-    {letter = "B"; value = 3};
-    {letter = "B"; value = 3};
-    {letter = "C"; value = 3};
-    {letter = "C"; value = 3};
-    {letter = "D"; value = 2};
-    {letter = "D"; value = 2};
-    {letter = "D"; value = 2};
-    {letter = "D"; value = 2};
-    {letter = "E"; value = 1};
-    {letter = "E"; value = 1};
-    {letter = "E"; value = 1};
-    {letter = "E"; value = 1};
-    {letter = "E"; value = 1};
-    {letter = "E"; value = 1};
-    {letter = "E"; value = 1};
-    {letter = "E"; value = 1};
-    {letter = "E"; value = 1};
-    {letter = "E"; value = 1};
-    {letter = "E"; value = 1};
-    {letter = "E"; value = 1};
-    {letter = "F"; value = 4};
-    {letter = "F"; value = 4};
-    {letter = "G"; value = 2};
-    {letter = "G"; value = 2};
-    {letter = "G"; value = 2};
-    {letter = "H"; value = 4};
-    {letter = "H"; value = 4};
-    {letter = "I"; value = 1};
-    {letter = "I"; value = 1};
-    {letter = "I"; value = 1};
-    {letter = "I"; value = 1};
-    {letter = "I"; value = 1};
-    {letter = "I"; value = 1};
-    {letter = "I"; value = 1};
-    {letter = "I"; value = 1};
-    {letter = "I"; value = 1};
-    {letter = "J"; value = 8};
-    {letter = "K"; value = 5};
-    {letter = "L"; value = 1};
-    {letter = "L"; value = 1};
-    {letter = "L"; value = 1};
-    {letter = "L"; value = 1};
-    {letter = "M"; value = 3};
-    {letter = "M"; value = 3};
-    {letter = "N"; value = 1};
-    {letter = "N"; value = 1};
-    {letter = "N"; value = 1};
-    {letter = "N"; value = 1};
-    {letter = "N"; value = 1};
-    {letter = "N"; value = 1};
-    {letter = "O"; value = 1};
-    {letter = "O"; value = 1};
-    {letter = "O"; value = 1};
-    {letter = "O"; value = 1};
-    {letter = "O"; value = 1};
-    {letter = "O"; value = 1};
-    {letter = "O"; value = 1};
-    {letter = "P"; value = 3};
-    {letter = "P"; value = 3};
-    {letter = "Q"; value = 10};
-    {letter = "R"; value = 1};
-    {letter = "R"; value = 1};
-    {letter = "R"; value = 1};
-    {letter = "R"; value = 1};
-    {letter = "R"; value = 1};
-    {letter = "R"; value = 1};
-    {letter = "S"; value = 1};
-    {letter = "S"; value = 1};
-    {letter = "S"; value = 1};
-    {letter = "S"; value = 1};
-    {letter = "T"; value = 1};
-    {letter = "T"; value = 1};
-    {letter = "T"; value = 1};
-    {letter = "T"; value = 1};
-    {letter = "T"; value = 1};
-    {letter = "T"; value = 1};
-    {letter = "U"; value = 1};
-    {letter = "U"; value = 1};
-    {letter = "U"; value = 1};
-    {letter = "U"; value = 1};
-    {letter = "V"; value = 4};
-    {letter = "V"; value = 4};
-    {letter = "W"; value = 4};
-    {letter = "W"; value = 4};
-    {letter = "X"; value = 8};
-    {letter = "Y"; value = 4};
-    {letter = "Y"; value = 4};
-    {letter = "Z"; value = 10};
-  ]
+  shuffle_bag tiles_from_json
 
 (** [draw_n start_bag start_n] is the previous two functions simplified and then
     squished into one function *)
@@ -272,7 +185,7 @@ let play_word state : (t * string) =
   let num_tiles_played = 7 - List.length state.current_player.dock in
   let (drawn_tiles, new_bag) = draw_n state.bag num_tiles_played in
   let (prescore, words) = calc_score state.board in
-  let score = if num_tiles_played = 7 then prescore + 50 else prescore in 
+  let score = if num_tiles_played = 7 then prescore + 50 else prescore in
   let to_log = state.current_player.name ^ " played " ^
                (String.concat ", " words) ^ " for "  ^
                (string_of_int score) ^ " points" in
@@ -429,6 +342,7 @@ let rec print_botline line =
 let print_linenum i =
   print_string [] ((i + 65) |> Char.chr |> Char.escaped)
 
+(** TODO: docs *)
 let print_lineright state i =
   match i with
   | 3 -> begin match (List.nth_opt state.log 0) with
@@ -481,7 +395,7 @@ let print_lineright state i =
     end
   | _ -> print_string [] ""
 
-(** print the score *)
+(** TODO: docs *)
 let print_topright state i =
   match i with
   | 0 -> let p = (List.nth state.players 0) in
@@ -538,6 +452,7 @@ let print_topright state i =
     end
   | _ -> print_string [] ""
 
+(** TODO: docs *)
 let print_botright state i =
   match i with
   | 0 -> let p = (List.nth state.players 1) in
@@ -632,6 +547,7 @@ let rec print_dockbot dock =
     print_string tile_style ("  " ^ string_of_int x.value ^ offset x);
     print_string [] "  "; print_dockbot xs
 
+(** TODO: docs *)
 let dock_offset dock : string =
   let rec extra n acc = if n = 0 then acc else extra (n-1) ("      " ^ acc)
   in "                    " ^ extra (7 - (List.length dock)) ""
