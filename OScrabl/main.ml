@@ -4,8 +4,7 @@ open Board
 open ANSITerminal
 
 let ai_perform_actions initial_state : (Moment.t * string) =
-  print_game initial_state;
-  print_endline "The computer is thinking";
+  print_game initial_state "The computer is thinking";
   let rec repeat state action_list msg =
     match action_list with
     | x::xs -> begin match x with
@@ -25,10 +24,7 @@ let rec gameplay st msg =
   if st.current_player.name = "AI" then
     let (next_state, msg) =  ai_perform_actions st in gameplay next_state msg
   else begin
-    print_game st;
-    print_endline msg;
-    print_string [red] ("Current player: " ^ st.current_player.name);
-    print_string [] "\n> ";
+    print_game st msg;
     try
       match parse_cmd (read_line ()) with
       | Place (letter,pos) ->
@@ -92,7 +88,7 @@ let rec initiate_game () =
 (** [main ()] unit -> unit
     Prompts for the game to play, then starts it. *)
 let main () =
-  resize 130 56;
+  resize 125 50;
   Words.add_hash_set Words.word_set Words.word_array Hashtbl.hash;
   initiate_game ()
 

@@ -509,13 +509,13 @@ let valid_tile_positions board: bool =
   && row_is_connected board y && col_is_connected board x
 
 (** Score? *)
-let calc_score board : (int * string list)=
+let calc_score board : (int * string list) =
   let rec words_iter assoc score_acc words_acc =
     match assoc with
     | [] -> (score_acc, words_acc)
     | (word,score)::xs ->
       if Words.validity word word_set then words_iter xs (score_acc + score) (word::words_acc)
-      else raise (InvalidWord word)in
+      else raise (InvalidWord word) in
   if valid_tile_positions board
   then words_iter (List.map squares_to_word_and_points (find_strings board)) 0 []
   else raise InvalidTilePlacement
