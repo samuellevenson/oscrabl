@@ -480,10 +480,10 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
           end
         | _ -> cmd0 in
 
-    let small_hor_tile_placements = hor_possible_placements 1 3 fT_wS [] in 
+    let small_hor_tile_placements = hor_possible_placements 2 3 fT_wS [] in 
     match small_hor_tile_placements with
     | [] -> begin 
-        let small_vert_tile_placements = vert_possible_placements 1 3 fT_wS [] in
+        let small_vert_tile_placements = vert_possible_placements 2 3 fT_wS [] in
         match small_vert_tile_placements with
         | [] -> begin 
             let med_hor_tile_placements = hor_possible_placements 4 5 fT_wS [] in 
