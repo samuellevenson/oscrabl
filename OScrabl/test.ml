@@ -122,6 +122,10 @@ let end_turn_1 =
       {letter = "W"; value = 1};
       {letter = "A"; value = 1};
       {letter = "D"; value = 1};
+      {letter = "H"; value = 1};
+      {letter = "O"; value = 1};
+      {letter = "W"; value = 1};
+      {letter = "N"; value = 1};
     ];
     score = 0;
   } in
@@ -132,6 +136,14 @@ let end_turn_1 =
     current_player = new_player;
     log = [];
   }
+
+let make_score_tests
+    (name: string)
+    (state : Moment.t)
+    (exp_score : int) =
+  name >:: (fun _ ->
+      Words.add_hash_set Words.word_set Words.word_array Hashtbl.hash;
+      assert_equal exp_score (get_current_player state).score; )
 
 
 let rule_tests = 
@@ -168,6 +180,13 @@ let rule_tests =
        |> pipeline_place (place_tuple "R" "J" "6")
        |> pipeline_place (place_tuple "N" "K" "6"))
       (InvalidTilePlacement); (* InvalidWord "HWAD"*)
+
+    (* make_score_tests "Score" 
+       (fst (play_word (end_turn_1 
+                       |> pipeline_place (place_tuple "H" "H" "7") 
+                       |> pipeline_place (place_tuple "O" "I" "7") 
+                       |> pipeline_place (place_tuple "W" "J" "7")))) 
+       6; *)
 
 
 
