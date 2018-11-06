@@ -60,13 +60,6 @@
 <td align="left" valign="top" >
 <code><span id="TYPEELTplayer.score">score</span>&nbsp;: <code class="type">int</code>;</code></td>
 
-</tr>
-<tr>
-<td align="left" valign="top" >
-<code>&nbsp;&nbsp;</code></td>
-<td align="left" valign="top" >
-<code><span id="TYPEELTplayer.words">words</span>&nbsp;: <code class="type">string list</code>;</code></td>
-
 </tr></table>
 }
 
@@ -105,6 +98,13 @@
 <td align="left" valign="top" >
 <code><span id="TYPEELTt.current_player">current_player</span>&nbsp;: <code class="type"><a href="Moment.html#TYPEplayer">player</a></code>;</code></td>
 
+</tr>
+<tr>
+<td align="left" valign="top" >
+<code>&nbsp;&nbsp;</code></td>
+<td align="left" valign="top" >
+<code><span id="TYPEELTt.log">log</span>&nbsp;: <code class="type">string list</code>;</code></td>
+
 </tr></table>
 }
 
@@ -114,6 +114,81 @@
 </div>
 </div>
 
+
+<pre><span id="VALcreate_player"><span class="keyword">val</span> create_player</span> : <code class="type">string -> <a href="Board.html#TYPEpretile">Board.pretile</a> list -> int -> <a href="Moment.html#TYPEplayer">player</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">create_player</code> is a function that creates a player object; intended to help
+    code reuse.</p>
+</div>
+</div>
+
+<pre><span id="VALcreate_moment"><span class="keyword">val</span> create_moment</span> : <code class="type"><a href="Board.html#TYPEboard">Board.board</a> -><br>       <a href="Board.html#TYPEpretile">Board.pretile</a> list -><br>       <a href="Moment.html#TYPEplayer">player</a> list -> <a href="Moment.html#TYPEplayer">player</a> -> string list -> <a href="Moment.html#TYPEt">t</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">create_moment</code> is a function that creates a moment object; intended to help
+    code reuse.</p>
+
+<p><code class="code">get_board</code> is the board in the current game moment.</p>
+</div>
+</div>
+
+<pre><span id="VALget_board"><span class="keyword">val</span> get_board</span> : <code class="type"><a href="Moment.html#TYPEt">t</a> -> <a href="Board.html#TYPEboard">Board.board</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_board</code> t -&gt; Board.board
+    Returns the board of the current game state.</p>
+</div>
+</div>
+
+<pre><span id="VALget_name"><span class="keyword">val</span> get_name</span> : <code class="type"><a href="Moment.html#TYPEplayer">player</a> -> string</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_name</code> player -&gt; string
+    Returns the name of the given player.</p>
+
+<p><code class="code">get_name</code> is the name of the given player.</p>
+</div>
+</div>
+
+<pre><span id="VALget_player_score"><span class="keyword">val</span> get_player_score</span> : <code class="type"><a href="Moment.html#TYPEplayer">player</a> -> int</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_player_score</code> is the score of a given player.</p>
+</div>
+</div>
+
+<pre><span id="VALget_current_player"><span class="keyword">val</span> get_current_player</span> : <code class="type"><a href="Moment.html#TYPEt">t</a> -> <a href="Moment.html#TYPEplayer">player</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_current_player</code> t -&gt; player
+    Returns the currently active player in the game state.</p>
+
+<p><code class="code">get_current_player</code> is the current active player in the game moment.</p>
+</div>
+</div>
+
+<pre><span id="VALget_other_player"><span class="keyword">val</span> get_other_player</span> : <code class="type"><a href="Moment.html#TYPEt">t</a> -> <a href="Moment.html#TYPEplayer">player</a></code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_other_player</code> t -&gt; player
+    Is the non-active player.</p>
+
+<p><code class="code">get_other_player</code> is the player that is 
+    not currently active in the game moment.</p>
+</div>
+</div>
+
+<pre><span id="VALget_dock"><span class="keyword">val</span> get_dock</span> : <code class="type"><a href="Moment.html#TYPEplayer">player</a> -> <a href="Board.html#TYPEpretile">Board.pretile</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_dock</code> player -&gt; Board.pretile list
+    is the dock of a selected player</p>
+
+<p><code class="code">get_dock</code> is the dock of a given player.</p>
+</div>
+</div>
+
+<pre><span id="VALget_current_dock"><span class="keyword">val</span> get_current_dock</span> : <code class="type"><a href="Moment.html#TYPEt">t</a> -> <a href="Board.html#TYPEpretile">Board.pretile</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">get_current_dock</code> t -&gt; Board.pretile list
+    is the dock of the current player.</p>
+
+<p><code class="code">get_current_dock</code> is the dock of the currently active player.</p>
+</div>
+</div>
 
 <pre><span id="VALrand_num"><span class="keyword">val</span> rand_num</span> : <code class="type">unit -> int</code></pre><div class="info ">
 <div class="info-desc">
@@ -127,19 +202,21 @@
 </div>
 </div>
 
-<pre><span id="VALinit_bag"><span class="keyword">val</span> init_bag</span> : <code class="type"><a href="Board.html#TYPEpretile">Board.pretile</a> list</code></pre>
-<pre><span id="VALdraw"><span class="keyword">val</span> draw</span> : <code class="type"><a href="Board.html#TYPEpretile">Board.pretile</a> list -> <a href="Board.html#TYPEpretile">Board.pretile</a> * <a href="Board.html#TYPEpretile">Board.pretile</a> list</code></pre><div class="info ">
+<pre><span id="VALmake_tile"><span class="keyword">val</span> make_tile</span> : <code class="type">Yojson.Basic.json -> <a href="Board.html#TYPEpretile">Board.pretile</a></code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">draw currentBag</code> draws one tile from the given bag and returns a tuple
-    containing the drawn tile and a bag with the remaining tiles</p>
+<p><code class="code">make_tile tile</code> creates the pretile record type from a json object <code class="code">tile</code></p>
 </div>
 </div>
 
-<pre><span id="VALdraw_n_times"><span class="keyword">val</span> draw_n_times</span> : <code class="type"><a href="Board.html#TYPEpretile">Board.pretile</a> list -> int -> <a href="Board.html#TYPEpretile">Board.pretile</a> list * <a href="Board.html#TYPEpretile">Board.pretile</a> list</code></pre><div class="info ">
+<pre><span id="VALtiles_from_json"><span class="keyword">val</span> tiles_from_json</span> : <code class="type"><a href="Board.html#TYPEpretile">Board.pretile</a> list</code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">draw_n_times currentBag n</code> draws <code class="code">n</code> tiles from the given bag and returns a
-    tuple containing a list of the drawn tiles and a bag with the remaining
-    tiles</p>
+<p>TODO: docs</p>
+</div>
+</div>
+
+<pre><span id="VALinit_bag"><span class="keyword">val</span> init_bag</span> : <code class="type"><a href="Board.html#TYPEpretile">Board.pretile</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">shuffle_bag</code> takes a bag as input and returns it, but shuffled.</p>
 </div>
 </div>
 
@@ -147,6 +224,12 @@
 <div class="info-desc">
 <p><code class="code">draw_n start_bag start_n</code> is the previous two functions simplified and then
     squished into one function</p>
+</div>
+</div>
+
+<pre><span id="VALshift"><span class="keyword">val</span> shift</span> : <code class="type">'a list -> 'a list</code></pre><div class="info ">
+<div class="info-desc">
+<p>shift log if length greater than 36</p>
 </div>
 </div>
 
@@ -161,6 +244,8 @@
 <div class="info-desc">
 <p><code class="code">init_state</code> creates a state with an empty board, a player with 7 random
     tiles drawn from a bag, and a bag with all tiles except for those 7</p>
+
+<p><code class="code">init_state</code> is an initial state.</p>
 </div>
 </div>
 
@@ -168,6 +253,8 @@
 <div class="info-desc">
 <p><code class="code">add_players state players</code> creates a new state from the list of player
     names</p>
+
+<p><code class="code">add_players</code> is the state with the given players added to it.</p>
 </div>
 </div>
 
@@ -190,6 +277,8 @@
 <pre><span id="VALplay_word"><span class="keyword">val</span> play_word</span> : <code class="type"><a href="Moment.html#TYPEt">t</a> -> <a href="Moment.html#TYPEt">t</a> * string</code></pre><div class="info ">
 <div class="info-desc">
 <p>turn ending implemented for 1 player game</p>
+
+<p><code class="code">play_word</code> is called in order to end the current player's turn.</p>
 </div>
 </div>
 
@@ -199,12 +288,22 @@
     takes in the current game state and a string list from user input and
     removes them from the dock, then refills the dock,
     effectively "exchanging" the tiles.</p>
+
+<p><code class="code">exchange</code> is the game state with the current player's choice of tiles 
+    exchanged. 
+    Raises: 
+    InvalidExchange if the player does not have 7 tiles,
+    MissingTilesToExchange if the player does not have the 
+    tiles they want to exchange.</p>
 </div>
 </div>
 
 <pre><span id="VALrecall"><span class="keyword">val</span> recall</span> : <code class="type"><a href="Moment.html#TYPEt">t</a> -> <a href="Moment.html#TYPEt">t</a></code></pre><div class="info ">
 <div class="info-desc">
 <p><code class="code">recall st</code> is the updated <code class="code">st</code> after Unfinal tiles are recalled.</p>
+
+<p><code class="code">recall</code> is the current game state with all tiles that have been placed in 
+    the turn recalled.</p>
 </div>
 </div>
 
@@ -214,24 +313,27 @@
     corresponding to <code class="code">letter</code> has been taken from the current player's dock and
     placed onto the board at the position specified by (row,col). Raises
     BadSelection if there is no tile in the player's dock of that letter.</p>
+
+<p><code class="code">place_tile</code> is the current game state with a given tile from the user's 
+    dock placed.</p>
 </div>
 </div>
 
 <pre><span id="VALpickup_tile"><span class="keyword">val</span> pickup_tile</span> : <code class="type"><a href="Moment.html#TYPEt">t</a> -> int * int -> <a href="Moment.html#TYPEt">t</a> * string</code></pre><div class="info ">
 <div class="info-desc">
 <p>TODO: docs</p>
+
+<p><code class="code">pickup_tile</code> is tuple game state with a tile removed, and the tile that is 
+    removed, as a pair.</p>
 </div>
 </div>
 
 <pre><span id="VALget_score"><span class="keyword">val</span> get_score</span> : <code class="type"><a href="Moment.html#TYPEt">t</a> -> string</code></pre><div class="info ">
 <div class="info-desc">
 <p>TODO: docs</p>
-</div>
-</div>
 
-<pre><span id="VALprint_docktop"><span class="keyword">val</span> print_docktop</span> : <code class="type"><a href="Board.html#TYPEpretile">Board.pretile</a> list -> unit</code></pre><div class="info ">
-<div class="info-desc">
-<p><code class="code">print_docktop dock</code> prints the top line of a players dock of tiles</p>
+<p><code class="code">get_score</code> is the string representation of the score of the 
+    current player.</p>
 </div>
 </div>
 
@@ -242,21 +344,83 @@
 </div>
 </div>
 
+<pre><span id="VALprint_topline"><span class="keyword">val</span> print_topline</span> : <code class="type">(<a href="Board.html#TYPEtile">Board.tile</a> * <a href="Board.html#TYPEmultiplier">Board.multiplier</a>) list -> unit</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">print_topline line</code> prints the top half of <code class="code">line</code>, where <code class="code">line</code> is one row
+    of a board</p>
+</div>
+</div>
+
+<pre><span id="VALprint_botline"><span class="keyword">val</span> print_botline</span> : <code class="type">(<a href="Board.html#TYPEtile">Board.tile</a> * <a href="Board.html#TYPEmultiplier">Board.multiplier</a>) list -> unit</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">print_topline line</code> prints the bottom half of <code class="code">line</code>, where <code class="code">line</code> is one
+    row of a board</p>
+</div>
+</div>
+
+<pre><span id="VALprint_linenum"><span class="keyword">val</span> print_linenum</span> : <code class="type">int -> unit</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">print_linenum i</code> prints the character corresponding to the row number with
+    A for row 1, B for row 2, and so on</p>
+</div>
+</div>
+
+<pre><span id="VALprint_lineright"><span class="keyword">val</span> print_lineright</span> : <code class="type"><a href="Moment.html#TYPEt">t</a> -> int -> unit</code></pre><div class="info ">
+<div class="info-desc">
+<p>TODO: docs</p>
+</div>
+</div>
+
+<pre><span id="VALprint_topright"><span class="keyword">val</span> print_topright</span> : <code class="type"><a href="Moment.html#TYPEt">t</a> -> int -> unit</code></pre><div class="info ">
+<div class="info-desc">
+<p>TODO: docs</p>
+</div>
+</div>
+
+<pre><span id="VALprint_botright"><span class="keyword">val</span> print_botright</span> : <code class="type"><a href="Moment.html#TYPEt">t</a> -> int -> unit</code></pre><div class="info ">
+<div class="info-desc">
+<p>TODO: docs</p>
+</div>
+</div>
+
+<pre><span id="VALprint_board"><span class="keyword">val</span> print_board</span> : <code class="type">(<a href="Board.html#TYPEtile">Board.tile</a> * <a href="Board.html#TYPEmultiplier">Board.multiplier</a>) list list -> <a href="Moment.html#TYPEt">t</a> -> int -> unit</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">print_board board</code> prints a graphical representation of <code class="code">board</code> into the
+    terminal window</p>
+</div>
+</div>
+
+<pre><span id="VALprint_docktop"><span class="keyword">val</span> print_docktop</span> : <code class="type"><a href="Board.html#TYPEpretile">Board.pretile</a> list -> unit</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">print_docktop dock</code> prints the top line of a players dock of tiles</p>
+</div>
+</div>
+
 <pre><span id="VALprint_dockbot"><span class="keyword">val</span> print_dockbot</span> : <code class="type"><a href="Board.html#TYPEpretile">Board.pretile</a> list -> unit</code></pre><div class="info ">
 <div class="info-desc">
 <p><code class="code">print_dockbot dock</code> prints the bottom line a players dock of tiles</p>
 </div>
 </div>
 
-<pre><span id="VALprint_dock"><span class="keyword">val</span> print_dock</span> : <code class="type"><a href="Moment.html#TYPEplayer">player</a> -> unit</code></pre><div class="info ">
+<pre><span id="VALdock_offset"><span class="keyword">val</span> dock_offset</span> : <code class="type">'a list -> string</code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">print_dock player</code> prints all of the tiles in a players docks</p>
+<p>TODO: docs</p>
 </div>
 </div>
 
-<pre><span id="VALprint_game"><span class="keyword">val</span> print_game</span> : <code class="type"><a href="Moment.html#TYPEt">t</a> -> unit</code></pre><div class="info ">
+<pre><span id="VALprint_dock"><span class="keyword">val</span> print_dock</span> : <code class="type"><a href="Moment.html#TYPEplayer">player</a> -> string -> unit</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">print_dock player</code> prints all of the tiles in a players docks</p>
+
+<p><code class="code">print_dock</code> is the function that prints the dock of the current player.</p>
+</div>
+</div>
+
+<pre><span id="VALprint_game"><span class="keyword">val</span> print_game</span> : <code class="type"><a href="Moment.html#TYPEt">t</a> -> string -> unit</code></pre><div class="info ">
 <div class="info-desc">
 <p><code class="code">print_game st</code> prints the board and dock of the state <code class="code">st</code></p>
+
+<p><code class="code">print_game</code> is the function that prints the game.</p>
 </div>
 </div>
 </body></html>

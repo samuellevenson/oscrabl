@@ -57,34 +57,36 @@
 <div class="info ">
 <div class="info-desc">
 <p>the type for ai a</p>
+
+<p>the type for ai a</p>
 </div>
 </div>
 
 
 <pre><span id="VALemptySqrs_right"><span class="keyword">val</span> emptySqrs_right</span> : <code class="type"><a href="Board.html#TYPEboard">Board.board</a> -> int * int -> (int * int) list</code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">emptySqrs_down b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile 
+<p><code class="code">emptySqrs_down b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile
     squares that are vertically below <code class="code">c</code> on <code class="code">b</code>.</p>
 </div>
 </div>
 
 <pre><span id="VALemptySqrs_left"><span class="keyword">val</span> emptySqrs_left</span> : <code class="type"><a href="Board.html#TYPEboard">Board.board</a> -> int * int -> (int * int) list</code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">emptySqrs_up b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile 
+<p><code class="code">emptySqrs_up b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile
     squares that are vertically above <code class="code">c</code> on <code class="code">b</code>.</p>
 </div>
 </div>
 
 <pre><span id="VALemptySqrs_up"><span class="keyword">val</span> emptySqrs_up</span> : <code class="type"><a href="Board.html#TYPEboard">Board.board</a> -> int * int -> (int * int) list</code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">emptySqrs_left b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile 
+<p><code class="code">emptySqrs_left b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile
     squares that are horizontally left from <code class="code">c</code> on <code class="code">b</code>.</p>
 </div>
 </div>
 
 <pre><span id="VALemptySqrs_down"><span class="keyword">val</span> emptySqrs_down</span> : <code class="type"><a href="Board.html#TYPEboard">Board.board</a> -> int * int -> (int * int) list</code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">emptySqrs_right b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile 
+<p><code class="code">emptySqrs_right b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile
     squares that are horizontally right from <code class="code">c</code> on <code class="code">b</code>.</p>
 </div>
 </div>
@@ -140,10 +142,10 @@
 
 <pre><span id="VALvertical_tile_placements"><span class="keyword">val</span> vertical_tile_placements</span> : <code class="type"><a href="Board.html#TYPEboard">Board.board</a> -> int * int -> int -> (int * int) list</code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">vertical_tile_placements b c s</code> is the list of coordinates for possible 
-    vertical tile placements anchored on coordinate <code class="code">c</code> on <code class="code">b</code> that one can 
-    make. The length of the list is limited to <code class="code">2 * size</code>. Raises InvalidSize 
-    if <code class="code">size</code> &gt; 7 or <code class="code">size</code> &lt; 1. Arranged from bottom to top. 
+<p><code class="code">vertical_tile_placements b c s</code> is the list of coordinates for possible
+    vertical tile placements anchored on coordinate <code class="code">c</code> on <code class="code">b</code> that one can
+    make. The length of the list is limited to <code class="code">2 * size</code>. Raises InvalidSize
+    if <code class="code">size</code> &gt; 7 or <code class="code">size</code> &lt; 1. Arranged from bottom to top.
     Example: <code class="code">(7,8), (7,6), (7,5)</code>, anchored on a board with only a single Final
     tile placed on (7,7).</p>
 </div>
@@ -151,18 +153,18 @@
 
 <pre><span id="VALhorizontal_tile_placements"><span class="keyword">val</span> horizontal_tile_placements</span> : <code class="type"><a href="Board.html#TYPEboard">Board.board</a> -> int * int -> int -> (int * int) list</code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">horizontal_tile_placements b c s</code> is the list of coordinates for possible 
-    horizontal tile placements anchored on coordinate <code class="code">c</code> on <code class="code">b</code> that one can 
-    make. The length of the list is limited to <code class="code">2 * size</code>. Raises InvalidSize 
-    if <code class="code">size</code> &gt; 7 or <code class="code">size</code> &lt; 1. Arranged from left to right. 
-    Example: <code class="code">(6,7), (8,7), (9,7)</code>, anchored on a board with only a single Final 
+<p><code class="code">horizontal_tile_placements b c s</code> is the list of coordinates for possible
+    horizontal tile placements anchored on coordinate <code class="code">c</code> on <code class="code">b</code> that one can
+    make. The length of the list is limited to <code class="code">2 * size</code>. Raises InvalidSize
+    if <code class="code">size</code> &gt; 7 or <code class="code">size</code> &lt; 1. Arranged from left to right.
+    Example: <code class="code">(6,7), (8,7), (9,7)</code>, anchored on a board with only a single Final
     tile placed on (7,7).</p>
 </div>
 </div>
 
 <pre><span id="VALinsert_all_positions"><span class="keyword">val</span> insert_all_positions</span> : <code class="type">'a -> 'a list -> 'a list list</code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">insert_all_positions x l</code> is the list of all possible arrangements for 
+<p><code class="code">insert_all_positions x l</code> is the list of all possible arrangements for
     inserting <code class="code">x</code> in <code class="code">l</code>, which is a list of permutations.</p>
 </div>
 </div>
@@ -182,9 +184,9 @@
 <pre><span id="VALtotalcombinations"><span class="keyword">val</span> totalcombinations</span> : <code class="type">'a list -> int -> 'a list list -> 'a list list</code></pre>
 <pre><span id="VALwindow_startSizes"><span class="keyword">val</span> window_startSizes</span> : <code class="type"><a href="Board.html#TYPEboard">Board.board</a> -> int * int -> int * int</code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">window_startSizes b c</code> is the int*int tuple representing start window 
-    sizes for probing potential tile placements around coordinate <code class="code">c</code> on <code class="code">b</code>, with 
-    the first int representing the horizontal window size, and the second int 
+<p><code class="code">window_startSizes b c</code> is the int*int tuple representing start window
+    sizes for probing potential tile placements around coordinate <code class="code">c</code> on <code class="code">b</code>, with
+    the first int representing the horizontal window size, and the second int
     representing the vertical window size. The window sizes are capped at 7.</p>
 </div>
 </div>
@@ -199,7 +201,7 @@
 <pre><span id="VALfinalTiles_windowSizes"><span class="keyword">val</span> finalTiles_windowSizes</span> : <code class="type"><a href="Board.html#TYPEboard">Board.board</a> -> (int * int) list -> ((int * int) * (int * int)) list</code></pre><div class="info ">
 <div class="info-desc">
 <p><code class="code">finalTiles_windowSizes b tl</code> is the associative list of int tuples. It
-    associates the elements of <code class="code">tl</code>, which are coordinates of final tiles on <code class="code">b</code>, 
+    associates the elements of <code class="code">tl</code>, which are coordinates of final tiles on <code class="code">b</code>,
     with their window start sizes.</p>
 </div>
 </div>
@@ -213,7 +215,7 @@
 <pre><span id="VALremove_first_element"><span class="keyword">val</span> remove_first_element</span> : <code class="type">'a list -> 'a list</code></pre>
 <pre><span id="VALsegment"><span class="keyword">val</span> segment</span> : <code class="type">'a list -> int -> 'a list list</code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">segment l n</code> is the in-order list of <code class="code">n</code>-size partitions of <code class="code">l</code>. 
+<p><code class="code">segment l n</code> is the in-order list of <code class="code">n</code>-size partitions of <code class="code">l</code>.
     Example: <code class="code">segment [1;2;3;4] 3</code> is <code class="code">[1;2;3];[2;3;4]</code>.</p>
 </div>
 </div>
@@ -229,7 +231,7 @@
 
 <pre><span id="VALvalid_tiles"><span class="keyword">val</span> valid_tiles</span> : <code class="type"><a href="Moment.html#TYPEt">Moment.t</a> -> <a href="Actions.html#TYPEaction">Actions.action</a> list -> <a href="Actions.html#TYPEaction">Actions.action</a> list</code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">valid_tiles s list</code> determines if <code class="code">list</code> produces valid tile placements 
+<p><code class="code">valid_tiles s list</code> determines if <code class="code">list</code> produces valid tile placements
     and valid words, given current state <code class="code">s</code>. Returns an empty list if there
     isn't a valid list of Actions.</p>
 </div>
@@ -241,4 +243,9 @@
 </div>
 </div>
 
-<pre><span id="VALai_actions"><span class="keyword">val</span> ai_actions</span> : <code class="type"><a href="Moment.html#TYPEt">Moment.t</a> -> <a href="Actions.html#TYPEaction">Actions.action</a> list</code></pre></body></html>
+<pre><span id="VALai_actions"><span class="keyword">val</span> ai_actions</span> : <code class="type"><a href="Moment.html#TYPEt">Moment.t</a> -> <a href="Actions.html#TYPEaction">Actions.action</a> list</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">ai_actions</code> is the actions that the AI will perform.</p>
+</div>
+</div>
+</body></html>

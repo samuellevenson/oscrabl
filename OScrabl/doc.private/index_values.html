@@ -23,7 +23,8 @@
 <tr><td align="left"><div>A</div></td></tr>
 <tr><td><a href="Words.html#VALadd_hash_set">add_hash_set</a> [<a href="Words.html">Words</a>]</td>
 <td><div class="info">
-<p><code class="code">add_hash_set</code> ('_a, 'b) Hashtbl.t -&gt; '_a array -&gt; ('_a -&gt; 'b) -&gt; unit
+<p><code class="code">add_hash_set</code> int StringHashTbl.t -&gt; 
+    StringHashTbl.key array -&gt; (StringHashTbl.key -&gt; int) -&gt; unit
     Iterates through an array and hashes a given set</p>
 
 </div>
@@ -36,11 +37,23 @@
 </div>
 </td></tr>
 <tr><td><a href="Board.html#VALadj_final_tiles">adj_final_tiles</a> [<a href="Board.html">Board</a>]</td>
-<td></td></tr>
+<td><div class="info">
+<p>TODO: docs</p>
+
+</div>
+</td></tr>
 <tr><td><a href="Ai.html#VALai_actions">ai_actions</a> [<a href="Ai.html">Ai</a>]</td>
-<td></td></tr>
+<td><div class="info">
+<p><code class="code">ai_actions</code> is the actions that the AI will perform.</p>
+
+</div>
+</td></tr>
 <tr><td><a href="Main.html#VALai_perform_actions">ai_perform_actions</a> [<a href="Main.html">Main</a>]</td>
-<td></td></tr>
+<td><div class="info">
+<p>TODO: docs</p>
+
+</div>
+</td></tr>
 <tr><td><a href="Board.html#VALall_are_words">all_are_words</a> [<a href="Board.html">Board</a>]</td>
 <td><div class="info">
 <p><code class="code">all_are_words strList</code> returns <code class="code">true</code> if all strings in <code class="code">strList</code> are in the
@@ -50,10 +63,15 @@
 </td></tr>
 <tr><td align="left"><div>C</div></td></tr>
 <tr><td><a href="Board.html#VALcalc_score">calc_score</a> [<a href="Board.html">Board</a>]</td>
-<td></td></tr>
-<tr><td><a href="Board.html#VALcalc_scoretuples">calc_scoretuples</a> [<a href="Board.html">Board</a>]</td>
 <td><div class="info">
 <p>Score?</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Actions.html#VALcheck_int">check_int</a> [<a href="Actions.html">Actions</a>]</td>
+<td><div class="info">
+<p><code class="code">check_int</code> string -&gt; boolean
+    returns true if a string is an int.</p>
 
 </div>
 </td></tr>
@@ -81,6 +99,20 @@
 <tr><td><a href="Ai.html#VALcombinations">combinations</a> [<a href="Ai.html">Ai</a>]</td>
 <td><div class="info">
 <p><code class="code">combiniations l k</code> is the size <code class="code">k</code> list of all potential combinations of elements in <code class="code">l</code>.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Moment.html#VALcreate_moment">create_moment</a> [<a href="Moment.html">Moment</a>]</td>
+<td><div class="info">
+<p><code class="code">create_moment</code> is a function that creates a moment object; intended to help
+    code reuse.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Moment.html#VALcreate_player">create_player</a> [<a href="Moment.html">Moment</a>]</td>
+<td><div class="info">
+<p><code class="code">create_player</code> is a function that creates a player object; intended to help
+    code reuse.</p>
 
 </div>
 </td></tr>
@@ -143,7 +175,7 @@
 </td></tr>
 <tr><td><a href="Words.html#VALdelete">delete</a> [<a href="Words.html">Words</a>]</td>
 <td><div class="info">
-<p><code class="code">delete</code> 'a -&gt; ('_a, 'b) Hashtbl.t -&gt; unit
+<p><code class="code">delete</code> StringHashTbl.key -&gt; 'a StringHashTbl.t -&gt; unit
     Removes a string from the OScrabl dictionary.</p>
 
 </div>
@@ -154,10 +186,9 @@
 
 </div>
 </td></tr>
-<tr><td><a href="Moment.html#VALdraw">draw</a> [<a href="Moment.html">Moment</a>]</td>
+<tr><td><a href="Moment.html#VALdock_offset">dock_offset</a> [<a href="Moment.html">Moment</a>]</td>
 <td><div class="info">
-<p><code class="code">draw currentBag</code> draws one tile from the given bag and returns a tuple
-    containing the drawn tile and a bag with the remaining tiles</p>
+<p>TODO: docs</p>
 
 </div>
 </td></tr>
@@ -165,14 +196,6 @@
 <td><div class="info">
 <p><code class="code">draw_n start_bag start_n</code> is the previous two functions simplified and then
     squished into one function</p>
-
-</div>
-</td></tr>
-<tr><td><a href="Moment.html#VALdraw_n_times">draw_n_times</a> [<a href="Moment.html">Moment</a>]</td>
-<td><div class="info">
-<p><code class="code">draw_n_times currentBag n</code> draws <code class="code">n</code> tiles from the given bag and returns a
-    tuple containing a list of the drawn tiles and a bag with the remaining
-    tiles</p>
 
 </div>
 </td></tr>
@@ -186,28 +209,28 @@
 </td></tr>
 <tr><td><a href="Ai.html#VALemptySqrs_down">emptySqrs_down</a> [<a href="Ai.html">Ai</a>]</td>
 <td><div class="info">
-<p><code class="code">emptySqrs_right b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile 
+<p><code class="code">emptySqrs_right b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile
     squares that are horizontally right from <code class="code">c</code> on <code class="code">b</code>.</p>
 
 </div>
 </td></tr>
 <tr><td><a href="Ai.html#VALemptySqrs_left">emptySqrs_left</a> [<a href="Ai.html">Ai</a>]</td>
 <td><div class="info">
-<p><code class="code">emptySqrs_up b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile 
+<p><code class="code">emptySqrs_up b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile
     squares that are vertically above <code class="code">c</code> on <code class="code">b</code>.</p>
 
 </div>
 </td></tr>
 <tr><td><a href="Ai.html#VALemptySqrs_right">emptySqrs_right</a> [<a href="Ai.html">Ai</a>]</td>
 <td><div class="info">
-<p><code class="code">emptySqrs_down b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile 
+<p><code class="code">emptySqrs_down b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile
     squares that are vertically below <code class="code">c</code> on <code class="code">b</code>.</p>
 
 </div>
 </td></tr>
 <tr><td><a href="Ai.html#VALemptySqrs_up">emptySqrs_up</a> [<a href="Ai.html">Ai</a>]</td>
 <td><div class="info">
-<p><code class="code">emptySqrs_left b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile 
+<p><code class="code">emptySqrs_left b c</code> is the list of coordinates of connected <code class="code">Nothing</code> tile
     squares that are horizontally left from <code class="code">c</code> on <code class="code">b</code>.</p>
 
 </div>
@@ -270,7 +293,18 @@
 </td></tr>
 <tr><td align="left"><div>G</div></td></tr>
 <tr><td><a href="Main.html#VALgameplay">gameplay</a> [<a href="Main.html">Main</a>]</td>
-<td></td></tr>
+<td><div class="info">
+<p>TODO: docs</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Moment.html#VALget_board">get_board</a> [<a href="Moment.html">Moment</a>]</td>
+<td><div class="info">
+<p><code class="code">get_board</code> t -&gt; Board.board
+    Returns the board of the current game state.</p>
+
+</div>
+</td></tr>
 <tr><td><a href="Board.html#VALget_col_sqrs">get_col_sqrs</a> [<a href="Board.html">Board</a>]</td>
 <td><div class="info">
 <p><code class="code">get_col_sqrs board x</code> returns the list of squares of column <code class="code">x</code> on <code class="code">board</code>.</p>
@@ -281,6 +315,47 @@
 <td><div class="info">
 <p><code class="code">get_coladj_notNothing_sqrs board (x,y)</code> returns the list of vertically
    connected squares that don't contain any Nothing tiles.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Moment.html#VALget_current_dock">get_current_dock</a> [<a href="Moment.html">Moment</a>]</td>
+<td><div class="info">
+<p><code class="code">get_current_dock</code> t -&gt; Board.pretile list
+    is the dock of the current player.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Moment.html#VALget_current_player">get_current_player</a> [<a href="Moment.html">Moment</a>]</td>
+<td><div class="info">
+<p><code class="code">get_current_player</code> t -&gt; player
+    Returns the currently active player in the game state.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Moment.html#VALget_dock">get_dock</a> [<a href="Moment.html">Moment</a>]</td>
+<td><div class="info">
+<p><code class="code">get_dock</code> player -&gt; Board.pretile list
+    is the dock of a selected player</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Moment.html#VALget_name">get_name</a> [<a href="Moment.html">Moment</a>]</td>
+<td><div class="info">
+<p><code class="code">get_name</code> player -&gt; string
+    Returns the name of the given player.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Moment.html#VALget_other_player">get_other_player</a> [<a href="Moment.html">Moment</a>]</td>
+<td><div class="info">
+<p><code class="code">get_other_player</code> t -&gt; player
+    Is the non-active player.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Moment.html#VALget_player_score">get_player_score</a> [<a href="Moment.html">Moment</a>]</td>
+<td><div class="info">
+<p><code class="code">get_player_score</code> is the score of a given player.</p>
 
 </div>
 </td></tr>
@@ -315,15 +390,19 @@
 <td></td></tr>
 <tr><td><a href="Ai.html#VALhorizontal_tile_placements">horizontal_tile_placements</a> [<a href="Ai.html">Ai</a>]</td>
 <td><div class="info">
-<p><code class="code">horizontal_tile_placements b c s</code> is the list of coordinates for possible 
-    horizontal tile placements anchored on coordinate <code class="code">c</code> on <code class="code">b</code> that one can 
+<p><code class="code">horizontal_tile_placements b c s</code> is the list of coordinates for possible
+    horizontal tile placements anchored on coordinate <code class="code">c</code> on <code class="code">b</code> that one can
     make.</p>
 
 </div>
 </td></tr>
 <tr><td align="left"><div>I</div></td></tr>
 <tr><td><a href="Moment.html#VALinit_bag">init_bag</a> [<a href="Moment.html">Moment</a>]</td>
-<td></td></tr>
+<td><div class="info">
+<p><code class="code">shuffle_bag</code> takes a bag as input and returns it, but shuffled.</p>
+
+</div>
+</td></tr>
 <tr><td><a href="Moment.html#VALinit_draw_num">init_draw_num</a> [<a href="Moment.html">Moment</a>]</td>
 <td><div class="info">
 <p><code class="code">init_draw_num</code> is the number of tiles to draw from the bag at the start of
@@ -339,7 +418,11 @@
 </div>
 </td></tr>
 <tr><td><a href="Main.html#VALinitiate_game">initiate_game</a> [<a href="Main.html">Main</a>]</td>
-<td></td></tr>
+<td><div class="info">
+<p>TODO: docs</p>
+
+</div>
+</td></tr>
 <tr><td><a href="Board.html#VALinsertTile">insertTile</a> [<a href="Board.html">Board</a>]</td>
 <td><div class="info">
 <p><code class="code">insertTile b t (x,y)</code> is the scrabble board <code class="code">b</code> with a tile <code class="code">t</code> square
@@ -349,13 +432,17 @@
 </td></tr>
 <tr><td><a href="Ai.html#VALinsert_all_positions">insert_all_positions</a> [<a href="Ai.html">Ai</a>]</td>
 <td><div class="info">
-<p><code class="code">insert_all_positions x l</code> is the list of all possible arrangements for 
+<p><code class="code">insert_all_positions x l</code> is the list of all possible arrangements for
     inserting <code class="code">x</code> in <code class="code">l</code>, which is a list of permutations.</p>
 
 </div>
 </td></tr>
 <tr><td><a href="Board.html#VALis_firstmove">is_firstmove</a> [<a href="Board.html">Board</a>]</td>
-<td></td></tr>
+<td><div class="info">
+<p>TODO: docs</p>
+
+</div>
+</td></tr>
 <tr><td><a href="Board.html#VALis_word">is_word</a> [<a href="Board.html">Board</a>]</td>
 <td><div class="info">
 <p><code class="code">is_word s</code> returns <code class="code">true</code> if <code class="code">s</code> is a string in dictionary.json,
@@ -377,6 +464,12 @@
 <td><div class="info">
 <p><code class="code">main ()</code> unit -&gt; unit
     Prompts for the game to play, then starts it.</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Moment.html#VALmake_tile">make_tile</a> [<a href="Moment.html">Moment</a>]</td>
+<td><div class="info">
+<p><code class="code">make_tile tile</code> creates the pretile record type from a json object <code class="code">tile</code></p>
 
 </div>
 </td></tr>
@@ -437,18 +530,21 @@
 
 </div>
 </td></tr>
-<tr><td><a href="Board.html#VALoffset">offset</a> [<a href="Board.html">Board</a>]</td>
+<tr><td align="left"><div>P</div></td></tr>
+<tr><td><a href="Actions.html#VALparse_cmd">parse_cmd</a> [<a href="Actions.html">Actions</a>]</td>
 <td><div class="info">
-<p><code class="code">offset tile</code> is the spaces needed after the value of a tile in order to
-    account for differences in number of digits.</p>
+<p><code class="code">parse_cmd</code> str -&gt; action
+    is the user's input parsed into an action.</p>
 
 </div>
 </td></tr>
-<tr><td align="left"><div>P</div></td></tr>
-<tr><td><a href="Actions.html#VALparse_cmd">parse_cmd</a> [<a href="Actions.html">Actions</a>]</td>
-<td></td></tr>
 <tr><td><a href="Actions.html#VALparse_game_mode">parse_game_mode</a> [<a href="Actions.html">Actions</a>]</td>
-<td></td></tr>
+<td><div class="info">
+<p><code class="code">parse_game_mode</code> string -&gt; game_mode
+    is the user's input parsed into a game mode.</p>
+
+</div>
+</td></tr>
 <tr><td><a href="Ai.html#VALpermutate">permutate</a> [<a href="Ai.html">Ai</a>]</td>
 <td><div class="info">
 <p><code class="code">permutate l n</code> is the list of all <code class="code">n</code>-size permutations of <code class="code">l</code>.</p>
@@ -489,17 +585,23 @@
 
 </div>
 </td></tr>
-<tr><td><a href="Board.html#VALprint_board">print_board</a> [<a href="Board.html">Board</a>]</td>
+<tr><td><a href="Moment.html#VALprint_board">print_board</a> [<a href="Moment.html">Moment</a>]</td>
 <td><div class="info">
 <p><code class="code">print_board board</code> prints a graphical representation of <code class="code">board</code> into the
     terminal window</p>
 
 </div>
 </td></tr>
-<tr><td><a href="Board.html#VALprint_botline">print_botline</a> [<a href="Board.html">Board</a>]</td>
+<tr><td><a href="Moment.html#VALprint_botline">print_botline</a> [<a href="Moment.html">Moment</a>]</td>
 <td><div class="info">
 <p><code class="code">print_topline line</code> prints the bottom half of <code class="code">line</code>, where <code class="code">line</code> is one
     row of a board</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Moment.html#VALprint_botright">print_botright</a> [<a href="Moment.html">Moment</a>]</td>
+<td><div class="info">
+<p>TODO: docs</p>
 
 </div>
 </td></tr>
@@ -527,17 +629,29 @@
 
 </div>
 </td></tr>
-<tr><td><a href="Board.html#VALprint_linenum">print_linenum</a> [<a href="Board.html">Board</a>]</td>
+<tr><td><a href="Moment.html#VALprint_linenum">print_linenum</a> [<a href="Moment.html">Moment</a>]</td>
 <td><div class="info">
 <p><code class="code">print_linenum i</code> prints the character corresponding to the row number with
     A for row 1, B for row 2, and so on</p>
 
 </div>
 </td></tr>
-<tr><td><a href="Board.html#VALprint_topline">print_topline</a> [<a href="Board.html">Board</a>]</td>
+<tr><td><a href="Moment.html#VALprint_lineright">print_lineright</a> [<a href="Moment.html">Moment</a>]</td>
+<td><div class="info">
+<p>TODO: docs</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Moment.html#VALprint_topline">print_topline</a> [<a href="Moment.html">Moment</a>]</td>
 <td><div class="info">
 <p><code class="code">print_topline line</code> prints the top half of <code class="code">line</code>, where <code class="code">line</code> is one row
     of a board</p>
+
+</div>
+</td></tr>
+<tr><td><a href="Moment.html#VALprint_topright">print_topright</a> [<a href="Moment.html">Moment</a>]</td>
+<td><div class="info">
+<p>TODO: docs</p>
 
 </div>
 </td></tr>
@@ -591,6 +705,12 @@
 
 </div>
 </td></tr>
+<tr><td><a href="Moment.html#VALshift">shift</a> [<a href="Moment.html">Moment</a>]</td>
+<td><div class="info">
+<p>shift log if length greater than 36</p>
+
+</div>
+</td></tr>
 <tr><td><a href="Moment.html#VALshuffle_bag">shuffle_bag</a> [<a href="Moment.html">Moment</a>]</td>
 <td><div class="info">
 <p><code class="code">shuffle_bag bag</code> is <code class="code">bag</code> with its contents in a random order</p>
@@ -627,6 +747,12 @@
 
 </div>
 </td></tr>
+<tr><td><a href="Moment.html#VALtiles_from_json">tiles_from_json</a> [<a href="Moment.html">Moment</a>]</td>
+<td><div class="info">
+<p>TODO: docs</p>
+
+</div>
+</td></tr>
 <tr><td><a href="Board.html#VALto_lower_case">to_lower_case</a> [<a href="Board.html">Board</a>]</td>
 <td><div class="info">
 <p><code class="code">to_lower_case lst</code> is the all lower_case ascii characters version of <code class="code">lst</code></p>
@@ -634,7 +760,12 @@
 </div>
 </td></tr>
 <tr><td><a href="Actions.html#VALto_upper_case">to_upper_case</a> [<a href="Actions.html">Actions</a>]</td>
-<td></td></tr>
+<td><div class="info">
+<p><code class="code">to_upper_case</code> string list -&gt; string list
+    is a character string list with every string capitalized.</p>
+
+</div>
+</td></tr>
 <tr><td><a href="Ai.html#VALtotalcombinations">totalcombinations</a> [<a href="Ai.html">Ai</a>]</td>
 <td></td></tr>
 <tr><td align="left"><div>U</div></td></tr>
@@ -658,7 +789,11 @@
 </td></tr>
 <tr><td align="left"><div>V</div></td></tr>
 <tr><td><a href="Board.html#VALvalid_first_move">valid_first_move</a> [<a href="Board.html">Board</a>]</td>
-<td></td></tr>
+<td><div class="info">
+<p>TODO: docs</p>
+
+</div>
+</td></tr>
 <tr><td><a href="Board.html#VALvalid_tile_positions">valid_tile_positions</a> [<a href="Board.html">Board</a>]</td>
 <td><div class="info">
 <p><code class="code">valid_tile_positions board</code> is whether the tiles of <code class="code">board</code> are placed in
@@ -668,24 +803,22 @@
 </td></tr>
 <tr><td><a href="Ai.html#VALvalid_tiles">valid_tiles</a> [<a href="Ai.html">Ai</a>]</td>
 <td><div class="info">
-<p><code class="code">valid_tiles s list</code> determines if <code class="code">list</code> produces valid tile placements 
+<p><code class="code">valid_tiles s list</code> determines if <code class="code">list</code> produces valid tile placements
     and valid words, given current state <code class="code">s</code>.</p>
 
 </div>
 </td></tr>
-<tr><td><a href="Board.html#VALvalid_words_and_pts">valid_words_and_pts</a> [<a href="Board.html">Board</a>]</td>
-<td></td></tr>
 <tr><td><a href="Words.html#VALvalidity">validity</a> [<a href="Words.html">Words</a>]</td>
 <td><div class="info">
-<p><code class="code">validity</code> 'a -&gt; ('_a, 'b) Hashtbl.t -&gt; bool
+<p><code class="code">validity</code> StringHashTbl.key -&gt; 'a StringHashTbl.t -&gt; bool
     Checks whether a string exists in the OScrabl dictionary.</p>
 
 </div>
 </td></tr>
 <tr><td><a href="Ai.html#VALvertical_tile_placements">vertical_tile_placements</a> [<a href="Ai.html">Ai</a>]</td>
 <td><div class="info">
-<p><code class="code">vertical_tile_placements b c s</code> is the list of coordinates for possible 
-    vertical tile placements anchored on coordinate <code class="code">c</code> on <code class="code">b</code> that one can 
+<p><code class="code">vertical_tile_placements b c s</code> is the list of coordinates for possible
+    vertical tile placements anchored on coordinate <code class="code">c</code> on <code class="code">b</code> that one can
     make.</p>
 
 </div>
@@ -693,9 +826,9 @@
 <tr><td align="left"><div>W</div></td></tr>
 <tr><td><a href="Ai.html#VALwindow_startSizes">window_startSizes</a> [<a href="Ai.html">Ai</a>]</td>
 <td><div class="info">
-<p><code class="code">window_startSizes b c</code> is the int*int tuple representing start window 
-    sizes for probing potential tile placements around coordinate <code class="code">c</code> on <code class="code">b</code>, with 
-    the first int representing the horizontal window size, and the second int 
+<p><code class="code">window_startSizes b c</code> is the int*int tuple representing start window
+    sizes for probing potential tile placements around coordinate <code class="code">c</code> on <code class="code">b</code>, with
+    the first int representing the horizontal window size, and the second int
     representing the vertical window size.</p>
 
 </div>

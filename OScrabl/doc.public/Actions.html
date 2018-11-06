@@ -158,40 +158,14 @@
 
 <pre><span id="EXCEPTIONBadSelection"><span class="keyword">exception</span> BadSelection</span></pre>
 
-<pre><span id="VALrm_space"><span class="keyword">val</span> rm_space</span> : <code class="type">string list -> string list</code></pre><div class="info ">
-<div class="info-desc">
-<p><code class="code">rm_space</code> string list -&gt; string list
-    A function that removes all empty strings in <code class="code">lst</code></p>
-</div>
-</div>
-
-<pre><span id="VALsingle_to_int"><span class="keyword">val</span> single_to_int</span> : <code class="type">string -> int</code></pre><div class="info ">
-<div class="info-desc">
-<p><code class="code">single_to_int</code> string -&gt; int
-    Takes a string of length one and codes it to an integer representing a board
-    position (0-14).</p>
-
-<p><code class="code">single_to_int</code> 
-    Takes a string of length one and codes it to an integer representing a board
-    position (0-14).</p>
-</div>
-</div>
-
 <pre><span id="VALcheck_int"><span class="keyword">val</span> check_int</span> : <code class="type">string -> bool</code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">check_int</code> string -&gt; boolean
-    returns true if a string is an int.</p>
-
 <p><code class="code">check_int</code> is whether or not a string has an integer in it.</p>
 </div>
 </div>
 
 <pre><span id="VALto_upper_case"><span class="keyword">val</span> to_upper_case</span> : <code class="type">string list -> string list</code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">to_upper_case</code> string list -&gt; string list
-    is a character string list with every string capitalized.
-    If a string contains an integer, BadSelectino is raised.</p>
-
 <p><code class="code">to_upper_case</code> is the given string list with every string capitalized.
     Raises:
     BadSelection if the given string contains an integer.</p>
@@ -200,12 +174,6 @@
 
 <pre><span id="VALparse_game_mode"><span class="keyword">val</span> parse_game_mode</span> : <code class="type">string -> <a href="Actions.html#TYPEgame_mode">game_mode</a></code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">parse_game_mode</code> string -&gt; game_mode
-    is the user's input parsed into a game mode.
-    Raises:
-    InvalidGameMode if something other than multiplayer, singleplayer,
-    or quit is given.</p>
-
 <p><code class="code">parse_game_mode</code> is the selected game mode from the given user input.
     Raises: 
     InvalidGameMode if something other than multiplayer, singleplayer,
@@ -215,16 +183,18 @@
 
 <pre><span id="VALparse_cmd"><span class="keyword">val</span> parse_cmd</span> : <code class="type">string -> <a href="Actions.html#TYPEaction">action</a></code></pre><div class="info ">
 <div class="info-desc">
-<p><code class="code">parse_cmd</code> str -&gt; action
-    is the user's input parsed into an action.
-    Raises:
-    Blank of user input is empty,
-    Broken if an invalid pattern for an action is given.</p>
-
 <p><code class="code">parse_cmd</code> is the selected action given by user input.
     Raises: 
     Blank of user input is empty, 
     Broken if an invalid pattern for an action is given.</p>
+</div>
+</div>
+
+<pre><span id="VALsingle_to_int"><span class="keyword">val</span> single_to_int</span> : <code class="type">string -> int</code></pre><div class="info ">
+<div class="info-desc">
+<p><code class="code">single_to_int</code> 
+    Takes a string of length one and codes it to an integer representing a board
+    position (0-14).</p>
 </div>
 </div>
 </body></html>
