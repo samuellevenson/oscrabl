@@ -1,4 +1,4 @@
-(** Check words against Scrabble® dictionary *)
+(** Check words against scrabble dictionary *)
 
 open Yojson.Basic.Util
 
