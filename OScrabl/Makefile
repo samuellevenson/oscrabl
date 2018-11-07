@@ -30,7 +30,7 @@ docs-private: build
 	mkdir -p doc.private
 	ocamlfind ocamldoc -I _build -package $(PKGS) \
 		-html -stars -d doc.private \
-		-inv-merge-ml-mli -m A $(MLS)
+		-inv-merge-ml-mli -m A -hide-warnings $(MLS)
 
 clean:
 	ocamlbuild -clean
