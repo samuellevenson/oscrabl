@@ -7,7 +7,7 @@ type action =
   | Pickup of position
   | Score
   | End
-  | Draw
+  | Pass
   | Help
   | Exchange of string list
   | Refill
@@ -57,9 +57,9 @@ let check_int s =
     is a character string list with every string capitalized.
     If a string contains an integer, BadSelectino is raised. *)
 let to_upper_case lst =
-  List.map 
-    (fun x -> if check_int x 
-      then raise BadSelection 
+  List.map
+    (fun x -> if check_int x
+      then raise BadSelection
       else String.uppercase_ascii x) lst
 
 (** [parse_game_mode] string -> game_mode
@@ -98,10 +98,10 @@ let rec parse_cmd str =
     if h = "score" && t = [] then Score
     else if h = "refill" && t = [] then Refill
     else if h = "help" && t = [] then Help
-    else if h = "exchange" && (List.length t > 0) 
+    else if h = "exchange" && (List.length t > 0)
     then Exchange (to_upper_case t)
     else if h = "end" && t = [] then End
-    else if h = "draw" && t = [] then Draw
     else if h = "quit" && t = [] then Quit
     else if h = "recall" && t = [] then Recall
+    else if h = "pass" && t = [] then Pass
     else raise Broken

@@ -9,6 +9,7 @@ open Yojson.Basic
 exception EmptyBag
 exception MissingTilesToExchange
 exception InvalidExchange
+exception BagTooSmall
 
 (** the type of the player *)
 type player = {
@@ -23,7 +24,8 @@ type t = {
   bag: pretile list;
   players: player list;
   current_player: player;
-  log: string list
+  log: string list;
+  scoreless: int
 }
 
 let create_player pname pdock pscore =
@@ -38,6 +40,7 @@ let create_moment board bag players current_player log =
     players = players;
     current_player = current_player;
     log = log;
+    scoreless = 0;
   }
 
 (** [get_board] t -> Board.board
@@ -125,7 +128,8 @@ let init_state = {
     dock = [];
     score = 0;
   };
-  log = ["Started Game"]
+  log = ["Started Game"];
+  scoreless = 0
 }
 
 (** [add_players state players] creates a new state from the list of player
@@ -144,6 +148,7 @@ let rec add_players state players =
       players = new_player::state.players;
       current_player = state.current_player;
       log = state.log;
+      scoreless = state.scoreless
     } in
     add_players next_state xs
   | [] ->
@@ -153,7 +158,30 @@ let rec add_players state players =
       players = state.players;
       current_player = state.players |> List.hd;
       log = state.log;
+      scoreless = state.scoreless
     }
+
+(** [tileless_player players] is true if any one of the players has a dock with
+    no tiles left in it *)
+let rec tileless_player players =
+  match players with
+  | [] -> false
+  | x::xs -> if List.length x.dock = 0 then true else tileless_player xs
+
+(** [game_is_over state] is true when 3 consecutive scoreless turns have passed
+    or the bag is empty and a player has no tiles left on their dock *)
+let gameover state =
+  (state.scoreless = 6) ||
+  (List.length state.bag = 0 && tileless_player state.players)
+
+(** [end_message state] is a win message with the name of the player who has
+    more points or a tie message if they have they same number of points *)
+let end_message state =
+  let p1 = (List.nth state.players 0) in
+  let p2 = (List.nth state.players 1) in
+  if p1.score > p2.score then (p1.name ^ " wins!")
+  else if p1.score < p2.score then (p2.name ^ " wins!")
+  else "Its a tie"
 
 (** [letter_to_tile] is a function taking a string containing a single letter
     and a dock as input, then returns the tile containing the letter in the dock
@@ -184,12 +212,33 @@ let remove_tile_from_dock player tile: player =
     dock = dock_iter tile player.dock []
   }
 
+(** [draw_num state] is the number of tiles to draw from the bag, accounting for
+    the situation where the bag has less tiles than the player would have to
+    draw in order to completely refill their dock *)
+let draw_num state =
+  let num_played = 7 - List.length state.current_player.dock in
+  if num_played <= List.length state.bag then num_played
+  else List.length state.bag
+
+(** [pass state] creates a new state where it is the next player's turn and
+    nothing else about the state has changed *)
+let pass state =
+  let to_log = state.current_player.name ^ " passed" in
+  {
+    board = state.board;
+    bag = state.bag;
+    players = List.rev (state.current_player::(List.tl (state.players)));
+    current_player = List.hd (List.tl state.players);
+    log = state.log@[to_log] |> shift;
+    scoreless = state.scoreless + 1
+  }
+
 (** [play_word state] creates a new state by adding the score from the words
     created during the turn to the player's score, drawing new tiles from the
     bag, and then making it the other players turn *)
 let play_word state : (t * string) =
   let num_tiles_played = 7 - List.length state.current_player.dock in
-  let (drawn_tiles, new_bag) = draw_n state.bag num_tiles_played in
+  let (drawn_tiles, new_bag) = draw_n state.bag (draw_num state) in
   let (prescore, words) = calc_score state.board in
   let score = if num_tiles_played = 7 then prescore + 50 else prescore in
   let to_log = state.current_player.name ^ " played " ^
@@ -205,7 +254,8 @@ let play_word state : (t * string) =
     bag = new_bag;
     players = List.rev (curr_player::(List.tl (state.players))) ;
     current_player = List.hd (List.tl state.players);
-    log = (state.log@[to_log]) |> shift
+    log = (state.log@[to_log]) |> shift;
+    scoreless = 0
   }, string_of_int score)
 
 (** [exchange] t -> string list -> t
@@ -215,6 +265,7 @@ let play_word state : (t * string) =
     it the other player's turn *)
 let exchange state start_letters =
   if (List.length state.current_player.dock <> 7) then raise InvalidExchange
+  else if (List.length state.bag < 7) then raise BagTooSmall
   else try begin
     let rec letter_iter player letters tile_acc =
       match letters with
@@ -222,9 +273,9 @@ let exchange state start_letters =
         let tile = letter_to_tile x player in
         letter_iter (remove_tile_from_dock player tile) xs (tile::tile_acc)
       | [] -> (player, tile_acc) in
-    let (p, tiles_exchanged) = 
+    let (p, tiles_exchanged) =
       letter_iter state.current_player start_letters [] in
-    let (tiles_drawn, new_bag) = 
+    let (tiles_drawn, new_bag) =
       draw_n state.bag (List.length start_letters) in
     let to_log = state.current_player.name ^ " exchanged " ^
                  (start_letters |> List.length |> string_of_int) ^ " letters" in
@@ -238,7 +289,8 @@ let exchange state start_letters =
       bag = tiles_exchanged@new_bag |> shuffle_bag;
       players = new_player::(List.tl state.players) |> List.rev;
       current_player = List.hd (List.tl state.players);
-      log = (state.log@[to_log]) |> shift
+      log = (state.log@[to_log]) |> shift;
+      scoreless = state.scoreless + 1
     } end
     with
     | BadSelection -> raise MissingTilesToExchange
@@ -256,7 +308,8 @@ let recall st =
       dock = st.current_player.dock@(snd board_and_pretiles);
       score = st.current_player.score;
     };
-    log = st.log
+    log = st.log;
+    scoreless = st.scoreless
   }
 
 (** [place_tile state (letter,(row,col))] is the new state after a tile
@@ -270,7 +323,8 @@ let place_tile state (letter,pos) =
     bag = state.bag;
     players = state.players;
     current_player = remove_tile_from_dock state.current_player tile;
-    log = state.log
+    log = state.log;
+    scoreless = state.scoreless
   }
 
 (** [pickup_tile state pos] is the new state after the tile at [pos] has been
@@ -282,13 +336,13 @@ let pickup_tile state pos : (t * string) =
     bag = state.bag;
     players = state.players;
     log = state.log;
-    current_player =
-      let p = state.current_player in
+    scoreless = state.scoreless;
+    current_player = let p = state.current_player in
       {
         name = p.name;
         score = p.score;
         dock = tile::p.dock;
-      }
+      };
   }, tile.letter)
 
 (** [get_score state] is the current player's score as a string *)
@@ -383,10 +437,10 @@ let print_lineright state n =
 let print_topright state n =
   match n with
   | 0 -> let p = (List.nth state.players 0) in
-    print_string [] 
+    print_string []
       ("     " ^ p.name ^ "'s score: " ^ (p.score |> string_of_int))
-  | 1 -> print_string [] 
-           ("     " ^ 
+  | 1 -> print_string []
+           ("     " ^
             (state.bag |> List.length |> string_of_int) ^ " tiles remaining")
   | 2 -> print_string [] "     Game Log:"
   | 3 -> print_log state.log 1
@@ -408,7 +462,7 @@ let print_topright state n =
 let print_botright state n =
   match n with
   | 0 -> let p = (List.nth state.players 1) in
-    print_string [] 
+    print_string []
       ("     " ^ p.name ^ "'s score: " ^ (p.score |> string_of_int))
   | 1 -> print_string [] ("     Current Player is " ^ state.current_player.name)
   | 3 -> print_log state.log 2
@@ -422,14 +476,14 @@ let print_botright state n =
   | 11 -> print_log state.log 26
   | 12 -> print_log state.log 29
   | 13 -> print_log state.log 32
-  | 14 -> print_log state.log 25
+  | 14 -> print_log state.log 35
   | _ ->  print_string [] ""
 
 (** [print_board board] prints a graphical representation of [board] into the
     terminal window *)
 let print_board board state i =
   let rec print_iter board state i =
-    print_string [] 
+    print_string []
       " +————+————+————+————+————+————+————+————+————+————+————+————+————+————+————+";
     print_lineright state i;
     print_endline "";
@@ -446,7 +500,7 @@ let print_board board state i =
       print_endline "";
       print_iter xs state (i + 1)
   in
-  print_endline 
+  print_endline
     "   0    1    2    3    4    5    6    7    8    9    10   11   12   13   14";
   print_iter board state i
 
@@ -477,7 +531,7 @@ let rec print_dock player msg =
   print_string [] "                  "; print_docktop dock;
   print_string [red] ((dock_offset dock) ^ msg ^ "\n");
   print_string [] "                  "; print_dockbot dock;
-  print_string [] ((dock_offset dock) ^ "> ")
+  print_string [Blink] ((dock_offset dock) ^ "> ")
 
 
 (** [print_game st] prints the board and dock of the state [st] *)

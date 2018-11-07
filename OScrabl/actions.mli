@@ -8,7 +8,7 @@ type action =
   | Pickup of position
   | Score
   | End
-  | Draw
+  | Pass
   | Help
   | Exchange of string list
   | Refill

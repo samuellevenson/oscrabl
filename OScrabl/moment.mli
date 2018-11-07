@@ -3,6 +3,7 @@
 exception EmptyBag
 exception MissingTilesToExchange
 exception InvalidExchange
+exception BagTooSmall
 
 type player
 type t
@@ -13,7 +14,7 @@ val create_player : string -> Board.pretile list -> int -> player
 
 (** [create_moment] is a function that creates a moment object; intended to help
     code reuse. *)
-val create_moment : 
+val create_moment :
   Board.board -> Board.pretile list -> player list -> player -> string list -> t
 (** [get_board] is the board in the current game moment.*)
 val get_board : t -> Board.board
@@ -41,16 +42,26 @@ val get_current_dock : t -> Board.pretile list
 val init_state : t
 
 (** [init_bag] is an initial bag. *)
-
 val init_bag : Board.pretile list
+
 (** [shuffle_bag] takes a bag as input and returns it, but shuffled. *)
 val shuffle_bag : Board.pretile list -> Board.pretile list
 
-(* val init_bag : Board.pretile list
+(** [end_message] is a message that displays after the game depending on who,
+    if anyone, won the game *)
+val end_message : t -> string
 
-   val init_state : Board.pretile list *)
+(** [game_is_over] is true when an end condition has been reached in the game *)
+val gameover : t -> bool
 
-(** [play_word] is called in order to end the current player's turn. *)
+(** [pass] is called when a player passes their turn *)
+val pass : t -> t
+
+(** [play_word] is called in order to end the current player's turn.
+    Raises:
+    InvalidTilePlacement if the tiles are not placed according to the rules of
+    scrabble
+    InvalidWord if the word(s) created are not in the dictionary *)
 val play_word : t -> (t * string)
 
 (** [exchange] is the game state with the current player's choice of tiles
@@ -58,7 +69,8 @@ val play_word : t -> (t * string)
     Raises:
     InvalidExchange if the player does not have 7 tiles,
     MissingTilesToExchange if the player does not have the
-    tiles they want to exchange.*)
+    tiles they want to exchange.
+    BagTooSmall if the bag has less than 7 tiles *)
 val exchange : t -> string list -> t
 
 (** [recall] is the current game state with all tiles that have been placed in

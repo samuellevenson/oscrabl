@@ -27,8 +27,9 @@ let ai_perform_actions initial_state : (Moment.t * string) =
     input and calls all of the appropriate functions from the other Modules. *)
 let rec gameplay st msg =
   let _ = Sys.command "clear" in
-  if (get_name (get_current_player st)) = "Computer" then
-    let (next_state, msg) =  ai_perform_actions st in gameplay next_state msg
+  if gameover st then (print_game st (end_message st); print_endline "")
+  else if (get_name (get_current_player st)) = "Computer"
+  then let (next_state, msg) =  ai_perform_actions st in gameplay next_state msg
   else begin
     print_game st msg;
     try
@@ -42,11 +43,12 @@ let rec gameplay st msg =
       | Help -> gameplay st
                   ("Your available actions are: place, score,
                  recall, quit, exchange, pickup, help.")
-      | End -> 
+      | End ->
         let (next_st, score) = (play_word st) in
         gameplay next_st ("You scored " ^ score ^ " points. Next turn!")
       | Exchange lst ->
         gameplay (exchange st lst) "Letters exchanged! Next turn!"
+      | Pass -> gameplay (pass st) ("You passed your turn")
       | Quit -> print_endline "Thanks for playing OScrabl!"; exit 0
       | Recall -> gameplay (recall st) "Tiles recalled!";
       | _ -> exit 0
@@ -63,34 +65,38 @@ let rec gameplay st msg =
     | InvalidExchange ->
       gameplay st "You can't exchange with tiles on the board"
     | MissingTilesToExchange -> gameplay st "You don't have those letters"
+    | BagTooSmall -> gameplay st "Can't exchange with less than 7 tiles in the bag"
+    | _ -> gameplay st "Invalid command"
   end
+
+let welcome_screen msg =
+  let _ = Sys.command "clear" in
+  print_string [magenta] "\n\n\n\n\n\n\n\n\n\n\n\n\n
+                                   ██████╗ ███████╗ ██████╗██████╗  █████╗ ██████╗ ██╗
+                                  ██╔═══██╗██╔════╝██╔════╝██╔══██╗██╔══██╗██╔══██╗██║
+                                  ██║   ██║███████╗██║     ██████╔╝███████║██████╔╝██║
+                                  ██║   ██║╚════██║██║     ██╔══██╗██╔══██║██╔══██╗██║
+                                  ╚██████╔╝███████║╚██████╗██║  ██║██║  ██║██████╔╝███████╗
+                                   ╚═════╝ ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝
+                                   \n";
+  print_string [Bold] "                                        ";
+  print_string [] "by Richard Yu, Samuel Levenson, and Max Chen\n";
+  print_string [] "\n\n\n\n\n\n\n\n\n";
+  print_string [] "                                           ";
+  print_string [Bold] msg;
+  print_string [Blink] "\n                                           > "
 
 (** [initiage_game] unit -> unit
     Starts the game, allowing the user to begin inputting actions. *)
 let rec initiate_game () =
   let _ = Sys.command "clear" in
-  print_string [magenta] "\n\n\n\n\n\n\n\n\n\n\n\n\n
-                                     ██████╗ ███████╗ ██████╗██████╗  █████╗ ██████╗ ██╗
-                                    ██╔═══██╗██╔════╝██╔════╝██╔══██╗██╔══██╗██╔══██╗██║
-                                    ██║   ██║███████╗██║     ██████╔╝███████║██████╔╝██║
-                                    ██║   ██║╚════██║██║     ██╔══██╗██╔══██║██╔══██╗██║
-                                    ╚██████╔╝███████║╚██████╗██║  ██║██║  ██║██████╔╝███████╗
-                                     ╚═════╝ ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝
-                                     \n";
-  print_string [Bold] "                                        ";
-  print_string [] "by Richard Yu, Samuel Levenson, and Max Chen\n";
-  print_string [] "\n\n\n\n\n\n\n\n\n";
-  print_string [] "                                           ";
-  print_string [Bold] "Choices: multiplayer or singleplayer\n";
-  print_string [Blink] "                                           > ";
+  welcome_screen "Choices: singpleplayer or multiplayer";
   try
     match parse_game_mode (read_line ()) with
     | MultiPlayer ->
-      print_string [red] "Enter Player 1's Name.";
-      print_string [] "\n> ";
+      welcome_screen "Enter player 1's name";
       let p1 = read_line () in
-      print_string [red] "Enter Player 2's Name.";
-      print_string [] "\n> ";
+      welcome_screen "Enter player 2's name";
       let p2 = read_line () in
       gameplay (add_players init_state [p2;p1]) ("Started multiplayer game")
     | SinglePlayer ->
@@ -104,7 +110,7 @@ let rec initiate_game () =
 (** [main ()] unit -> unit
     Prompts for the game to play, then starts it. *)
 let main () =
-  resize 125 50;
+  resize 130 50;
   Words.add_hash_set Words.word_set Words.word_array Hashtbl.hash;
   initiate_game ()
 
