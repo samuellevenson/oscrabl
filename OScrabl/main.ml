@@ -102,7 +102,7 @@ let rec initiate_game () =
     | SinglePlayer ->
       gameplay
         (add_players init_state
-           ["Computer";"Player"]) "Started singleplayer game"
+           ["Computer";"Computer"]) "Started singleplayer game"
     | QuitGame -> print_endline "Thanks for playing OScrabl!"; exit 0
   with
   | InvalidGameMode -> print_endline "???"; initiate_game ()

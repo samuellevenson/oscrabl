@@ -342,10 +342,11 @@ let valid_tiles state list =
 
 (** [dock_letters d] is the string list of all letters on a given [d].*)
 let dock_letters dock =
-  [(List.nth dock 0).letter; (List.nth dock 1).letter;
-   (List.nth dock 2).letter; (List.nth dock 3).letter;
-   (List.nth dock 4).letter; (List.nth dock 5).letter;
-   (List.nth dock 6).letter]
+  let rec helper docks acclist =
+    match docks with 
+    |h::t -> helper t (h.letter::acclist)
+    | _ -> List.rev acclist
+  in helper dock []
 
 let ai_actions (cur_st:Moment.t): Actions.action list =
   (* setting up *)
