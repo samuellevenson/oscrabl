@@ -20,7 +20,9 @@ let ai_perform_actions initial_state : (Moment.t * string) =
     | [] -> (state, msg)
   in repeat initial_state (Ai.ai_actions initial_state) ""
 
-(** TODO: docs *)
+(** [gameplay] Moment.t -> string -> unit
+    represents the current gameplay frame. It prints to screen according to user
+    input and calls all of the appropriate functions from the other Modules. *)
 let rec gameplay st msg =
   let _ = Sys.command "clear" in
   if (get_name (get_current_player st)) = "Computer" then
@@ -61,7 +63,8 @@ let rec gameplay st msg =
     | MissingTilesToExchange -> gameplay st "You don't have those letters"
   end
 
-(** TODO: docs *)
+(** [initiage_game] unit -> unit 
+    Starts the game, allowing the user to begin inputting actions. *)
 let rec initiate_game () =
   let _ = Sys.command "clear" in
   print_string [magenta] "
