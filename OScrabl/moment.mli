@@ -4,6 +4,7 @@ exception EmptyBag
 exception MissingTilesToExchange
 exception InvalidExchange
 exception BagTooSmall
+exception InvalidPass
 
 type player
 type t

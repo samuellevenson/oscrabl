@@ -41,8 +41,7 @@ let rec gameplay st msg =
         gameplay next_st ("Picked up " ^ tile)
       | Score -> gameplay st ("Your score is " ^ get_score st)
       | Help -> gameplay st
-                  ("Your available actions are: place, score,
-                 recall, quit, exchange, pickup, help.")
+                  ("place, score, recall, quit, exchange, pickup, help")
       | End ->
         let (next_st, score) = (play_word st) in
         gameplay next_st ("You scored " ^ score ^ " points. Next turn!")
@@ -66,6 +65,7 @@ let rec gameplay st msg =
       gameplay st "You can't exchange with tiles on the board"
     | MissingTilesToExchange -> gameplay st "You don't have those letters"
     | BagTooSmall -> gameplay st "Can't exchange with less than 7 tiles in the bag"
+    | InvalidPass -> gameplay st "Can't pass with tiles placed"
     | _ -> gameplay st "Invalid command"
   end
 

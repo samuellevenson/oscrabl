@@ -10,6 +10,7 @@ exception EmptyBag
 exception MissingTilesToExchange
 exception InvalidExchange
 exception BagTooSmall
+exception InvalidPass
 
 (** the type of the player *)
 type player = {
@@ -223,15 +224,16 @@ let draw_num state =
 (** [pass state] creates a new state where it is the next player's turn and
     nothing else about the state has changed *)
 let pass state =
-  let to_log = state.current_player.name ^ " passed" in
-  {
-    board = state.board;
-    bag = state.bag;
-    players = List.rev (state.current_player::(List.tl (state.players)));
-    current_player = List.hd (List.tl state.players);
-    log = state.log@[to_log] |> shift;
-    scoreless = state.scoreless + 1
-  }
+  if List.length state.current_player.dock <> 7 then raise InvalidPass
+  else let to_log = state.current_player.name ^ " passed" in
+    {
+      board = state.board;
+      bag = state.bag;
+      players = List.rev (state.current_player::(List.tl (state.players)));
+      current_player = List.hd (List.tl state.players);
+      log = state.log@[to_log] |> shift;
+      scoreless = state.scoreless + 1
+    }
 
 (** [play_word state] creates a new state by adding the score from the words
     created during the turn to the player's score, drawing new tiles from the
