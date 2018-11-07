@@ -21,7 +21,8 @@ let make_placement_tests
     (name: string)
     (state: Moment.t)
     (error: exn) = 
-  name >:: (fun _ -> assert_raises error (fun () -> Board.calc_score (Moment.get_board state)))
+  name >:: (fun _ -> assert_raises error 
+               (fun () -> Board.calc_score (Moment.get_board state)))
 
 let make_exchange_failure_tests 
     (name: string)
@@ -116,6 +117,7 @@ let make_exchange_tests
       assert_equal exp_dock 
         (get_dock (get_other_player (exchange state letters_to_exchange))))
 let dummy_player = create_player "Dummy" [] 0
+let dummy_player2 = create_player "Dummy2" [] 0
 
 let test_exchange_1 =
   let curr_player = create_player "Test" ([{letter = "A"; value = 1};
@@ -155,8 +157,33 @@ let make_exchange_failures
                (fun () -> exchange state letters_to_exchange)
            )
 
+let make_pass_tests 
+    (name: string)
+    (state: Moment.t)
+    (exp: bool) =
+  name >:: (fun _ -> 
+      assert_equal exp 
+        (gameover (state)))
+
+let pass_state_1 = create_moment emptyBoard [{letter = "T"; value = 1};]
+    [dummy_player;dummy_player2] dummy_player []
+
+let pass_state_2 = create_moment emptyBoard []
+    [dummy_player;dummy_player2] dummy_player []
 let rule_tests = 
   [ 
+    make_pass_tests "end game on 6 passes" 
+      (pass_state_1 |> pass |> pass |> pass |> pass |> pass |> pass)
+      true;
+    make_pass_tests "do not end game on <6 passes" 
+      (pass_state_1 |> pass |> pass |> pass |> pass |> pass)
+      false;
+    make_pass_tests "end game on no passes, but no tiles left" 
+      (pass_state_2)
+      true;
+    make_pass_tests "end game on 6 passes and no tiles left" 
+      (pass_state_2 |> pass |> pass |> pass |> pass |> pass |> pass)
+      true;
     make_exchange_tests "Swapping letters" 
       test_exchange_1
       ["A";"B";"C";"D";"E";"F";"G"] 
