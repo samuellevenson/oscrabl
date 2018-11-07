@@ -348,6 +348,9 @@ let dock_letters dock =
     | _ -> List.rev acclist
   in helper dock []
 
+(** [ai_actions st] is the list of actions the ai will perform, in order, given
+    [st]. Will only return a list of Place actions, or a list of a single 
+    Exchange action, depending on [st].  *)
 let ai_actions (cur_st:Moment.t): Actions.action list =
   (* setting up *)
   let cur_brain = {original_state = cur_st;
