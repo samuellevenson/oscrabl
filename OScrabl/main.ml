@@ -1,3 +1,5 @@
+(** Plays the game *)
+
 open Actions
 open Moment
 open Board

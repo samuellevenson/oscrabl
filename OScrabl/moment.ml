@@ -1,3 +1,5 @@
+(** Representation of the gamestate at a particular moment *)
+
 open Board
 open ANSITerminal
 open Actions

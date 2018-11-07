@@ -1,3 +1,5 @@
+(** How the computer plays scrabble *)
+
 open Actions
 open Moment
 open Words
@@ -326,9 +328,9 @@ let valid_tiles state list =
     | Place (letter,pos)::xs -> let new_state = place_tile st (letter,pos) in
       helper new_state xs
     | _ -> begin try (match (calc_score (get_board st)) with
-        |(_,_) -> list) with 
-      |InvalidWord s -> [] 
-      |InvalidTilePlacement -> [] end in helper state list 
+        |(_,_) -> list) with
+      |InvalidWord s -> []
+      |InvalidTilePlacement -> [] end in helper state list
 
 (** [dock_letters d] is the string list of all letters on a given [d].*)
 let dock_letters dock =
@@ -372,10 +374,10 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
 
 
     (* (1) begin iterating through each final tile **)
-    let rec vert_possible_placements (start: int) (limit:int) (ft_ws: ((int*int) * (int*int)) list) (cmd0: action list) = 
-      if cmd0 != [] then cmd0 else 
-        match ft_ws with 
-        | ((y,x),(vert,hor))::t -> begin 
+    let rec vert_possible_placements (start: int) (limit:int) (ft_ws: ((int*int) * (int*int)) list) (cmd0: action list) =
+      if cmd0 != [] then cmd0 else
+        match ft_ws with
+        | ((y,x),(vert,hor))::t -> begin
 
             (* (2) begin iterating through all window sizes for tile at hand *)
             let rec helper2 windowSize cmd1 =
@@ -384,7 +386,7 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
                 (* Change the 2nd "windowSize guard statement" to limit number
                    of possible tiles AI can place in a move.*)
 
-              if (windowSize <= vert) && (windowSize <= limit) then 
+              if (windowSize <= vert) && (windowSize <= limit) then
                 let perms = permutate dock (windowSize) in
 
                 (* (3) begin iterating through all possible lists of positions for window size at hand *)
@@ -421,15 +423,15 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
                 helper2 (windowSize + 1) actions_for_window
               else cmd1 in
 
-            let actions_for_all_windows = helper2 start [] in 
+            let actions_for_all_windows = helper2 start [] in
             vert_possible_placements start (limit) t (actions_for_all_windows)
           end
         | _ -> cmd0 in
 
-    let rec hor_possible_placements (start:int) (limit:int) (ft_ws: ((int*int) * (int*int)) list) (cmd0: action list) = 
-      if cmd0 != [] then cmd0 else 
-        match ft_ws with 
-        | ((y,x),(vert,hor))::t -> begin 
+    let rec hor_possible_placements (start:int) (limit:int) (ft_ws: ((int*int) * (int*int)) list) (cmd0: action list) =
+      if cmd0 != [] then cmd0 else
+        match ft_ws with
+        | ((y,x),(vert,hor))::t -> begin
 
             (* (2) begin iterating through all window sizes for tile at hand *)
             let rec helper2 windowSize cmd1 =
@@ -438,7 +440,7 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
                 (* Change the 2nd "windowSize guard statement" to limit number
                    of possible tiles AI can place in a move.*)
 
-              if (windowSize <= hor) && (windowSize <= limit) then 
+              if (windowSize <= hor) && (windowSize <= limit) then
                 let perms = permutate dock (windowSize) in
 
                 (* (3) begin iterating through all possible lists of positions for window size at hand *)
@@ -475,29 +477,29 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
                 helper2 (windowSize + 1) actions_for_window
               else cmd1 in
 
-            let actions_for_all_windows = helper2 start [] in 
+            let actions_for_all_windows = helper2 start [] in
             hor_possible_placements start limit t (actions_for_all_windows)
           end
         | _ -> cmd0 in
 
-    let small_hor_tile_placements = hor_possible_placements 2 3 fT_wS [] in 
+    let small_hor_tile_placements = hor_possible_placements 2 3 fT_wS [] in
     match small_hor_tile_placements with
-    | [] -> begin 
+    | [] -> begin
         let small_vert_tile_placements = vert_possible_placements 2 3 fT_wS [] in
         match small_vert_tile_placements with
-        | [] -> begin 
-            let med_hor_tile_placements = hor_possible_placements 4 5 fT_wS [] in 
-            match med_hor_tile_placements with 
-            | [] -> begin 
-                let med_vert_tile_placements = vert_possible_placements 4 5 fT_wS [] in 
-                match med_vert_tile_placements with 
-                | [] -> 
-                  begin 
-                    let large_hor_tile_placements = hor_possible_placements 6 6 fT_wS [] in 
-                    match large_hor_tile_placements with 
-                    | [] -> begin 
-                        let large_vert_tile_placements = vert_possible_placements 6 6 fT_wS [] in 
-                        match large_vert_tile_placements with 
+        | [] -> begin
+            let med_hor_tile_placements = hor_possible_placements 4 5 fT_wS [] in
+            match med_hor_tile_placements with
+            | [] -> begin
+                let med_vert_tile_placements = vert_possible_placements 4 5 fT_wS [] in
+                match med_vert_tile_placements with
+                | [] ->
+                  begin
+                    let large_hor_tile_placements = hor_possible_placements 6 6 fT_wS [] in
+                    match large_hor_tile_placements with
+                    | [] -> begin
+                        let large_vert_tile_placements = vert_possible_placements 6 6 fT_wS [] in
+                        match large_vert_tile_placements with
                         | [] -> [Exchange (dock_letters dock)]
                         | _ ->  (List.rev (End::large_vert_tile_placements))
                       end

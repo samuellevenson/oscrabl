@@ -1,3 +1,5 @@
+(** Functions and types for the board *)
+
 open ANSITerminal
 open Words
 

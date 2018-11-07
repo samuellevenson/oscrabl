@@ -1,3 +1,5 @@
+(** Parse player (and AI) input *)
+
 type position = int * int
 
 type action =

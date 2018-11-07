@@ -1,4 +1,4 @@
-(** The scrabble playing computer *)
+(** How the computer plays scrabble *)
 
 open Actions
 open Moment
