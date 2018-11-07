@@ -49,7 +49,7 @@ let rec gameplay st msg =
       | Exchange lst ->
         gameplay (exchange st lst) "Letters exchanged! Next turn!"
       | Pass -> gameplay (pass st) ("You passed your turn")
-      | Quit -> print_endline "Thanks for playing OScrabl!"; exit 0
+      | Quit -> print_game st "Thanks for playing Oscrabl"; print_endline ""
       | Recall -> gameplay (recall st) "Tiles recalled!";
       | _ -> exit 0
     with
@@ -90,7 +90,7 @@ let welcome_screen msg =
     Starts the game, allowing the user to begin inputting actions. *)
 let rec initiate_game () =
   let _ = Sys.command "clear" in
-  welcome_screen "Choices: singpleplayer or multiplayer";
+  welcome_screen "Choices: singleplayer or multiplayer";
   try
     match parse_game_mode (read_line ()) with
     | MultiPlayer ->
