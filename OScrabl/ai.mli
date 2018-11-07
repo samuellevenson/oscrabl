@@ -1,3 +1,5 @@
+(** The scrabble playing computer *)
+
 open Actions
 open Moment
 open Words
@@ -7,7 +9,7 @@ exception InvalidSize
 exception Test
 
 (** the type for ai a*)
-type brain 
+type brain
 
 (** [ai_actions] is the actions that the AI will perform. *)
 val ai_actions : Moment.t -> Actions.action list
