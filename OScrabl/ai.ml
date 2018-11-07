@@ -192,14 +192,16 @@ let insert_all_positions x list =
     | hd::tl as l -> aux (p @ [hd]) ((p @ [x] @ l) :: acc) tl in
   aux [] [] list
 
-(** [permutations l] is the list of all possible permutations of elements in [l].*)
+(** [permutations l] is the list of all possible permutations 
+    of elements in [l].*)
 let rec permutations = function
   | [] -> []
   | x::[] -> [[x]]
   | x::xs -> List.fold_left (fun acc p -> acc @ insert_all_positions x p) []
                (permutations xs)
 
-(** [combiniations l k] is the size [k] list of all potential combinations of elements in [l].*)
+(** [combiniations l k] is the size [k] list of all potential 
+    combinations of elements in [l].*)
 let combinations list k =
   let rec helper1 l k acc =
     if k<=0 || k > List.length l then acc []
@@ -210,15 +212,17 @@ let combinations list k =
         (
           fun helper2 -> helper1 tl (k-1)
               (
-                fun helper3 -> acc (List.rev_append (List.map (fun x -> hd::x) helper3) helper2)
+                fun helper3 -> acc 
+                    (List.rev_append 
+                       (List.map (fun x -> hd::x) helper3) helper2)
               )
         )
   in helper1 list k (fun x -> x)
 
 (* [totalcombinations l s a] is the list of all permutations of elements in [l]
    of size [s] and up to the length of [l].
-   Example: should return a list of size 13699, given [l] has seven elements, [s] is one,
-   and [a] is the empty list. *)
+   Example: should return a list of size 13699, 
+   given [l] has seven elements, [s] is one, and [a] is the empty list. *)
 let rec totalcombinations list startSize acclist=
   if (startSize <= (List.length list)) then
     let combos = combinations list startSize in
@@ -231,16 +235,20 @@ let rec totalcombinations list startSize acclist=
   else acclist
 
 (** [window_startSizes b c] is the int*int tuple representing start window
-    sizes for probing potential tile placements around coordinate [c] on [b], with
-    the first int representing the horizontal window size, and the second int
-    representing the vertical window size. The window sizes are capped at 7. *)
+    sizes for probing potential tile placements around coordinate [c] on [b], 
+    with the first int representing the horizontal window size, and the second 
+    int representing the vertical window size. 
+    The window sizes are capped at 7. *)
 let window_startSizes board (y,x): (int * int) =
   let vertical = vertical_tile_placements board (y,x) 7 in
   let horizontal = horizontal_tile_placements board (y,x) 7 in
   if ((List.length vertical) >= 7) && ((List.length horizontal) >= 7) then
-    (7,7) else if ((List.length vertical) < 7) && ((List.length horizontal) >= 7) then
-    (List.length vertical, 7) else if ((List.length vertical) >= 7) && ((List.length horizontal) < 7) then
-    (7, List.length horizontal) else (List.length horizontal, List.length vertical)
+    (7,7) 
+  else if ((List.length vertical) < 7) && ((List.length horizontal) >= 7) then
+    (List.length vertical, 7) 
+  else if ((List.length vertical) >= 7) && ((List.length horizontal) < 7) then
+    (7, List.length horizontal) 
+  else (List.length horizontal, List.length vertical)
 
 (** [final_tile_coords board] is the list of all coordinates of final tiles on
     [board]. No particular ordering.*)
@@ -258,8 +266,8 @@ let final_tile_coords board =
   List.flatten (helper 0 [])
 
 (** [finalTiles_windowSizes b tl] is the associative list of int tuples. It
-    associates the elements of [tl], which are coordinates of final tiles on [b],
-    with their window start sizes. *)
+    associates the elements of [tl], which are coordinates of final tiles on 
+    [b], with their window start sizes. *)
 let finalTiles_windowSizes board tileList =
   let rec helper tiles (acclist: ((int*int) * (int*int)) list) =
     match tiles with
@@ -297,10 +305,10 @@ let segment list n =
     else List.rev accList1 in
   helper1 list []
 
-(** [first_valid_tiles s l] is the FIRST valid list of Actions, from [l]. That is,
-    the list of Actions generates a state from [s] with all tile placements being valid
-    and all strings formed being valid words. Returns an empty list if there isn't
-    a valid list of Actions. *)
+(** [first_valid_tiles s l] is the FIRST valid list of Actions, from [l]. 
+    That is, the list of Actions generates a state from [s] with all 
+    tile placements being valid and all strings formed being valid words. 
+    Returns an empty list if there isn't a valid list of Actions. *)
 let first_valid_tiles state (lists: Actions.action list list) =
   let rec helper1 l acclist=
     match (l,acclist) with
@@ -308,8 +316,8 @@ let first_valid_tiles state (lists: Actions.action list list) =
     | h::t, [] ->
       let rec helper2 st moves =
         match moves with
-        | Place (letter,pos)::xs -> let new_state = place_tile st (letter,pos) in
-          helper2 new_state xs
+        | Place (letter,pos)::xs -> let new_state = place_tile st (letter,pos) 
+          in helper2 new_state xs
         | _ -> try (match (calc_score (get_board st)) with
             |(_,_) -> h) with
         |InvalidWord string -> [] in
@@ -354,9 +362,11 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
       match perms with
       |list::xs -> let rec halper2 perm index acclist =
                      match perm with
-                     | h::t -> halper2 t (index+1) (Place (h.letter, (7 + index, 7))::acclist)
+                     | h::t -> halper2 t (index+1) 
+                                 (Place (h.letter, (7 + index, 7))::acclist)
                      | _ ->  let possible_actions = List.rev acclist in
-                       match valid_tiles cur_brain.original_state possible_actions with
+                       match valid_tiles 
+                               cur_brain.original_state possible_actions with
                        | [] -> (false,[])
                        | _ -> (true,possible_actions) in
         let potential_move = halper2 list 0 [] in
@@ -364,7 +374,8 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
           halper1 xs
       |_ -> [] in
     let possibleActions = halper1 all_perms in
-    let valid_tile_placement = valid_tiles cur_brain.original_state possibleActions in
+    let valid_tile_placement = valid_tiles 
+        cur_brain.original_state possibleActions in
     match valid_tile_placement with
     | [] -> [Exchange (dock_letters dock)]
     | _ -> (List.rev (End::valid_tile_placement))
@@ -372,7 +383,8 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
 
 
     (* (1) begin iterating through each final tile **)
-    let rec vert_possible_placements (start: int) (limit:int) (ft_ws: ((int*int) * (int*int)) list) (cmd0: action list) = 
+    let rec vert_possible_placements (start: int) (limit:int) 
+        (ft_ws: ((int*int) * (int*int)) list) (cmd0: action list) = 
       if cmd0 != [] then cmd0 else 
         match ft_ws with 
         | ((y,x),(vert,hor))::t -> begin 
@@ -387,25 +399,31 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
               if (windowSize <= vert) && (windowSize <= limit) then 
                 let perms = permutate dock (windowSize) in
 
-                (* (3) begin iterating through all possible lists of positions for window size at hand *)
+                (* (3) begin iterating through all possible lists of positions 
+                   for window size at hand *)
                 let rec helper3 positions cmd2 =
                   if cmd2 != [] then cmd2 else
                     match positions with
                     | pos1::t ->
 
-                      (* (4) begin iterating through all possible permutations for list of positions at hand *)
+                      (* (4) begin iterating through all possible permutations 
+                         for list of positions at hand *)
                       let rec helper4 pos1 permIndex : Actions.action list =
                         if (permIndex < (List.length perms)) then
 
                           let current_perm = List.nth perms permIndex in
 
-                          (* (5) construct action list for permutation at hand *)
+                          (* (5) construct action list for permutation 
+                             at hand *)
                           let rec helper5 pos2 perm_items list2 =
 
                             match (pos2, perm_items) with
-                            | (c1::t1,c2::t2) -> helper5 t1 t2 ((Place ((c2.letter), c1))::list2)
+                            | (c1::t1,c2::t2) -> 
+                              helper5 t1 t2 ((Place ((c2.letter), c1))::list2)
                             | _ -> let possible_actions = List.rev list2 in
-                              match valid_tiles cur_brain.original_state possible_actions with
+                              match valid_tiles 
+                                      cur_brain.original_state 
+                                      possible_actions with
                               | [] -> (false,[])
                               | _ -> (true, possible_actions) in
 
@@ -417,7 +435,10 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
                       helper3 t ((helper4 pos1 1))
                     | _ -> cmd2 in
 
-                let actions_for_window = ((helper3 (segment(vertical_tile_placements orig_board (y,x) windowSize) windowSize) [])) in
+                let actions_for_window = 
+                  ((helper3 (segment(vertical_tile_placements 
+                                       orig_board 
+                                       (y,x) windowSize) windowSize) [])) in
                 helper2 (windowSize + 1) actions_for_window
               else cmd1 in
 
@@ -426,7 +447,8 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
           end
         | _ -> cmd0 in
 
-    let rec hor_possible_placements (start:int) (limit:int) (ft_ws: ((int*int) * (int*int)) list) (cmd0: action list) = 
+    let rec hor_possible_placements (start:int) 
+        (limit:int) (ft_ws: ((int*int) * (int*int)) list) (cmd0: action list) = 
       if cmd0 != [] then cmd0 else 
         match ft_ws with 
         | ((y,x),(vert,hor))::t -> begin 
@@ -441,25 +463,31 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
               if (windowSize <= hor) && (windowSize <= limit) then 
                 let perms = permutate dock (windowSize) in
 
-                (* (3) begin iterating through all possible lists of positions for window size at hand *)
+                (* (3) begin iterating through all possible lists of 
+                   positions for window size at hand *)
                 let rec helper3 positions cmd2 =
                   if cmd2 != [] then cmd2 else
                     match positions with
                     | pos1::t ->
 
-                      (* (4) begin iterating through all possible permutations for list of positions at hand *)
+                      (* (4) begin iterating through all possible permutations 
+                         for list of positions at hand *)
                       let rec helper4 pos1 permIndex : Actions.action list =
                         if (permIndex < (List.length perms)) then
 
                           let current_perm = List.nth perms permIndex in
 
-                          (* (5) construct action list for permutation at hand *)
+                          (* (5) construct action list for permutation 
+                             at hand *)
                           let rec helper5 pos2 perm_items list2 =
 
                             match (pos2, perm_items) with
-                            | (c1::t1,c2::t2) -> helper5 t1 t2 ((Place ((c2.letter), c1))::list2)
+                            | (c1::t1,c2::t2) -> 
+                              helper5 t1 t2 ((Place ((c2.letter), c1))::list2)
                             | _ -> let possible_actions = List.rev list2 in
-                              match valid_tiles cur_brain.original_state possible_actions with
+                              match valid_tiles 
+                                      cur_brain.original_state 
+                                      possible_actions with
                               | [] -> (false,[])
                               | _ -> (true, possible_actions) in
 
@@ -471,7 +499,10 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
                       helper3 t ((helper4 pos1 1))
                     | _ -> cmd2 in
 
-                let actions_for_window = ((helper3 (segment(horizontal_tile_placements orig_board (y,x) windowSize) windowSize) [])) in
+                let actions_for_window = 
+                  ((helper3 (segment(horizontal_tile_placements 
+                                       orig_board (y,x) windowSize) 
+                               windowSize) [])) in
                 helper2 (windowSize + 1) actions_for_window
               else cmd1 in
 
@@ -483,20 +514,25 @@ let ai_actions (cur_st:Moment.t): Actions.action list =
     let small_hor_tile_placements = hor_possible_placements 2 3 fT_wS [] in 
     match small_hor_tile_placements with
     | [] -> begin 
-        let small_vert_tile_placements = vert_possible_placements 2 3 fT_wS [] in
+        let small_vert_tile_placements = 
+          vert_possible_placements 2 3 fT_wS [] in
         match small_vert_tile_placements with
         | [] -> begin 
-            let med_hor_tile_placements = hor_possible_placements 4 5 fT_wS [] in 
+            let med_hor_tile_placements = 
+              hor_possible_placements 4 5 fT_wS [] in 
             match med_hor_tile_placements with 
             | [] -> begin 
-                let med_vert_tile_placements = vert_possible_placements 4 5 fT_wS [] in 
+                let med_vert_tile_placements = 
+                  vert_possible_placements 4 5 fT_wS [] in 
                 match med_vert_tile_placements with 
                 | [] -> 
                   begin 
-                    let large_hor_tile_placements = hor_possible_placements 6 6 fT_wS [] in 
+                    let large_hor_tile_placements = 
+                      hor_possible_placements 6 6 fT_wS [] in 
                     match large_hor_tile_placements with 
                     | [] -> begin 
-                        let large_vert_tile_placements = vert_possible_placements 6 6 fT_wS [] in 
+                        let large_vert_tile_placements = 
+                          vert_possible_placements 6 6 fT_wS [] in 
                         match large_vert_tile_placements with 
                         | [] -> [Exchange (dock_letters dock)]
                         | _ ->  (List.rev (End::large_vert_tile_placements))

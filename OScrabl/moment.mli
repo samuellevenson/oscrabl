@@ -13,7 +13,8 @@ val create_player : string -> Board.pretile list -> int -> player
 
 (** [create_moment] is a function that creates a moment object; intended to help
     code reuse. *)
-val create_moment : Board.board -> Board.pretile list -> player list -> player -> string list -> t
+val create_moment : 
+  Board.board -> Board.pretile list -> player list -> player -> string list -> t
 (** [get_board] is the board in the current game moment.*)
 val get_board : t -> Board.board
 
