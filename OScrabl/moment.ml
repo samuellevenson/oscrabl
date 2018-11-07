@@ -222,8 +222,10 @@ let exchange state start_letters =
         let tile = letter_to_tile x player in
         letter_iter (remove_tile_from_dock player tile) xs (tile::tile_acc)
       | [] -> (player, tile_acc) in
-    let (p, tiles_exchanged) = letter_iter state.current_player start_letters [] in
-    let (tiles_drawn, new_bag) = draw_n state.bag (List.length start_letters) in
+    let (p, tiles_exchanged) = 
+      letter_iter state.current_player start_letters [] in
+    let (tiles_drawn, new_bag) = 
+      draw_n state.bag (List.length start_letters) in
     let to_log = state.current_player.name ^ " exchanged " ^
                  (start_letters |> List.length |> string_of_int) ^ " letters" in
     let new_player = {
@@ -381,8 +383,11 @@ let print_lineright state n =
 let print_topright state n =
   match n with
   | 0 -> let p = (List.nth state.players 0) in
-    print_string [] ("     " ^ p.name ^ "'s score: " ^ (p.score |> string_of_int))
-  | 1 -> print_string [] ("     " ^ (state.bag |> List.length |> string_of_int) ^ " tiles remaining")
+    print_string [] 
+      ("     " ^ p.name ^ "'s score: " ^ (p.score |> string_of_int))
+  | 1 -> print_string [] 
+           ("     " ^ 
+            (state.bag |> List.length |> string_of_int) ^ " tiles remaining")
   | 2 -> print_string [] "     Game Log:"
   | 3 -> print_log state.log 1
   | 4 -> print_log state.log 4
@@ -403,7 +408,8 @@ let print_topright state n =
 let print_botright state n =
   match n with
   | 0 -> let p = (List.nth state.players 1) in
-    print_string [] ("     " ^ p.name ^ "'s score: " ^ (p.score |> string_of_int))
+    print_string [] 
+      ("     " ^ p.name ^ "'s score: " ^ (p.score |> string_of_int))
   | 1 -> print_string [] ("     Current Player is " ^ state.current_player.name)
   | 3 -> print_log state.log 2
   | 4 -> print_log state.log 5
@@ -423,7 +429,8 @@ let print_botright state n =
     terminal window *)
 let print_board board state i =
   let rec print_iter board state i =
-    print_string [] " +————+————+————+————+————+————+————+————+————+————+————+————+————+————+————+";
+    print_string [] 
+      " +————+————+————+————+————+————+————+————+————+————+————+————+————+————+————+";
     print_lineright state i;
     print_endline "";
     match board with
@@ -439,7 +446,8 @@ let print_board board state i =
       print_endline "";
       print_iter xs state (i + 1)
   in
-  print_endline "   0    1    2    3    4    5    6    7    8    9    10   11   12   13   14";
+  print_endline 
+    "   0    1    2    3    4    5    6    7    8    9    10   11   12   13   14";
   print_iter board state i
 
 (** [print_docktop dock] prints the top line of a players dock of tiles *)

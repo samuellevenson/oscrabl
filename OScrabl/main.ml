@@ -15,7 +15,8 @@ let ai_perform_actions initial_state : (Moment.t * string) =
         | End ->
           let (next_st, score) = (play_word state) in
           repeat next_st xs ("The computer scored " ^ score ^ " points")
-        | Exchange lst -> repeat (exchange state lst) xs "The computer exchanged its tiles"
+        | Exchange lst -> 
+          repeat (exchange state lst) xs "The computer exchanged its tiles"
         | _ -> failwith "ai should not issue any other command"
       end
     | [] -> (state, msg)
@@ -42,7 +43,8 @@ let rec gameplay st msg =
       | End ->
         let (next_st, score) = (play_word st) in
         gameplay next_st ("You scored " ^ score ^ " points. Next turn!")
-      | Exchange lst -> gameplay (exchange st lst) "Letters exchanged! Next turn!"
+      | Exchange lst -> 
+        gameplay (exchange st lst) "Letters exchanged! Next turn!"
       | Quit -> print_endline "Thanks for playing OScrabl!"; exit 0
       | Recall -> gameplay (recall st) "Tiles recalled!";
       | _ -> exit 0
@@ -56,7 +58,8 @@ let rec gameplay st msg =
     | Can'tPickupTile -> gameplay st "Can't pick up that tile"
     | InvalidWord msg -> gameplay st (msg ^ " is not a word")
     | InvalidTilePlacement -> gameplay st "Tiles placed incorrectly"
-    | InvalidExchange -> gameplay st "You can't exchange with tiles on the board"
+    | InvalidExchange -> 
+      gameplay st "You can't exchange with tiles on the board"
     | MissingTilesToExchange -> gameplay st "You don't have those letters"
   end
 
@@ -88,9 +91,11 @@ let rec initiate_game () =
 
 
 ";
-  print_string [Bold] "                                        by Richard Yu, Samuel Levenson, and Max Chen\n";
+  print_string [Bold] "                                        ";
+  print_string [Bold] "by Richard Yu, Samuel Levenson, and Max Chen\n";
   print_string [] "\n\n\n\n\n\n\n\n\n";
-  print_string [] "                                           Choices: multiplayer or singleplayer\n";
+  print_string [] "                                           ";
+  print_string [] "Choices: multiplayer or singleplayer\n";
   print_string [Blink] "                                           > ";
   try
     match parse_game_mode (read_line ()) with
@@ -102,7 +107,10 @@ let rec initiate_game () =
       print_string [] "\n> ";
       let p2 = read_line () in
       gameplay (add_players init_state [p2;p1]) ("Started multiplayer game")
-    | SinglePlayer -> gameplay (add_players init_state ["Computer";"Player"]) "Started singleplayer game"
+    | SinglePlayer -> 
+      gameplay 
+        (add_players init_state 
+           ["Computer";"Player"]) "Started singleplayer game"
     | QuitGame -> print_endline "Thanks for playing OScrabl!"; exit 0
   with
   | InvalidGameMode -> print_endline "???"; initiate_game ()
