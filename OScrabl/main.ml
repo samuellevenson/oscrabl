@@ -42,7 +42,7 @@ let rec gameplay st msg =
       | Help -> gameplay st
                   ("Your available actions are: place, score,
                  recall, quit, exchange, pickup, help.")
-      | End ->
+      | End -> 
         let (next_st, score) = (play_word st) in
         gameplay next_st ("You scored " ^ score ^ " points. Next turn!")
       | Exchange lst ->
