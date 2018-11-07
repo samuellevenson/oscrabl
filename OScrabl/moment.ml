@@ -531,7 +531,7 @@ let rec print_dock player msg =
   print_string [] "                  "; print_docktop dock;
   print_string [red] ((dock_offset dock) ^ msg ^ "\n");
   print_string [] "                  "; print_dockbot dock;
-  print_string [Blink] ((dock_offset dock) ^ "> ")
+  print_string [Bold;Blink] ((dock_offset dock) ^ "> ")
 
 
 (** [print_game st] prints the board and dock of the state [st] *)

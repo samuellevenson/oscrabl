@@ -79,7 +79,7 @@ let welcome_screen msg =
                                   ╚██████╔╝███████║╚██████╗██║  ██║██║  ██║██████╔╝███████╗
                                    ╚═════╝ ╚══════╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚══════╝
                                    \n";
-  print_string [Bold] "                                        ";
+  print_string [] "                                        ";
   print_string [] "by Richard Yu, Samuel Levenson, and Max Chen\n";
   print_string [] "\n\n\n\n\n\n\n\n\n";
   print_string [] "                                           ";
