@@ -10,16 +10,16 @@ let ai_perform_actions initial_state : (Moment.t * string) =
   print_game initial_state "The computer is thinking";
   let rec repeat state action_list msg =
     try match action_list with
-    | x::xs -> begin match x with
-        | Place (letter,pos) -> repeat (place_tile state (letter,pos)) xs ""
-        | End ->
-          let (next_st, score) = (play_word state) in
-          repeat next_st xs ("The computer scored " ^ score ^ " points")
-        | Exchange lst ->
-          repeat (exchange state lst) xs "The computer exchanged its tiles"
-        | _ -> failwith "ai should not issue any other command"
-      end
-    | [] -> (state, msg)
+      | x::xs -> begin match x with
+          | Place (letter,pos) -> repeat (place_tile state (letter,pos)) xs ""
+          | End ->
+            let (next_st, score) = (play_word state) in
+            repeat next_st xs ("The computer scored " ^ score ^ " points")
+          | Exchange lst ->
+            repeat (exchange state lst) xs "The computer exchanged its tiles"
+          | _ -> failwith "ai should not issue any other command"
+        end
+      | [] -> (state, msg)
     with
     | _ -> repeat (pass initial_state) [] ""
   in repeat initial_state (Ai.ai_actions initial_state) ""
@@ -30,7 +30,9 @@ let ai_perform_actions initial_state : (Moment.t * string) =
 let rec gameplay st msg =
   let _ = Sys.command "clear" in
   if gameover st then (print_game st (end_message st); print_endline "")
-  else if (get_name (get_current_player st)) = "Computer"
+  else if ((get_name (get_current_player st)) = "Computer" ||
+           (get_name (get_current_player st)) = "Computer1" ||
+           (get_name (get_current_player st)) = "Computer2")
   then let (next_state, msg) =  ai_perform_actions st in gameplay next_state msg
   else begin
     print_game st msg;
@@ -84,15 +86,15 @@ let welcome_screen msg =
   print_string [] "                                        ";
   print_string [] "by Richard Yu, Samuel Levenson, and Max Chen\n";
   print_string [] "\n\n\n\n\n\n\n\n\n";
-  print_string [] "                                           ";
+  print_string [] "                                      ";
   print_string [Bold] msg;
-  print_string [Blink] "\n                                           > "
+  print_string [Blink] "\n                                      > "
 
 (** [initiage_game] unit -> unit
     Starts the game, allowing the user to begin inputting actions. *)
 let rec initiate_game () =
   let _ = Sys.command "clear" in
-  welcome_screen "Choices: singleplayer or multiplayer";
+  welcome_screen "Choices: singleplayer, multiplayer, or spectator";
   try
     match parse_game_mode (read_line ()) with
     | MultiPlayer ->
@@ -100,11 +102,13 @@ let rec initiate_game () =
       let p1 = read_line () in
       welcome_screen "Enter player 2's name";
       let p2 = read_line () in
-      gameplay (add_players init_state [p2;p1]) ("Started multiplayer game")
+      gameplay (add_players init_state [p2;p1]) "Started multiplayer game"
     | SinglePlayer ->
-      gameplay
-        (add_players init_state
-           ["Computer";"Player"]) "Started singleplayer game"
+      gameplay (add_players init_state ["Computer";"Player"])
+        "Started singleplayer game"
+    | Spectator ->
+      gameplay (add_players init_state ["Computer2";"Computer1"])
+        "Started spectator game"
     | QuitGame -> print_endline "Thanks for playing OScrabl!"; exit 0
   with
   | InvalidGameMode -> print_endline "???"; initiate_game ()

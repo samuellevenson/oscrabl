@@ -22,6 +22,7 @@ type action =
 type game_mode =
   | SinglePlayer
   | MultiPlayer
+  | Spectator
   | QuitGame
 
 exception InvalidGameMode

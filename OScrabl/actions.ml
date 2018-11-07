@@ -17,6 +17,7 @@ type action =
 type game_mode =
   | SinglePlayer
   | MultiPlayer
+  | Spectator
   | QuitGame
 
 exception InvalidGameMode
@@ -76,6 +77,7 @@ let rec parse_game_mode str =
     if h = "multiplayer" then MultiPlayer
     else if h = "quit" then QuitGame
     else if h = "singleplayer" then SinglePlayer
+    else if h = "spectator" then Spectator
     else raise InvalidGameMode
 
 
