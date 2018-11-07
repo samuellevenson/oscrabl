@@ -351,10 +351,10 @@ let get_rowadj_notNothing_sqrs board (x,y) =
   | (Nothing, multiplier) -> raise NothingSquare
   | _ -> begin
       let rec rightHelper xPos (accSqrList: square list) =
-        if (xPos<14) then (let tentSqr = get_square board (xPos,y) in
-                           match tentSqr with
-                           | (Nothing, multiplier) -> accSqrList
-                           | _ -> rightHelper (xPos+1) (accSqrList@[tentSqr]))
+        if (xPos<=14) then (let tentSqr = get_square board (xPos,y) in
+                            match tentSqr with
+                            | (Nothing, multiplier) -> accSqrList
+                            | _ -> rightHelper (xPos+1) (accSqrList@[tentSqr]))
         else accSqrList in
       let rec leftHelper xPos (accSqrList: square list) =
         if (xPos>=0) then (let tentSqr = get_square board (xPos,y) in
@@ -379,10 +379,10 @@ let get_coladj_notNothing_sqrs board (x,y) =
   | (Nothing, multiplier) -> raise NothingSquare
   | _ -> begin
       let rec botHelper yPos (accSqrList: square list) =
-        if (yPos<14) then (let tentSqr = get_square board (x,yPos) in
-                           match tentSqr with
-                           | (Nothing, multiplier) -> accSqrList
-                           | _ -> botHelper (yPos+1) (accSqrList@[tentSqr]))
+        if (yPos<=14) then (let tentSqr = get_square board (x,yPos) in
+                            match tentSqr with
+                            | (Nothing, multiplier) -> accSqrList
+                            | _ -> botHelper (yPos+1) (accSqrList@[tentSqr]))
         else accSqrList in
       let rec topHelper yPos (accSqrList: square list) =
         if (yPos>=0) then (let tentSqr = get_square board (x,yPos) in
