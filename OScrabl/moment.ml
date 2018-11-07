@@ -224,7 +224,8 @@ let draw_num state =
 (** [pass state] creates a new state where it is the next player's turn and
     nothing else about the state has changed *)
 let pass state =
-  if List.length state.current_player.dock <> 7 then raise InvalidPass
+  let (_,unfinals) = pop_unfinals state.board in
+  if unfinals <> [] then raise InvalidPass
   else let to_log = state.current_player.name ^ " passed" in
     {
       board = state.board;

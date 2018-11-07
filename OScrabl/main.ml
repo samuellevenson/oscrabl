@@ -9,7 +9,7 @@ open ANSITerminal
 let ai_perform_actions initial_state : (Moment.t * string) =
   print_game initial_state "The computer is thinking";
   let rec repeat state action_list msg =
-    match action_list with
+    try match action_list with
     | x::xs -> begin match x with
         | Place (letter,pos) -> repeat (place_tile state (letter,pos)) xs ""
         | End ->
@@ -20,6 +20,8 @@ let ai_perform_actions initial_state : (Moment.t * string) =
         | _ -> failwith "ai should not issue any other command"
       end
     | [] -> (state, msg)
+    with
+    | _ -> repeat (pass initial_state) [] ""
   in repeat initial_state (Ai.ai_actions initial_state) ""
 
 (** [gameplay] Moment.t -> string -> unit
@@ -102,7 +104,7 @@ let rec initiate_game () =
     | SinglePlayer ->
       gameplay
         (add_players init_state
-           ["Computer";"Computer"]) "Started singleplayer game"
+           ["Computer";"Player"]) "Started singleplayer game"
     | QuitGame -> print_endline "Thanks for playing OScrabl!"; exit 0
   with
   | InvalidGameMode -> print_endline "???"; initiate_game ()
