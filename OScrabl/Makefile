@@ -5,7 +5,7 @@ MLIS=$(MODULES:=.mli)
 TEST=test.byte
 MAIN=main.byte
 OCAMLBUILD=ocamlbuild -use-ocamlfind
-PKGS=oUnit,ANSITerminal,Yojson,Hashtbl
+PKGS=oUnit,ANSITerminal,Yojson
 
 build:
 	$(OCAMLBUILD) $(OBJECTS)
