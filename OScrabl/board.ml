@@ -1,3 +1,5 @@
+(** Functions and types for the board *)
+
 open ANSITerminal
 open Words
 
@@ -39,13 +41,20 @@ let def_col_zero : square list =
     if (row < 15) then
       begin
         if (row = 0) then helper (row + 1) ((Nothing, TripleWord)::acclist)
-        else if (row <> 0) && (row < 3) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 3) then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
-        else if (row <> 3) && (row < 7) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 7) then helper (row + 1) ((Nothing, TripleWord)::acclist)
-        else if (row <> 7) && (row < 11) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 11) then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
-        else if (row <> 11) && (row < 14) then helper (row + 1) ((Nothing, NaN)::acclist)
+        else if (row <> 0) && (row < 3)
+        then helper (row + 1) ((Nothing, NaN)::acclist)
+        else if (row = 3)
+        then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
+        else if (row <> 3) && (row < 7)
+        then helper (row + 1) ((Nothing, NaN)::acclist)
+        else if (row = 7)
+        then helper (row + 1) ((Nothing, TripleWord)::acclist)
+        else if (row <> 7) && (row < 11)
+        then helper (row + 1) ((Nothing, NaN)::acclist)
+        else if (row = 11)
+        then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
+        else if (row <> 11) && (row < 14)
+        then helper (row + 1) ((Nothing, NaN)::acclist)
         else helper (row + 1) ((Nothing, TripleWord)::acclist)
       end
     else List.rev acclist
@@ -58,13 +67,20 @@ let def_col_one =
     if (row < 15) then
       begin
         if (row = 0) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 1) then helper (row + 1) ((Nothing, DoubleWord)::acclist)
-        else if (row < 5) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 5) then helper (row + 1) ((Nothing, TripleLetter)::acclist)
-        else if (row < 9) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 9) then helper (row + 1) ((Nothing, TripleLetter)::acclist)
-        else if (row < 13) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 13) then helper (row + 1) ((Nothing, DoubleWord)::acclist)
+        else if (row = 1)
+        then helper (row + 1) ((Nothing, DoubleWord)::acclist)
+        else if (row < 5)
+        then helper (row + 1) ((Nothing, NaN)::acclist)
+        else if (row = 5)
+        then helper (row + 1) ((Nothing, TripleLetter)::acclist)
+        else if (row < 9)
+        then helper (row + 1) ((Nothing, NaN)::acclist)
+        else if (row = 9)
+        then helper (row + 1) ((Nothing, TripleLetter)::acclist)
+        else if (row < 13)
+        then helper (row + 1) ((Nothing, NaN)::acclist)
+        else if (row = 13)
+        then helper (row + 1) ((Nothing, DoubleWord)::acclist)
         else helper (row + 1) ((Nothing, NaN)::acclist)
       end
     else List.rev acclist
@@ -79,11 +95,16 @@ let def_col_two =
         if (row < 2) then helper (row + 1) ((Nothing, NaN)::acclist)
         else if (row = 2) then helper (row + 1) ((Nothing, DoubleWord)::acclist)
         else if (row < 6) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 6) then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
-        else if (row < 8) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 8) then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
-        else if (row < 12) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 12) then helper (row + 1) ((Nothing, DoubleWord)::acclist)
+        else if (row = 6)
+        then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
+        else if (row < 8)
+        then helper (row + 1) ((Nothing, NaN)::acclist)
+        else if (row = 8)
+        then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
+        else if (row < 12)
+        then helper (row + 1) ((Nothing, NaN)::acclist)
+        else if (row = 12)
+        then helper (row + 1) ((Nothing, DoubleWord)::acclist)
         else helper (row + 1) ((Nothing, NaN)::acclist)
       end
     else List.rev acclist
@@ -99,9 +120,11 @@ let def_col_three =
         else if (row < 3) then helper (row + 1) ((Nothing, NaN)::acclist)
         else if (row = 3) then helper (row + 1) ((Nothing, DoubleWord)::acclist)
         else if (row < 7) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 7) then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
+        else if (row = 7)
+        then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
         else if (row < 11) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 11) then helper (row + 1) ((Nothing, DoubleWord)::acclist)
+        else if (row = 11)
+        then helper (row + 1) ((Nothing, DoubleWord)::acclist)
         else if (row < 14) then helper (row + 1) ((Nothing, NaN)::acclist)
         else helper (row + 1) ((Nothing, DoubleLetter)::acclist)
       end
@@ -115,9 +138,12 @@ let def_col_four =
     if (row < 15) then
       begin
         if (row < 4) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 4) then helper (row + 1) ((Nothing, DoubleWord)::acclist)
-        else if (row < 10) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 10) then helper (row + 1) ((Nothing, DoubleWord)::acclist)
+        else if (row = 4)
+        then helper (row + 1) ((Nothing, DoubleWord)::acclist)
+        else if (row < 10)
+        then helper (row + 1) ((Nothing, NaN)::acclist)
+        else if (row = 10)
+        then helper (row + 1) ((Nothing, DoubleWord)::acclist)
         else helper (row + 1) ((Nothing, NaN)::acclist)
       end
     else List.rev acclist
@@ -130,13 +156,20 @@ let def_col_five =
     if (row < 15) then
       begin
         if (row = 0) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 1) then helper (row + 1) ((Nothing, TripleLetter)::acclist)
-        else if (row < 5) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 5) then helper (row + 1) ((Nothing, TripleLetter)::acclist)
-        else if (row < 9) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 9) then helper (row + 1) ((Nothing, TripleLetter)::acclist)
-        else if (row < 13) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 13) then helper (row + 1) ((Nothing, TripleLetter)::acclist)
+        else if (row = 1)
+        then helper (row + 1) ((Nothing, TripleLetter)::acclist)
+        else if (row < 5)
+        then helper (row + 1) ((Nothing, NaN)::acclist)
+        else if (row = 5)
+        then helper (row + 1) ((Nothing, TripleLetter)::acclist)
+        else if (row < 9)
+        then helper (row + 1) ((Nothing, NaN)::acclist)
+        else if (row = 9)
+        then helper (row + 1) ((Nothing, TripleLetter)::acclist)
+        else if (row < 13)
+        then helper (row + 1) ((Nothing, NaN)::acclist)
+        else if (row = 13)
+        then helper (row + 1) ((Nothing, TripleLetter)::acclist)
         else helper (row + 1) ((Nothing, NaN)::acclist)
       end
     else List.rev acclist
@@ -149,13 +182,20 @@ let def_col_six =
     if (row < 15) then
       begin
         if (row < 2) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 2) then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
-        else if (row < 6) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 6) then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
-        else if (row < 8) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 8) then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
-        else if (row < 12) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 12) then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
+        else if (row = 2)
+        then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
+        else if (row < 6)
+        then helper (row + 1) ((Nothing, NaN)::acclist)
+        else if (row = 6)
+        then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
+        else if (row < 8)
+        then helper (row + 1) ((Nothing, NaN)::acclist)
+        else if (row = 8)
+        then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
+        else if (row < 12)
+        then helper (row + 1) ((Nothing, NaN)::acclist)
+        else if (row = 12)
+        then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
         else helper (row + 1) ((Nothing, NaN)::acclist)
       end
     else List.rev acclist
@@ -169,11 +209,14 @@ let def_col_seven =
       begin
         if (row = 0) then helper (row + 1) ((Nothing, TripleWord)::acclist)
         else if (row < 3) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 3) then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
+        else if (row = 3)
+        then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
         else if (row < 7) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 7) then helper (row + 1) ((Nothing, DoubleWord)::acclist)
+        else if (row = 7)
+        then helper (row + 1) ((Nothing, DoubleWord)::acclist)
         else if (row < 11) then helper (row + 1) ((Nothing, NaN)::acclist)
-        else if (row = 11) then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
+        else if (row = 11)
+        then helper (row + 1) ((Nothing, DoubleLetter)::acclist)
         else if (row < 14) then helper (row + 1) ((Nothing, NaN)::acclist)
         else helper (row + 1) ((Nothing, TripleWord)::acclist)
       end
@@ -195,7 +238,8 @@ let get_square board (x,y) = if (x >= 0 && x<= 14) && (y>=0 && y<= 14) then
 (** [insertTile b t (x,y)] is the scrabble board [b] with a tile [t] square
     at the [x]th row and [y]th column of the board *)
 let insertTile board tile (x,y) =
-  if fst (List.nth (List.nth board x) y) <> Nothing then raise Can'tPlaceTile else
+  if fst (List.nth (List.nth board x) y) <> Nothing
+  then raise Can'tPlaceTile else
     let rec rowIter row col new_col =
       if row < y then rowIter (row + 1) col ((List.nth col row)::new_col)
       else if row = y then
@@ -205,8 +249,10 @@ let insertTile board tile (x,y) =
       else List.rev new_col in
     let rec columnIter col list_of_cols =
       if col < x then columnIter (col + 1) ((List.nth board col)::list_of_cols)
-      else if col = x then columnIter (col + 1) ((rowIter 0 (List.nth board col) [])::list_of_cols)
-      else if col < 15 then columnIter (col + 1) ((List.nth board col)::list_of_cols)
+      else if col = x then
+        columnIter (col + 1) ((rowIter 0 (List.nth board col) [])::list_of_cols)
+      else if col < 15 then
+        columnIter (col + 1) ((List.nth board col)::list_of_cols)
       else List.rev list_of_cols in
     columnIter 0 []
 
@@ -223,8 +269,10 @@ let remove_tile board (x,y) =
     else List.rev new_col in
   let rec columnIter col list_of_cols =
     if col < x then columnIter (col + 1) ((List.nth board col)::list_of_cols)
-    else if col = x then columnIter (col + 1) ((rowIter 0 (List.nth board col) [])::list_of_cols)
-    else if col < 15 then columnIter (col + 1) ((List.nth board col)::list_of_cols)
+    else if col = x then
+      columnIter (col + 1) ((rowIter 0 (List.nth board col) [])::list_of_cols)
+    else if col < 15 then
+      columnIter (col + 1) ((List.nth board col)::list_of_cols)
     else List.rev list_of_cols in
   match fst (List.nth (List.nth board x) y) with
   | Unfinal tile ->
@@ -232,7 +280,7 @@ let remove_tile board (x,y) =
   | _ -> raise Can'tPickupTile
 
 (** [tileSqrs_to_preTileSqrs sqrList] returns [sqrList] with all [Final(a)] and
-    [Unfinal(a)] tiles converted to [a] pretiles. [Nothing] tiles are removed. *)
+    [Unfinal(a)] tiles converted to [a] pretiles. [Nothing] tiles are removed.*)
 let tileSqrs_to_preTileSqrs squareList =
   let rec helper (sqrList: square list) (accList: (pretile * multiplier) list) =
     match sqrList with
@@ -352,7 +400,8 @@ let get_coladj_notNothing_sqrs board (x,y) =
 (** [row_is_connected board y] is true when the row does not contain any squares
     of type Nothing in between the Unfinal squares *)
 let row_is_connected (board:board) y =
-  let rec row_iter (passed_unfinal:bool) (passed_nothing:bool) (row:square list) =
+  let rec row_iter
+      (passed_unfinal:bool) (passed_nothing:bool) (row:square list) =
     match row with
     | [] -> true
     | x::xs -> match fst x with
@@ -405,8 +454,10 @@ let pop_unfinals board: (board * (pretile list)) =
   let rec pop_board index2 acclist3 =
     if index2 < 15 then let rec helper2 col acclist4 =
                           match (col: square list) with
-                          | (Unfinal a, multiplier):: t -> helper2 t ((Nothing, multiplier)::acclist4)
-                          | (b, multiplier)::t -> helper2 t ((b, multiplier)::acclist4)
+                          | (Unfinal a, multiplier):: t ->
+                            helper2 t ((Nothing, multiplier)::acclist4)
+                          | (b, multiplier)::t ->
+                            helper2 t ((b, multiplier)::acclist4)
                           | _ -> List.rev acclist4 in
       let col_squares = helper2 (List.nth board index2) [] in
       pop_board (index2 + 1) (col_squares::acclist3)
@@ -434,7 +485,8 @@ let check_uncrossed board (x_fix, y_fix) =
 let xor p1 p2 =
   (p1 && not p2) || (not p1 && p2)
 
-(** TODO: docs *)
+(** [unfinals_are_horizontal board y] is true if the unfinal tiles are oriented
+    horizontally *)
 let unfinals_are_horizontal board x =
   let rec col_iter col unfinals =
     match col with
@@ -444,7 +496,8 @@ let unfinals_are_horizontal board x =
       | _ -> col_iter xs unfinals
   in col_iter (get_col_sqrs board x) 0
 
-(** TODO: docs *)
+(** [unfinals_are_vertical board y] is true if the unfinal tiles are oriented
+    vertically *)
 let unfinals_are_vertical board y =
   let rec row_iter row unfinals =
     match row with
@@ -454,11 +507,14 @@ let unfinals_are_vertical board y =
       | _ -> row_iter xs unfinals
   in row_iter (get_row_sqrs board y) 0
 
-(** TODO: docs *)
+(** [unfinals_singly_oriented board (x,y)] is true if all of the unfinal tiles
+    are aligned in the same way, either horizontally or vertically *)
 let unfinals_singly_oriented board (x,y) =
   xor (unfinals_are_horizontal board x > 1) (unfinals_are_vertical board y > 1)
   || (unfinals_are_horizontal board x = 1 && unfinals_are_vertical board y = 1)
 
+(** [is_firstmove board] is true if there are no final tiles on the board and
+    false otherwise *)
 let is_firstmove (board:board) : bool =
   let (flattened_board: square list) = List.flatten board in
   let rec helper list =
@@ -468,20 +524,23 @@ let is_firstmove (board:board) : bool =
     | _ -> true
   in helper flattened_board
 
+(** [valid_first_move board] is true if the center tile contains an unfinal tile
+    and false otherwise *)
 let valid_first_move (board:board): bool =
   let center_tile = (get_square board (7,7)) in
   match center_tile with
   | (Unfinal a, _) -> true
   | _ -> false
 
-(** [find_strings board] finds all the strings created by the unfinal tiles on the
-    board. These strings may not be English words *)
+(** [find_strings board] finds all the strings created by the unfinal tiles on
+    the board. These strings may not be English words *)
 let find_strings board : square list list =
   let rec board_iter x y words_acc =
     match fst (get_square board (x, y)) with
     | Unfinal tile ->
       let to_add =
-        [(get_coladj_notNothing_sqrs board (x,y));(get_rowadj_notNothing_sqrs board (x,y))] in
+        [(get_coladj_notNothing_sqrs board (x,y));
+         (get_rowadj_notNothing_sqrs board (x,y))] in
       if x < 14 then (board_iter (x+1) y) (to_add@words_acc)
       else if y < 14 then (board_iter 0 (y+1)) (to_add@words_acc)
       else (to_add@words_acc)
@@ -489,8 +548,11 @@ let find_strings board : square list list =
       if x < 14 then board_iter (x+1) y words_acc
       else if y < 14 then board_iter 0 (y+1) words_acc
       else words_acc
-  in (board_iter 0 0 []) |> List.filter (fun x -> List.length x > 1) |> List.sort_uniq compare
+  in (board_iter 0 0 [])
+     |> List.filter (fun x -> List.length x > 1) |> List.sort_uniq compare
 
+(** [adj_final_tiles board] is true if at least one of the newly placed tiles is
+    adjacent to a previously placed tile and false otherwise *)
 let adj_final_tiles board: bool =
   let rec iter = function
     | [] -> false
@@ -508,16 +570,20 @@ let valid_tile_positions board: bool =
   && unfinals_singly_oriented board (x,y)
   && row_is_connected board y && col_is_connected board x
 
-(** Score? *)
+(** [calc_score board] if the tiles are placed validly, calculate the words
+    created and the score of those words, returning a tuple containing the score
+    and the list of words created *)
 let calc_score board : (int * string list) =
   let rec words_iter assoc score_acc words_acc =
     match assoc with
     | [] -> (score_acc, words_acc)
     | (word,score)::xs ->
-      if Words.validity word word_set then words_iter xs (score_acc + score) (word::words_acc)
+      if Words.validity word word_set
+      then words_iter xs (score_acc + score) (word::words_acc)
       else raise (InvalidWord word) in
   if valid_tile_positions board
-  then words_iter (List.map squares_to_word_and_points (find_strings board)) 0 []
+  then
+    words_iter (List.map squares_to_word_and_points (find_strings board)) 0 []
   else raise InvalidTilePlacement
 
 (** [finalize_board board] turns all the Unfinal tiles into Final tiles *)

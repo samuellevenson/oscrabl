@@ -31,83 +31,46 @@ let make_exchange_failure_tests
   name >:: (fun _ -> assert_raises error (fun () -> exchange state strings))
 
 let exchange_state_1 = 
-  let new_player = {
-    name = "Test1";
-    dock = [{letter = "A"; value = 1};
-            {letter = "A"; value = 1};
-            {letter = "A"; value = 1};
-            {letter = "A"; value = 1};
-            {letter = "A"; value = 1};
-            {letter = "A"; value = 1}];
-    score = 0
-  } in
-  {
-    board = emptyBoard;
-    bag = [];
-    players = [new_player];
-    current_player = new_player;
-    log = []
-  }
+  let new_player = create_player "Test1" ([{letter = "A"; value = 1};
+                                           {letter = "A"; value = 1};
+                                           {letter = "A"; value = 1};
+                                           {letter = "A"; value = 1};
+                                           {letter = "A"; value = 1};
+                                           {letter = "A"; value = 1}]) 0 in
+  create_moment emptyBoard [] [new_player] new_player []
 
 let exchange_state_2 = 
-  let new_player = {
-    name = "Test2";
-    dock = [{letter = "A"; value = 1};
-            {letter = "B"; value = 1};
-            {letter = "C"; value = 1};
-            {letter = "D"; value = 1};
-            {letter = "E"; value = 1};
-            {letter = "F"; value = 1};
-            {letter = "G"; value = 1}];
-    score = 0
-  } in
-  {
-    board = emptyBoard;
-    bag = [];
-    players = [new_player];
-    current_player = new_player;
-    log = []
-  }
+  let new_player = create_player "Test2" ([{letter = "A"; value = 1};
+                                           {letter = "B"; value = 1};
+                                           {letter = "C"; value = 1};
+                                           {letter = "D"; value = 1};
+                                           {letter = "E"; value = 1};
+                                           {letter = "F"; value = 1};
+                                           {letter = "G"; value = 1}]) 0
+  in
+  create_moment emptyBoard [] [new_player] new_player []
 
-let placement_state_1 = 
-  let new_player = {
-    name = "Test1";
-    dock = [{letter = "B"; value = 1};
-            {letter = "A"; value = 1};
-            {letter = "T"; value = 1};
-            {letter = "D"; value = 1};
-            {letter = "Z"; value = 1};
-            {letter = "F"; value = 1};
-            {letter = "G"; value = 1}];
-    score = 0;
-  } in
-  {
-    board = emptyBoard;
-    bag = init_bag;
-    players = [new_player];
-    current_player = new_player;
-    log = [];
-  }
+let placement_state_1 =
+  let new_player = create_player "Test1" ([{letter = "B"; value = 1};
+                                           {letter = "A"; value = 1};
+                                           {letter = "T"; value = 1};
+                                           {letter = "D"; value = 1};
+                                           {letter = "Z"; value = 1};
+                                           {letter = "F"; value = 1};
+                                           {letter = "G"; value = 1}]) 0
+  in
+  create_moment emptyBoard init_bag [new_player] new_player []
 
 let placement_state_2 = 
-  let new_player = {
-    name = "Test2";
-    dock = [{letter = "H"; value = 1};
-            {letter = "W"; value = 1};
-            {letter = "A"; value = 1};
-            {letter = "D"; value = 1};
-            {letter = "O"; value = 1};
-            {letter = "R"; value = 1};
-            {letter = "N"; value = 1}];
-    score = 0;
-  } in
-  {
-    board = emptyBoard;
-    bag = init_bag;
-    players = [new_player];
-    current_player = new_player;
-    log = [];
-  }
+  let new_player = create_player "Test2" ([{letter = "H"; value = 1};
+                                           {letter = "W"; value = 1};
+                                           {letter = "A"; value = 1};
+                                           {letter = "D"; value = 1};
+                                           {letter = "O"; value = 1};
+                                           {letter = "R"; value = 1};
+                                           {letter = "N"; value = 1}]) 0
+  in
+  create_moment emptyBoard init_bag [new_player] new_player []
 
 
 let pipeline_place tuple state = place_tile state tuple
@@ -116,9 +79,7 @@ let place_tuple letter row col = (letter, (single_to_int row, int_of_string col)
 
 
 let end_turn_1 = 
-  let new_player = {
-    name = "Test1";
-    dock = [
+  let new_player = create_player "Test1" ([
       {letter = "W"; value = 1};
       {letter = "A"; value = 1};
       {letter = "D"; value = 1};
@@ -126,16 +87,9 @@ let end_turn_1 =
       {letter = "O"; value = 1};
       {letter = "W"; value = 1};
       {letter = "N"; value = 1};
-    ];
-    score = 0;
-  } in
-  {
-    board = emptyBoard;
-    bag = init_bag;
-    players = [new_player];
-    current_player = new_player;
-    log = [];
-  }
+    ]) 0
+  in
+  create_moment emptyBoard init_bag [new_player] new_player []
 
 let make_score_tests
     (name: string)
@@ -143,11 +97,71 @@ let make_score_tests
     (exp_score : int) =
   name >:: (fun _ ->
       Words.add_hash_set Words.word_set Words.word_array Hashtbl.hash;
-      assert_equal exp_score (get_current_player state).score; )
+      assert_equal exp_score (get_player_score (get_current_player state)); )
 
+let make_exchange_tests 
+    (name: string)
+    (state: Moment.t)
+    (letters_to_exchange : string list)
+    (exp_dock: pretile list) =
+  name >:: (fun _ -> 
+      assert_equal exp_dock 
+        (get_dock (get_other_player (exchange state letters_to_exchange))))
+let dummy_player = create_player "Dummy" [] 0
+
+let test_exchange_1 =
+  let curr_player = create_player "Test" ([{letter = "A"; value = 1};
+                                           {letter = "B"; value = 1};
+                                           {letter = "C"; value = 1};
+                                           {letter = "D"; value = 1};
+                                           {letter = "E"; value = 1};
+                                           {letter = "F"; value = 1};
+                                           {letter = "G"; value = 1};]) 0 
+  in
+  create_moment emptyBoard ([{letter = "H"; value = 1};
+                             {letter = "W"; value = 1}]) 
+    [curr_player; dummy_player] curr_player ["Started Game"]
+
+let test_exchange_2 =
+  let curr_player = create_player "Test" ([{letter = "T"; value = 1};
+                                           {letter = "X"; value = 1};
+                                           {letter = "Y"; value = 1};
+                                           {letter = "Z"; value = 1};]) 0 
+  in
+  create_moment emptyBoard ([{letter = "H"; value = 1};
+                             {letter = "W"; value = 1}]) 
+    [curr_player; dummy_player] curr_player ["Started Game"]
+
+
+let make_exchange_failures
+    (name: string)
+    (state : Moment.t)
+    (letters_to_exchange: string list)
+    (error : exn) =
+  name >:: (fun _ -> assert_raises error 
+               (fun () -> exchange state letters_to_exchange)
+           )
 
 let rule_tests = 
-  [
+  [ 
+    make_exchange_tests "Swapping letters" 
+      test_exchange_1
+      ["A";"B";] 
+      [ 
+        {letter = "C"; value = 1};
+        {letter = "D"; value = 1};
+        {letter = "E"; value = 1};
+        {letter = "F"; value = 1};
+        {letter = "G"; value = 1};
+        {letter = "W"; value = 1};
+        {letter = "H"; value = 1};
+      ];
+    make_exchange_failures "Invalid Exchange Selection" 
+      test_exchange_1 ["H";"W"] MissingTilesToExchange;
+    make_exchange_failures "Valid Exchange Selection, but don't have 7 tiles." 
+      test_exchange_2 ["T";"Y"] InvalidExchange;
+    make_exchange_failures "Invalid Exchange Selection, but don't have 7 tiles." 
+      test_exchange_2 ["H";"W"] InvalidExchange;
     make_placement_tests "First tile is not h7" 
       (place_tile placement_state_1 ("A",(single_to_int "H", int_of_string "8")))
       InvalidTilePlacement; 
@@ -252,83 +266,39 @@ let make_refill_tests
     (state: Moment.t)
     (exp: int) =
   name >:: (fun _ ->
-      assert_equal (List.length state.current_player.dock)
+      assert_equal (List.length (get_current_dock state))
         exp;
     )
 
-let state_3_elements : Moment.t = {
-  board = Board.emptyBoard;
-  bag = Moment.init_bag;
-  players = [
-    {
-      name = "OScrabl Player";
-      dock =
-        [{letter = "A"; value = 1};
-         {letter = "A"; value = 1};
-         {letter = "A"; value = 1};];
-      score = 0;
-    }
-  ];
-  current_player = {
-    name = "OScrabl Player";
-    dock =
-      [{letter = "A"; value = 1};
-       {letter = "A"; value = 1};
-       {letter = "A"; value = 1};];
-    score = 0;
-  };
-  log = [];
-}
-let state_0_elements : Moment.t = {
-  board = Board.emptyBoard;
-  bag = Moment.init_bag;
-  players = [
-    {
-      name = "OScrabl Player";
-      dock =
-        [];
-      score = 0;
-    }
-  ];
-  current_player = {
-    name = "OScrabl Player";
-    dock =
-      [];
-    score = 0;
-  };
-  log = [];
-}
-let state_7_elements : Moment.t = {
-  board = Board.emptyBoard;
-  bag = Moment.init_bag;
-  players = [
-    {
-      name = "OScrabl Player";
-      dock =
-        [{letter = "A"; value = 1};
-         {letter = "A"; value = 1};
-         {letter = "A"; value = 1};
-         {letter = "A"; value = 1};
-         {letter = "A"; value = 1};
-         {letter = "A"; value = 1};
-         {letter = "A"; value = 1};];
-      score = 0;
-    }
-  ];
-  current_player = {
-    name = "OScrabl Player";
-    dock =
-      [{letter = "A"; value = 1};
-       {letter = "A"; value = 1};
-       {letter = "A"; value = 1};
-       {letter = "A"; value = 1};
-       {letter = "A"; value = 1};
-       {letter = "A"; value = 1};
-       {letter = "A"; value = 1};];
-    score = 0;
-  };
-  log = [];
-}
+let state_3_elements : Moment.t = 
+  let curr_player = create_player "OScrabl Player" ([{letter = "A"; value = 1};
+                                                     {letter = "A"; value = 1};
+                                                     {letter = "A"; value = 1};]) 0 in
+  create_moment emptyBoard init_bag [curr_player] curr_player []
+
+let state_0_elements : Moment.t = 
+  let curr_player = create_player "OScrabl Player" ([]) 0 in
+  create_moment emptyBoard init_bag [curr_player] curr_player []
+
+let state_7_elements : Moment.t = 
+  let curr_player = create_player "OScrabl Player" ([{letter = "A"; value = 1};
+                                                     {letter = "A"; value = 1};
+                                                     {letter = "A"; value = 1};
+                                                     {letter = "A"; value = 1};
+                                                     {letter = "A"; value = 1};
+                                                     {letter = "A"; value = 1};
+                                                     {letter = "A"; value = 1};]) 0 in
+  create_moment emptyBoard init_bag [curr_player] curr_player []
+
+
+let make_shuffle_tests
+    (name: string)
+    (bag: pretile list)
+    (exp: pretile list) =
+  name >:: (fun _ ->
+      assert (bag <> exp);
+    )
+
 let moment_tests =
   [
     (* make_refill_tests "Between 0 and 7 tiles"
@@ -337,6 +307,9 @@ let moment_tests =
        (Moment.refill state_0_elements;) 7;
        make_refill_tests "full dock to start"
        (Moment.refill state_7_elements;) 7; *)
+    make_shuffle_tests "Shuffle bag once" (shuffle_bag init_bag) init_bag;
+    make_shuffle_tests "Shuffle bag twice" 
+      (init_bag |> shuffle_bag |> shuffle_bag) init_bag;
   ]
 
 let suite =
