@@ -240,7 +240,7 @@ let pass state =
     created during the turn to the player's score, drawing new tiles from the
     bag, and then making it the other players turn *)
 let play_word state : (t * string) =
-  let num_tiles_played = 7 - List.length state.current_player.dock in
+  let num_tiles_played = pop_unfinals state.board |> snd |> List.length in
   let (drawn_tiles, new_bag) = draw_n state.bag (draw_num state) in
   let (prescore, words) = calc_score state.board in
   let score = if num_tiles_played = 7 then prescore + 50 else prescore in

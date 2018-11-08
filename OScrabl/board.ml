@@ -570,6 +570,7 @@ let valid_tile_positions board: bool =
   && unfinals_singly_oriented board (x,y)
   && row_is_connected board y && col_is_connected board x
 
+
 (** [calc_score board] if the tiles are placed validly, calculate the words
     created and the score of those words, returning a tuple containing the score
     and the list of words created *)

@@ -1,3 +1,3 @@
 (** Author information *)
 
-let hours_worked = [12; 12; 12]
+let hours_worked = [16; 16; 16]
